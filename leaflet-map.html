@@ -426,15 +426,6 @@ L.easyButton('<strong>Sq</strong>', function(){
 	}
 }).addTo(map);
 
-L.easyButton('<strong>20</strong>', function(){
-	if (map.hasLayer(squareTiles20)) {
-		map.removeLayer(squareTiles20);
-	} else {
-		map.addLayer(squareTiles20);
-	}
-}).addTo(map);
-
-
 L.easyButton('<strong>N</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(ctwNew);
