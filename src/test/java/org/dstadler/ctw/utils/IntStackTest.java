@@ -1,4 +1,4 @@
-package org.dstadler.ctw;
+package org.dstadler.ctw.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

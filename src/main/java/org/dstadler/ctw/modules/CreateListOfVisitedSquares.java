@@ -1,4 +1,4 @@
-package org.dstadler.ctw;
+package org.dstadler.ctw.modules;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,6 +24,8 @@ import java.util.stream.Stream;
 import org.dstadler.commons.gpx.GPXTrackpointsParser;
 import org.dstadler.commons.gpx.TrackPoint;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.utils.OSMTile;
+import org.dstadler.ctw.utils.UTMRefWithHash;
 import org.xml.sax.SAXException;
 
 import uk.me.jstott.jcoord.LatLng;

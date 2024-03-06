@@ -1,6 +1,6 @@
-package org.dstadler.ctw;
+package org.dstadler.ctw.modules;
 
-import static org.dstadler.ctw.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
+import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.utils.GeoJSON;
+import org.dstadler.ctw.utils.OSMTile;
+import org.dstadler.ctw.utils.UTMRefWithHash;
 
 import com.github.filosganga.geogson.model.Feature;
 

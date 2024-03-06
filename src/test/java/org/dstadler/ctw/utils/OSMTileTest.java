@@ -1,8 +1,8 @@
-package org.dstadler.ctw;
+package org.dstadler.ctw.utils;
 
-import static org.dstadler.ctw.CreateListOfVisitedSquares.VISITED_TILES_TXT;
-import static org.dstadler.ctw.OSMTile.MAX_ZOOM;
-import static org.dstadler.ctw.OSMTile.MIN_ZOOM;
+import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_TILES_TXT;
+import static org.dstadler.ctw.utils.OSMTile.MAX_ZOOM;
+import static org.dstadler.ctw.utils.OSMTile.MIN_ZOOM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;

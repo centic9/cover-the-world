@@ -1,11 +1,11 @@
-package org.dstadler.ctw;
+package org.dstadler.ctw.utils;
 
-import static org.dstadler.ctw.CreateLargestRectangleGeoJSONSquares.CLUSTER_RECTANGLE_TXT;
-import static org.dstadler.ctw.CreateLargestSquareGeoJSONSquares.CLUSTER_SQUARE_TXT;
-import static org.dstadler.ctw.CreateLargestSquareGeoJSONTiles.CLUSTER_TILES_TXT;
-import static org.dstadler.ctw.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
-import static org.dstadler.ctw.CreateListOfVisitedSquares.VISITED_TILES_TXT;
-import static org.dstadler.ctw.MatrixUtils.ZONE;
+import static org.dstadler.ctw.modules.CreateLargestRectangleGeoJSONSquares.CLUSTER_RECTANGLE_TXT;
+import static org.dstadler.ctw.modules.CreateLargestSquareGeoJSONSquares.CLUSTER_SQUARE_TXT;
+import static org.dstadler.ctw.modules.CreateLargestSquareGeoJSONTiles.CLUSTER_TILES_TXT;
+import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
+import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_TILES_TXT;
+import static org.dstadler.ctw.utils.MatrixUtils.ZONE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;

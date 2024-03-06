@@ -1,4 +1,4 @@
-package org.dstadler.ctw;
+package org.dstadler.ctw.utils;
 
 import com.google.common.base.Preconditions;
 

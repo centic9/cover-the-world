@@ -1,8 +1,8 @@
-package org.dstadler.ctw;
+package org.dstadler.ctw.modules;
 
-import static org.dstadler.ctw.CreateListOfVisitedSquares.TILE_ZOOM;
-import static org.dstadler.ctw.CreateListOfVisitedSquares.VISITED_TILES_TXT;
-import static org.dstadler.ctw.MatrixUtils.ZONE;
+import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.TILE_ZOOM;
+import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_TILES_TXT;
+import static org.dstadler.ctw.utils.MatrixUtils.ZONE;
 
 import java.awt.Rectangle;
 import java.io.BufferedWriter;
@@ -17,6 +17,9 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.utils.GeoJSON;
+import org.dstadler.ctw.utils.MatrixUtils;
+import org.dstadler.ctw.utils.OSMTile;
 
 import com.github.filosganga.geogson.model.Feature;
 import com.github.filosganga.geogson.model.LinearRing;

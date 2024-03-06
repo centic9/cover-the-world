@@ -1,6 +1,6 @@
-package org.dstadler.ctw;
+package org.dstadler.ctw.utils;
 
-import static org.dstadler.ctw.OSMTileTest.ASSERT_DELTA;
+import static org.dstadler.ctw.utils.OSMTileTest.ASSERT_DELTA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;

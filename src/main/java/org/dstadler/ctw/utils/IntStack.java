@@ -2,7 +2,7 @@
 // Complete documentation is available from the IntStack link in:
 //   http://www.cs.colorado.edu/~main/docs/
 
-package org.dstadler.ctw;
+package org.dstadler.ctw.utils;
 
 import java.util.EmptyStackException;
 
