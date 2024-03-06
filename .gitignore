@@ -28,13 +28,5 @@ build/
 sloccount.sc
 
 # Log files
-CpverTheWorld.*.log
-CpverTheWorld.*.log.lck
-
-# Resulting lists of visited squares
-Visited*.txt
-LargestCluster*.txt
-Cluster*.txt
-Visited*.js
-LargestCluster*.js
-Cluster*.js
+CoverTheWorld.*.log
+CoverTheWorld.*.log.lck
