@@ -8,12 +8,31 @@
 
 This is a small library of code-pieces that can be used to read GPX files and produce a web-page which 
 displays covered "tiles" on a world map.
- 
-## Usage
 
-TBD...
+## Definitions
 
-## Using it
+* `square`: a 1km x 1km square on the map
+* `tile`: a square on the map based on zoom level 14 of the map at https://www.openstreetmap.org/ and other derived mapping sites
+* `largest square`: The largest area of tiles/squares that can be filled with a square
+* `largest cluster`: The largest area of tiles/squares that can be filled with a rectangle
+* `new squares/tiles`: Each time the application runs and processes new GPX tracks, it allows to visualize which tiles 
+  have been newly covered
+
+## Prepare
+
+Either put GPX files into the directory `gpx` or replace `gpx` with a symlink to your GPX files
+or adjust the code to look elsewhere. 
+
+## Run it
+
+Run the application `org.dstadler.ctw.CoverTheWorld`, e.g. via Gradle:
+
+`./gradlew updateFiles`
+
+## Using it as a library
+
+The code can also be included as a library in your own application, e.g. if you want to automate
+things in some way.
 
 ### Add it to your project as Gradle dependency
 

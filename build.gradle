@@ -165,3 +165,11 @@ signing {
 }
 
 afterReleaseBuild.dependsOn publish
+
+
+tasks.register('updateFiles', JavaExec) {
+	description = 'Run all steps to read the GPX files and produce the necessary files for the sample web application'
+
+	mainClass = 'org.dstadler.ctw.CoverTheWorld'
+	classpath = sourceSets.main.runtimeClasspath
+}
