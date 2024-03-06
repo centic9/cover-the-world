@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
 import com.github.filosganga.geogson.model.Feature;
@@ -57,6 +59,8 @@ public class CreateLargestClusterGeoJSON {
 
 		if (clusters.isEmpty()) {
 			log.info("Did not find any clusters for squares");
+			GeoJSON.writeGeoJSON(LARGEST_CLUSTER_SQUARES_JSON, "largest", Collections.emptyList());
+			FileUtils.writeStringToFile(new File(LARGEST_CLUSTER_SQUARES_TXT), "", "UTF-8");
 			return;
 		}
 
