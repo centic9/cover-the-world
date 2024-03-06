@@ -20,15 +20,15 @@ public class CoverTheWorld {
 		CreateClusterGeoJSON.main(new String[0]);
 
 		// produce "LargestCluster*"
-		CreateLargestClusterGeoJSON.main(new String[0]);
+		CreateLargestClusterGeoJSONSquares.main(new String[0]);
 		CreateLargestClusterGeoJSONTiles.main(new String[0]);
 
 		// produce "ClusterRectangle.*" and "ClusterTileRectangle.*"
-		CreateLargestRectangleGeoJSON.main(new String[0]);
+		CreateLargestRectangleGeoJSONSquares.main(new String[0]);
 		CreateLargestRectangleGeoJSONTiles.main(new String[0]);
 
 		// produce "ClusterSquare.*" and "ClusterTileSquare.*"
-		CreateLargestRectangleGeoJSON.main(new String[0]);
-		CreateLargestRectangleGeoJSONTiles.main(new String[0]);
+		CreateLargestSquareGeoJSONSquares.main(new String[0]);
+		CreateLargestSquareGeoJSONTiles.main(new String[0]);
 	}
 }

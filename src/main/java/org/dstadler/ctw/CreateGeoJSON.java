@@ -40,7 +40,7 @@ import uk.me.jstott.jcoord.LatLng;
 /**
  * Small application which reads the list of covered squares
  * (twice for all covered and only new squares)
- * from a simple text-file and produces a GeoJSON embedded in
+ * from a simple text-file and produces GeoJSON embedded in
  * a JavaScript file which can be loaded in a leaflet.js map
  * to display covered squares.
  */

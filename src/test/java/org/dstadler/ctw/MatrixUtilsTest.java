@@ -1,7 +1,7 @@
 package org.dstadler.ctw;
 
-import static org.dstadler.ctw.CreateLargestRectangleGeoJSON.CLUSTER_RECTANGLE_TXT;
-import static org.dstadler.ctw.CreateLargestSquareGeoJSON.CLUSTER_SQUARE_TXT;
+import static org.dstadler.ctw.CreateLargestRectangleGeoJSONSquares.CLUSTER_RECTANGLE_TXT;
+import static org.dstadler.ctw.CreateLargestSquareGeoJSONSquares.CLUSTER_SQUARE_TXT;
 import static org.dstadler.ctw.CreateLargestSquareGeoJSONTiles.CLUSTER_TILES_TXT;
 import static org.dstadler.ctw.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.CreateListOfVisitedSquares.VISITED_TILES_TXT;

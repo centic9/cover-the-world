@@ -22,11 +22,11 @@ import com.github.filosganga.geogson.model.Feature;
  * computation easier. If the rectangle should someday span
  * more than one Zone, this tool likely needs a major overhaul!
  */
-public class CreateLargestRectangleGeoJSON {
+public class CreateLargestRectangleGeoJSONSquares {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_RECTANGLE_JSON = "ClusterRectangle.js";
-	public static final String CLUSTER_RECTANGLE_TXT = "ClusterRectangle.txt";
+	public static final String CLUSTER_RECTANGLE_JSON = "LargestRectangleSquares.js";
+	public static final String CLUSTER_RECTANGLE_TXT = "LargestRectangleSquares.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();

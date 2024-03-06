@@ -25,8 +25,8 @@ import com.github.filosganga.geogson.model.Feature;
 public class CreateLargestRectangleGeoJSONTiles {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_RECTANGLE_TILE_JSON = "ClusterTileRectangle.js";
-	public static final String CLUSTER_RECTANGLE_TILE_TXT = "ClusterTileRectangle.txt";
+	public static final String CLUSTER_RECTANGLE_TILE_JSON = "LargestRectangleTiles.js";
+	public static final String CLUSTER_RECTANGLE_TILE_TXT = "LargestRectangleTiles.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();

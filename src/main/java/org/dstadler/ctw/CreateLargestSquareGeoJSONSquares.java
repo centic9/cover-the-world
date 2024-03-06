@@ -31,11 +31,11 @@ import com.google.gson.JsonPrimitive;
  * computation easier. If the rectangle should someday span
  * more than one Zone, this tool likely needs a major overhaul!
  */
-public class CreateLargestSquareGeoJSON {
+public class CreateLargestSquareGeoJSONSquares {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_SQUARE_JSON = "ClusterSquare.js";
-	public static final String CLUSTER_SQUARE_TXT = "ClusterSquare.txt";
+	public static final String CLUSTER_SQUARE_JSON = "LargestSquareSquares.js";
+	public static final String CLUSTER_SQUARE_TXT = "LargestSquareSquares.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();

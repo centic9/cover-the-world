@@ -37,8 +37,8 @@ import uk.me.jstott.jcoord.LatLng;
 public class CreateLargestSquareGeoJSONTiles {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_TILES_JSON = "ClusterTileSquare.js";
-	public static final String CLUSTER_TILES_TXT = "ClusterTileSquare.txt";
+	public static final String CLUSTER_TILES_JSON = "LargestSquareTiles.js";
+	public static final String CLUSTER_TILES_TXT = "LargestSquareTiles.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();

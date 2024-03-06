@@ -31,7 +31,7 @@ import com.github.filosganga.geogson.model.Feature;
  * This is computed by searching for squares with four neighbours
  * and then expanding the cluster out as far as possible.
  */
-public class CreateLargestClusterGeoJSON {
+public class CreateLargestClusterGeoJSONSquares {
     private static final Logger log = LoggerFactory.make();
 
     public static final String LARGEST_CLUSTER_SQUARES_JSON = "LargestClusterSquares.js";
