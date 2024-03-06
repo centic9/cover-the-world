@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Cover the World</title>
+
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+	<link rel="stylesheet" href="L.Control.ZoomDisplay.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@v0.79.0/dist/L.Control.Locate.min.css" />
+	<link rel="stylesheet" href="L.Control.MousePosition.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-loading@0.1.24/src/Control.Loading.min.css">
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+	<!-- Zoom Plugin from https://github.com/azavea/Leaflet.zoomdisplay/ -->
+	<script type="text/javascript" src="L.Control.ZoomDisplay.js"></script>
+	<!-- GPS Plugin from https://github.com/domoritz/leaflet-locatecontrol -->
+	<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@v0.79.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+	<!-- https://github.com/ardhi/Leaflet.MousePosition -->
+	<script type="text/javascript" src="L.Control.MousePosition.js"></script>
+	<!-- https://github.com/cliffcloud/Leaflet.EasyButton -->
+	<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2.4.0/src/easy-button.js"></script>
+	<!-- https://github.com/sjaakp/leaflet-search -->
+	<script src="https://unpkg.com/@sjaakp/leaflet-search@1.0.2/dist/leaflet-search.js"></script>
+    <!-- https://github.com/TolonUK/Leaflet.EdgeBuffer/ -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-edgebuffer@1.0.6/src/leaflet.edgebuffer.min.js"></script>
+	<!-- https://github.com/ebrelsford/Leaflet.loading -->
+	<script src="https://cdn.jsdelivr.net/npm/leaflet-loading@0.1.24/src/Control.Loading.min.js "></script>
+
+	<script src="VisitedSquares.js"></script>
+	<script src="VisitedSquaresNew.js"></script>
+	<script src="VisitedTiles.js"></script>
+	<script src="VisitedTilesNew.js"></script>
+	<script src="ClusterSquares.js"></script>
+	<script src="LargestClusterSquares.js"></script>
+	<script src="ClusterRectangle.js"></script>
+	<script src="ClusterSquare.js"></script>
+	<script src="ClusterTileSquare.js"></script>
+	<script src="ClusterTileRectangle.js"></script>
+	<script src="LargestClusterTiles.js"></script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.leaflet-container {
+            height: 100%;
+            width: 100%;
+		}
+	</style>
+</head>
+<body>
+
+<div id='map'></div>
+
+<script>
+const icon = new L.Icon.Default;
+
+const params = new URLSearchParams(window.location.search);
+/* supported query params:
+Base Map: bergfex, cycle, rendered, prerendered, prerenderedpure
+Overlay: tiles, mtb
+Feature:
+*/
+
+function mapstyle() {
+	return{
+		fillColor:"#880000",
+		color:"#880000",
+		weight: 0.05,
+		fillOpacity:0.3
+	};
+}
+
+function clusterstyle() {
+	return{
+		fillColor:"#00aaaa",
+		color:"#00bbbbb",
+		weight: 0.05,
+		fillOpacity:0.2
+	};
+}
+
+function rectanglestyle() {
+	return{
+		fillColor:"#0077ff",
+		color:"#00bbbbb",
+		weight: 0.05,
+		fillOpacity:0.2
+	};
+}
+
+function squarestyle() {
+	return{
+		fillColor:"#1166aa",
+		color:"#00bbbbb",
+		weight: 0.05,
+		fillOpacity:0.2
+	};
+}
+
+function linestyle() {
+	return{
+		fillColor:"#0077ff",
+		color:"#0077ff",
+		weight: 1.0,
+		fillOpacity:1
+	};
+}
+
+
+const map = L.map('map', {
+	center: [48.4503, 14.0170],
+	zoom: 11,
+
+	// enable loading spinner
+	loadingControl: true
+});
+
+// full tile-based layers
+////////////////////////////////////////
+// https://tile.openstreetmap.org/12/2207/1415.png
+const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	// requests for tiles on zoom-level 20 were timing out at time
+	maxZoom: 19,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
+
+// https://ptolemy.openstreetmap.de/12/2207/1415.png
+const osmDE = L.tileLayer('https://ptolemy.openstreetmap.de/{z}/{x}/{y}.png', {
+	maxZoom: 20,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: '<a target=_blank href="https://www.openstreetmap.org/">Karte hergestellt aus OpenStreetMap-Daten</a> | Lizenz: <a rel="license" target="_blank" href="https://opendatacommons.org/licenses/odbl/">Open Database License (ODbL)</a>'
+});
+
+// https://tile.openstreetmap.fr/hot/12/2207/1415.png
+const osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+	maxZoom: 20,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+});
+
+// https://tile.opentopomap.org/12/2207/1415.png
+const openTopo = L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
+// https://tiles.bergfex.at/
+// https://tiles.bergfex.at/styles/bergfex-osm/12/2207/1415.png
+const bergfex = L.tileLayer('https://tiles.bergfex.at/styles/bergfex-osm/{z}/{x}/{y}.png', {
+	maxZoom: 20,
+	//edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+});
+
+// https://tiles.bergfex.at/
+// https://tiles.bergfex.at/styles/bergfex-osm/12/2207/1415@2x.jpg
+const bergfexJpg = L.tileLayer('https://tiles.bergfex.at/styles/bergfex-osm/{z}/{x}/{y}@2x.jpg', {
+	maxZoom: 20,
+	//edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+});
+
+// https://tiles.bergfex.at/data/oek50-512/12/2207/1415.jpg70
+const bergfexOEK50 = L.tileLayer('https://tiles.bergfex.at/data/oek50-512/{z}/{x}/{y}.jpg70', {
+	maxZoom: 15,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+});
+
+// https://tiles.bergfex.at/styles/basemap-ortho/12/2207/1415.png
+const bergfexOrtho = L.tileLayer('https://tiles.bergfex.at/styles/basemap-ortho/{z}/{x}/{y}.png', {
+	maxZoom: 20,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+});
+
+// Overlay layers
+////////////////////////////////////////
+// https://tile.waymarkedtrails.org/mtb/12/2207/1415.png
+const mtb = L.tileLayer('https://tile.waymarkedtrails.org/mtb/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
+});
+
+// https://c.tile.thunderforest.com/cycle/12/2207/1415.png
+const cycle = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
+	maxZoom: 19,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
+});
+
+// https://cs37700.dogadoserver.de/ctw/tiles/12/2207/1415.png
+const ctw = L.tileLayer('tiles/{z}/{x}/{y}.png', {
+	// we currently only generate up to zoom-level 18
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
+});
+
+// https://cs37700.dogadoserver.de/ctw/tilesNew/12/2207/1415.png
+const ctwNew = L.tileLayer('tilesNew/{z}/{x}/{y}.png', {
+	// we currently only generate up to zoom-level 18
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
+});
+
+// https://cs37700.dogadoserver.de/ctw/tilesTiles/12/2207/1415.png
+const ctwTiles = L.tileLayer('tilesTiles/{z}/{x}/{y}.png', {
+	// we currently only generate up to zoom-level 18
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
+});
+
+// https://cs37700.dogadoserver.de/ctw/tilesTilesNew/12/2207/1415.png
+const ctwTilesNew = L.tileLayer('tilesTilesNew/{z}/{x}/{y}.png', {
+	// we currently only generate up to zoom-level 18
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
+});
+
+
+// GeoJSON based overlay layers
+////////////////////////////////////////
+function onEachFeature(feature, layer) {
+	// does this feature have a property named popupContent?
+	if (feature.properties && feature.properties.popupContent) {
+		layer.bindPopup(feature.properties.popupContent);
+	}
+}
+
+var paddedRenderer = L.svg({ padding: 0.8 });
+
+var geo = L.geoJSON(states,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var geoNew = L.geoJSON(newstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var geoTiles = L.geoJSON(tilesstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var geoTilesNew = L.geoJSON(tilesnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var cluster = L.geoJSON(clusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var largest = L.geoJSON(largeststates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var rectangle = L.geoJSON(rectanglestates,{style:rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var square = L.geoJSON(squarestates,{style:squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var squareTiles = L.geoJSON(tilesquarestates,{style:squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var rectangleTiles = L.geoJSON(tilerectanglestates,{style:rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var clusterTiles = L.geoJSON(largesttilesstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+// just needed for the divider-line in the menu
+var emptystates=[{"type":"FeatureCollection","features":[]}];
+var empty = L.geoJSON(emptystates,{style:clusterstyle, onEachFeature: onEachFeature});
+
+var gridOsm = L.gridLayer();
+
+gridOsm.createTile = function (coords) {
+	const tile = document.createElement('div');
+	tile.style.outline = '1px solid green';
+	tile.style.fontWeight = 'bold';
+	tile.style.fontSize = '14pt';
+	tile.innerHTML = [coords.z, coords.x, coords.y].join('/');
+	return tile;
+};
+
+// default layers OSM + CTW-GeoJSON + CTWNew-GeoJSON
+if (params.get("bergfex") === "1") {
+    map.addLayer(bergfex);
+} else if (params.get("cycle") === "1") {
+    map.addLayer(cycle);
+} else {
+    map.addLayer(osm);
+}
+
+if (params.get("tiles") === "1") {
+	map.addLayer(geoTiles);
+	map.addLayer(geoTilesNew);
+} else if (params.get("rendered") === "1") {
+	map.addLayer(ctw);
+	map.addLayer(ctwNew);
+} else if (params.get("prerendered") === "1") {
+	map.addLayer(ctwCombined);
+} else if (params.get("prerenderedpure") === "1") {
+	map.addLayer(ctwCombinedPure);
+} else {
+    map.addLayer(geo);
+    map.addLayer(geoNew);
+}
+
+if (params.get("mtb") === "1") {
+    map.addLayer(mtb);
+}
+
+const baseLayers = {
+	'OpenStreetMap': osm,
+	'OpenStreetMap DE': osmDE,
+	'OpenStreetMap.HOT': osmHOT,
+	'OpenTopo': openTopo,
+	'Cycle': cycle,
+	'Bergfex': bergfex,
+	'Bergfex JPG': bergfexJpg,
+	'Bergfex OEK50': bergfexOEK50,
+	'Bergfex Ortho': bergfexOrtho,
+};
+
+const overlays = {
+	'Squares': geo,
+	'New': geoNew,
+	'Cluster': cluster,
+	'Largest Cluster': largest,
+	'Rectangle': rectangle,
+	'Square': square,
+	'-- StatsHunter --': empty,
+	'StatsHunter Tiles': geoTiles,
+	'StatsHunter New Tiles': geoTilesNew,
+	'StatsHunter Square': squareTiles,
+	'StatsHunter Rectangle': rectangleTiles,
+	'StatsHunter Cluster': clusterTiles,
+	'-- Rendered overlay --': empty,
+	'Rendered Squares': ctw,
+	'Rendered New': ctwNew,
+	'Rendered Tiles': ctwTiles,
+	'Rendered Tiles New': ctwTilesNew,
+	'-- Other --': empty,
+	'MTB': mtb,
+	'Grid': gridOsm,
+	'-- -- --': empty,
+};
+
+L.control.layers(baseLayers, overlays).addTo(map);
+
+L.control.scale().addTo(map);
+
+// GPS Plugin
+var lc = L.control
+		.locate({
+			position: "topright",
+			strings: {
+				title: "Position"
+			}
+		})
+		.addTo(map);
+
+L.control.mousePosition().addTo(map);
+
+
+L.easyButton('<strong>Cl</strong>', function(){
+	if (map.hasLayer(geoTiles)) {
+		map.removeLayer(largest);
+		if (map.hasLayer(clusterTiles)) {
+			map.removeLayer(clusterTiles);
+		} else {
+			map.addLayer(clusterTiles);
+		}
+	} else {
+		map.removeLayer(clusterTiles);
+		if (map.hasLayer(largest)) {
+			map.removeLayer(largest);
+		} else {
+			map.addLayer(largest);
+		}
+	}
+}).addTo(map);
+
+L.easyButton('<strong>Re</strong>', function(){
+	if (map.hasLayer(geoTiles)) {
+		map.removeLayer(rectangle);
+		if (map.hasLayer(rectangleTiles)) {
+			map.removeLayer(rectangleTiles);
+		} else {
+			map.addLayer(rectangleTiles);
+		}
+	} else {
+		map.removeLayer(rectangleTiles);
+		if (map.hasLayer(rectangle)) {
+			map.removeLayer(rectangle);
+		} else {
+			map.addLayer(rectangle);
+		}
+	}
+}).addTo(map);
+
+L.easyButton('<strong>Sq</strong>', function(){
+	if (map.hasLayer(geoTiles)) {
+		map.removeLayer(square);
+		if (map.hasLayer(squareTiles)) {
+			map.removeLayer(squareTiles);
+		} else {
+			map.addLayer(squareTiles);
+		}
+	} else {
+		map.removeLayer(squareTiles);
+		if (map.hasLayer(square)) {
+			map.removeLayer(square);
+		} else {
+			map.addLayer(square);
+		}
+	}
+}).addTo(map);
+
+L.easyButton('<strong>20</strong>', function(){
+	if (map.hasLayer(squareTiles20)) {
+		map.removeLayer(squareTiles20);
+	} else {
+		map.addLayer(squareTiles20);
+	}
+}).addTo(map);
+
+
+L.easyButton('<strong>N</strong>', function(){
+	if (map.hasLayer(geoTiles)) {
+		map.removeLayer(ctwNew);
+		map.removeLayer(ctwTilesNew);
+		map.removeLayer(geoNew);
+		if (map.hasLayer(geoTilesNew)) {
+			map.removeLayer(geoTilesNew);
+		} else {
+			map.addLayer(geoTilesNew);
+		}
+	} else {
+		map.removeLayer(ctwNew);
+		map.removeLayer(ctwTilesNew);
+		map.removeLayer(geoTilesNew);
+		if (map.hasLayer(geoNew)) {
+			map.removeLayer(geoNew);
+		} else {
+			map.addLayer(geoNew);
+		}
+	}
+}).addTo(map);
+
+L.easyButton('<strong>S</strong>', function(){
+	map.removeLayer(ctw);
+	map.removeLayer(geoTiles);
+	map.removeLayer(geoTilesNew);
+	if (map.hasLayer(geo)) {
+		map.removeLayer(geo);
+	} else {
+		map.addLayer(geo);
+	}
+}).addTo(map);
+
+L.easyButton('<strong>T</strong>', function(){
+	map.removeLayer(ctw);
+	map.removeLayer(ctwNew);
+	map.removeLayer(ctwTiles);
+	map.removeLayer(ctwTilesNew);
+	map.removeLayer(geo);
+	map.removeLayer(geoNew);
+	if (map.hasLayer(geoTiles)) {
+		map.removeLayer(geoTiles);
+	} else {
+		map.addLayer(geoTiles);
+	}
+}).addTo(map);
+
+map.setGeocoder('Nominatim');
+map.addControl(L.control.search({ }));
+</script>
+</body>
+</html>
