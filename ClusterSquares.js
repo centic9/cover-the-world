@@ -1,0 +1,1 @@
+var clusterstates=[{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[14.33985,48.26531],[14.35332,48.26531],[14.35332,48.25632],[14.33985,48.25632],[14.33985,48.26531]]]}}]}];

@@ -1,0 +1,1 @@
+var tilesquarestates=[{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"popupContent":"4 tiles: 2x2"},"geometry":{"type":"Polygon","coordinates":[[[14.32617,48.26857],[14.37012,48.26857],[14.37012,48.23931],[14.32617,48.23931],[14.32617,48.26857]]]}}]}];
