@@ -63,9 +63,9 @@ public class CreateGeoJSON {
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
 
-		writeGeoJSON(VISITED_SQUARES_TXT, VISITED_SQUARES_JSON, "",
+		writeGeoJSON(VISITED_SQUARES_TXT, VISITED_SQUARES_JSON, "squares",
 				UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "squares");
-		writeGeoJSON(VISITED_SQUARES_NEW_TXT, VISITED_SQUARES_NEW_JSON, "new",
+		writeGeoJSON(VISITED_SQUARES_NEW_TXT, VISITED_SQUARES_NEW_JSON, "squaresnew",
 				UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "new squares");
 
 		writeGeoJSON(VISITED_TILES_TXT, VISITED_TILES_JSON, "tiles",

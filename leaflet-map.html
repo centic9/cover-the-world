@@ -38,11 +38,11 @@
 	<script src="VisitedTilesNew.js"></script>
 	<script src="ClusterSquares.js"></script>
 	<script src="LargestClusterSquares.js"></script>
-	<script src="LargestRectangleSquares.js"></script>
-	<script src="LargestSquareSquares.js"></script>
-	<script src="LargestSquareTiles.js"></script>
-	<script src="LargestRectangleTiles.js"></script>
-	<script src="LargestClusterTiles.js"></script>
+    <script src="LargestClusterTiles.js"></script>
+    <script src="LargestRectangleSquares.js"></script>
+    <script src="LargestRectangleTiles.js"></script>
+    <script src="LargestSquareSquares.js"></script>
+    <script src="LargestSquareTiles.js"></script>
 
 	<style>
 		html, body {
@@ -127,7 +127,7 @@ const map = L.map('map', {
 ////////////////////////////////////////
 // https://tile.openstreetmap.org/12/2207/1415.png
 const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	// requests for tiles on zoom-level 20 were timing out at time
+	// requests for tiles on zoom-level 20 were timing out at times
 	maxZoom: 19,
 	edgeBufferTiles: 1,
 	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
@@ -254,9 +254,9 @@ function onEachFeature(feature, layer) {
 
 var paddedRenderer = L.svg({ padding: 0.8 });
 
-var geo = L.geoJSON(states,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+var geo = L.geoJSON(squaresstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var geoNew = L.geoJSON(newstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+var geoNew = L.geoJSON(squaresnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 var geoTiles = L.geoJSON(tilesstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
