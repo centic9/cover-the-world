@@ -166,6 +166,12 @@ signing {
 
 afterReleaseBuild.dependsOn publish
 
+tasks.register('createZip', Zip) {
+	from '.'
+	excludes = ['bin', 'build', '.gradle', '.svn', '.git', '*.log', '*.log.*', '.idea',
+				'out', '*.zip', 'tiles*']
+}
+
 
 tasks.register('updateFiles', JavaExec) {
 	description = 'Run all steps to read the GPX files and produce the necessary files for the sample web application'
