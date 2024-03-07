@@ -9,11 +9,16 @@
 This project can be used to read tracks from GPX files and produce a web-page which
 displays covered "tiles" on a world map.
 
+## Introduction
+
 The sport of physically visiting as many tiles (i.e. square areas) as possible on the 
 map is often known as "tile-hunting".
 
 This project can be used both as library in other project and directly as a set of 
 applications which process data so that it can be visualized on a web page.
+
+The flow of data is roughly as follows
+`GPX files -> list of covered tiles (txt) -> GeoJSON file for map-display (js) -> HTML page`
 
 ## Definitions
 
@@ -27,9 +32,9 @@ applications which process data so that it can be visualized on a web page.
 
 ## How does it look like?
 
-You can open the provided file `leaflet-map.html` in a web-browser to see how this looks like.
+You can directly open the provided file [leaflet-map.html](leaflet-map.html) in a web-browser to see how this looks like.
 
-### Features of web page
+### Features of the web page
 
 On the left side:
 * Shows OSM zoom level
@@ -48,16 +53,15 @@ On the right side:
 
 ## Prepare with your own data
 
-Either put GPX files into the directory `gpx` or replace `gpx` with a symlink to your GPX files
+Either put GPX files into the directory `gpx` or replace the directory `gpx` with a symlink to your GPX files
 or adjust the code to look elsewhere. 
 
-### Garmin devices via Garmin Connect
+## Fetching GPX tracks from Garmin Connect
 
-A populare tool for fetching GPX tracks from Garmin Connect is [garmin-connect-export](https://github.com/pe-st/garmin-connect-export)
+A popular tool for fetching GPX tracks from Garmin Connect is [garmin-connect-export](https://github.com/pe-st/garmin-connect-export)
 
 A sample commandline to fetch all GPX files from an account is as follows: 
 `python3 gcexport.py --directory ~/.garmin --unzip --format gpx --username "${GARMIN_EMAIL}" --password "${GARMIN_PASS}" --count "all"`
-
 
 ## Run it
 
