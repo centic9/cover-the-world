@@ -207,7 +207,7 @@ const cycle = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.
 });
 
 // https://cs37700.dogadoserver.de/ctw/tiles/12/2207/1415.png
-const ctw = L.tileLayer('tiles/{z}/{x}/{y}.png', {
+const ctwSquares = L.tileLayer('tilesSquares/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
 	edgeBufferTiles: 1,
@@ -216,7 +216,7 @@ const ctw = L.tileLayer('tiles/{z}/{x}/{y}.png', {
 });
 
 // https://cs37700.dogadoserver.de/ctw/tilesNew/12/2207/1415.png
-const ctwNew = L.tileLayer('tilesNew/{z}/{x}/{y}.png', {
+const ctwSquaresNew = L.tileLayer('tilesSquaresNew/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
 	edgeBufferTiles: 1,
@@ -304,8 +304,8 @@ if (params.get("tiles") === "1") {
 	map.addLayer(geoTiles);
 	map.addLayer(geoTilesNew);
 } else if (params.get("rendered") === "1") {
-	map.addLayer(ctw);
-	map.addLayer(ctwNew);
+	map.addLayer(ctwSquares);
+	map.addLayer(ctwSquaresNew);
 } else if (params.get("prerendered") === "1") {
 	map.addLayer(ctwCombined);
 } else if (params.get("prerenderedpure") === "1") {
@@ -345,8 +345,8 @@ const overlays = {
 	'StatsHunter Rectangle': rectangleTiles,
 	'StatsHunter Cluster': clusterTiles,
 	'-- Rendered overlay --': empty,
-	'Rendered Squares': ctw,
-	'Rendered New': ctwNew,
+	'Rendered Squares': ctwSquares,
+	'Rendered New': ctwSquaresNew,
 	'Rendered Tiles': ctwTiles,
 	'Rendered Tiles New': ctwTilesNew,
 	'-- Other --': empty,
@@ -428,7 +428,7 @@ L.easyButton('<strong>Sq</strong>', function(){
 
 L.easyButton('<strong>N</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
-		map.removeLayer(ctwNew);
+		map.removeLayer(ctwSquaresNew);
 		map.removeLayer(ctwTilesNew);
 		map.removeLayer(geoNew);
 		if (map.hasLayer(geoTilesNew)) {
@@ -437,7 +437,7 @@ L.easyButton('<strong>N</strong>', function(){
 			map.addLayer(geoTilesNew);
 		}
 	} else {
-		map.removeLayer(ctwNew);
+		map.removeLayer(ctwSquaresNew);
 		map.removeLayer(ctwTilesNew);
 		map.removeLayer(geoTilesNew);
 		if (map.hasLayer(geoNew)) {
@@ -449,7 +449,7 @@ L.easyButton('<strong>N</strong>', function(){
 }).addTo(map);
 
 L.easyButton('<strong>S</strong>', function(){
-	map.removeLayer(ctw);
+	map.removeLayer(ctwSquares);
 	map.removeLayer(geoTiles);
 	map.removeLayer(geoTilesNew);
 	if (map.hasLayer(geo)) {
@@ -460,8 +460,8 @@ L.easyButton('<strong>S</strong>', function(){
 }).addTo(map);
 
 L.easyButton('<strong>T</strong>', function(){
-	map.removeLayer(ctw);
-	map.removeLayer(ctwNew);
+	map.removeLayer(ctwSquares);
+	map.removeLayer(ctwSquaresNew);
 	map.removeLayer(ctwTiles);
 	map.removeLayer(ctwTilesNew);
 	map.removeLayer(geo);

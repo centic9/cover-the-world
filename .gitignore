@@ -30,3 +30,6 @@ sloccount.sc
 # Log files
 CoverTheWorld.*.log
 CoverTheWorld.*.log.lck
+
+# Tile directories
+/tiles*/
