@@ -1,4 +1,4 @@
-package org.dstadler.ctw.utils;
+package org.dstadler.ctw.geojson;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -7,6 +7,8 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+
+import org.dstadler.ctw.utils.LatLonRectangle;
 
 import com.github.filosganga.geogson.gson.GeometryAdapterFactory;
 import com.github.filosganga.geogson.gson.PositionsAdapter;

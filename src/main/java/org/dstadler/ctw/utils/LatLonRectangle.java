@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 public class LatLonRectangle {
 
 	// (lat1,lon1) is upper-left, (lat2,lon2) is lower-right
-	double lat1, lon1, lat2, lon2;
+	public double lat1, lon1, lat2, lon2;
 
 	public LatLonRectangle(double lat1, double lon1, double lat2, double lon2) {
 		Preconditions.checkArgument(lat1 > lat2,

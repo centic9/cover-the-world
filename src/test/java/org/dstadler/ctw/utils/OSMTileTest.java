@@ -1,6 +1,6 @@
 package org.dstadler.ctw.utils;
 
-import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_TILES_TXT;
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 import static org.dstadler.ctw.utils.OSMTile.MAX_ZOOM;
 import static org.dstadler.ctw.utils.OSMTile.MIN_ZOOM;
 import static org.junit.Assert.assertEquals;

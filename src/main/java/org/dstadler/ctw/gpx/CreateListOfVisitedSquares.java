@@ -1,4 +1,4 @@
-package org.dstadler.ctw.modules;
+package org.dstadler.ctw.gpx;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

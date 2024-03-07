@@ -1,7 +1,7 @@
 package org.dstadler.ctw.utils;
 
-import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_SQUARES_NEW_TXT;
-import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NEW_TXT;
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.utils.OSMTileTest.ASSERT_DELTA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

@@ -1,6 +1,6 @@
-package org.dstadler.ctw.modules;
+package org.dstadler.ctw.geojson;
 
-import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,7 +14,6 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
-import org.dstadler.ctw.utils.GeoJSON;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
 

@@ -2,15 +2,15 @@ package org.dstadler.ctw;
 
 import java.io.IOException;
 
-import org.dstadler.ctw.modules.CreateClusterGeoJSON;
-import org.dstadler.ctw.modules.CreateGeoJSON;
-import org.dstadler.ctw.modules.CreateLargestClusterGeoJSONSquares;
-import org.dstadler.ctw.modules.CreateLargestClusterGeoJSONTiles;
-import org.dstadler.ctw.modules.CreateLargestRectangleGeoJSONSquares;
-import org.dstadler.ctw.modules.CreateLargestRectangleGeoJSONTiles;
-import org.dstadler.ctw.modules.CreateLargestSquareGeoJSONSquares;
-import org.dstadler.ctw.modules.CreateLargestSquareGeoJSONTiles;
-import org.dstadler.ctw.modules.CreateListOfVisitedSquares;
+import org.dstadler.ctw.geojson.CreateClusterGeoJSON;
+import org.dstadler.ctw.geojson.CreateGeoJSON;
+import org.dstadler.ctw.geojson.CreateLargestClusterGeoJSONSquares;
+import org.dstadler.ctw.geojson.CreateLargestClusterGeoJSONTiles;
+import org.dstadler.ctw.geojson.CreateLargestRectangleGeoJSONSquares;
+import org.dstadler.ctw.geojson.CreateLargestRectangleGeoJSONTiles;
+import org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONSquares;
+import org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONTiles;
+import org.dstadler.ctw.gpx.CreateListOfVisitedSquares;
 import org.xml.sax.SAXException;
 
 /**

@@ -1,6 +1,6 @@
 package org.dstadler.ctw.utils;
 
-import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.TILE_ZOOM;
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.TILE_ZOOM;
 
 import java.awt.Rectangle;
 import java.util.Set;

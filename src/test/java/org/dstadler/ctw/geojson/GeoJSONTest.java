@@ -1,4 +1,4 @@
-package org.dstadler.ctw.utils;
+package org.dstadler.ctw.geojson;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.dstadler.ctw.utils.LatLonRectangle;
+import org.dstadler.ctw.utils.OSMTile;
+import org.dstadler.ctw.utils.UTMRefWithHash;
 import org.junit.Test;
 
 import com.github.filosganga.geogson.model.Feature;

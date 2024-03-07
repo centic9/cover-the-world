@@ -1,6 +1,6 @@
-package org.dstadler.ctw.modules;
+package org.dstadler.ctw.geojson;
 
-import static org.dstadler.ctw.modules.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.utils.MatrixUtils.ZONE;
 
 import java.awt.Rectangle;
@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
-import org.dstadler.ctw.utils.GeoJSON;
 import org.dstadler.ctw.utils.MatrixUtils;
 import org.dstadler.ctw.utils.UTMRefWithHash;
 
