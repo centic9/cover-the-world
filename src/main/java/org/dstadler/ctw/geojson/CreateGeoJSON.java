@@ -1,5 +1,6 @@
 package org.dstadler.ctw.geojson;
 
+import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
@@ -195,9 +196,9 @@ public class CreateGeoJSON {
 		}
 
 		/*UTMRefWithHash recRefMin = UTMRefWithHash.fromString(ZONE + "U " +
-				(minEast + (rect.x - rect.width) * 1000) + " " + (minNorth + (rect.y - rect.height) * 1000 + 1000));
+				(minEast + (rect.x - rect.width) * SQUARE_SIZE) + " " + (minNorth + (rect.y - rect.height) * SQUARE_SIZE + SQUARE_SIZE));
 		UTMRefWithHash recRefMax = UTMRefWithHash.fromString(ZONE + "U " +
-				(minEast + rect.x * 1000) + " " + (minNorth + rect.y * 1000 + 1000));
+				(minEast + rect.x * SQUARE_SIZE) + " " + (minNorth + rect.y * SQUARE_SIZE + SQUARE_SIZE));
 		log.fine("Found largest square at " + rect.x + "x" + rect.y +
 				"\n" + recRefMin +
 				"\n" + recRefMax +
@@ -285,13 +286,13 @@ public class CreateGeoJSON {
 				" = " + result.getValue());
 
 		UTMRefWithHash recRefMinMin = new UTMRefWithHash(ZONE, 'U',
-				(minEast + (rect.x - rect.width) * 1000), (minNorth + (rect.y - rect.height) * 1000 + 1000));
+				(minEast + (rect.x - rect.width) * SQUARE_SIZE), (minNorth + (rect.y - rect.height) * SQUARE_SIZE + SQUARE_SIZE));
 		UTMRefWithHash recRefMaxMin = new UTMRefWithHash(ZONE, 'U',
-				(minEast + (rect.x - rect.width) * 1000), (minNorth + rect.y * 1000 + 1000));
+				(minEast + (rect.x - rect.width) * SQUARE_SIZE), (minNorth + rect.y * SQUARE_SIZE + SQUARE_SIZE));
 		UTMRefWithHash recRefMinMax = new UTMRefWithHash(ZONE, 'U',
-				(minEast + rect.x * 1000), (minNorth + (rect.y - rect.height) * 1000 + 1000));
+				(minEast + rect.x * SQUARE_SIZE), (minNorth + (rect.y - rect.height) * SQUARE_SIZE + SQUARE_SIZE));
 		UTMRefWithHash recRefMaxMax = new UTMRefWithHash(ZONE, 'U',
-				(minEast + rect.x * 1000), (minNorth + rect.y * 1000 + 1000));
+				(minEast + rect.x * SQUARE_SIZE), (minNorth + rect.y * SQUARE_SIZE + SQUARE_SIZE));
 
 		log.fine("Found largest rectangle at " + rect.x + "x" + rect.y +
 				"\n" + recRefMinMin +
@@ -308,8 +309,8 @@ public class CreateGeoJSON {
 				"\n" + OSMTile.fromLatLngZoom(recRefMaxMax.toLatLng().getLatitude(), recRefMaxMax.toLatLng().getLongitude(), 13));
 
 		// remove all squares of the rectangle from the list of remaining squares
-		for (double easting = recRefMinMin.getEasting(); easting < recRefMinMax.getEasting(); easting+=1000) {
-			for (double northing = recRefMinMax.getNorthing(); northing < recRefMaxMax.getNorthing(); northing+=1000) {
+		for (double easting = recRefMinMin.getEasting(); easting < recRefMinMax.getEasting(); easting+=SQUARE_SIZE) {
+			for (double northing = recRefMinMax.getNorthing(); northing < recRefMaxMax.getNorthing(); northing+=SQUARE_SIZE) {
 				final UTMRefWithHash ref = new UTMRefWithHash(ZONE, 'U', easting, northing);
 				final UTMRefWithHash refFixed = new UTMRefWithHash(ZONE, ref.toLatLng().toUTMRef().getLatZone(), easting, northing);
 				final boolean removed = squares.remove(

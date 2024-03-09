@@ -1,6 +1,7 @@
 package org.dstadler.ctw.geojson;
 
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
+import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import static org.dstadler.ctw.utils.Constants.ZONE;
 
 import java.awt.Rectangle;
@@ -79,13 +80,13 @@ public class CreateLargestSquareGeoJSONSquares {
 				" = " + result.getValue());
 
 		UTMRefWithHash recRefMinMin = new UTMRefWithHash(ZONE, 'U',
-				(minEast + (rect.x - rect.width) * 1000), (minNorth + (rect.y - rect.height) * 1000 + 1000));
+				(minEast + (rect.x - rect.width) * SQUARE_SIZE), (minNorth + (rect.y - rect.height) * SQUARE_SIZE + SQUARE_SIZE));
 		UTMRefWithHash recRefMaxMin = new UTMRefWithHash(ZONE, 'U',
-				(minEast + (rect.x - rect.width) * 1000), (minNorth + rect.y * 1000 + 1000));
+				(minEast + (rect.x - rect.width) * SQUARE_SIZE), (minNorth + rect.y * SQUARE_SIZE + SQUARE_SIZE));
 		UTMRefWithHash recRefMinMax = new UTMRefWithHash(ZONE, 'U',
-				(minEast + rect.x * 1000), (minNorth + (rect.y - rect.height) * 1000 + 1000));
+				(minEast + rect.x * SQUARE_SIZE), (minNorth + (rect.y - rect.height) * SQUARE_SIZE + SQUARE_SIZE));
 		UTMRefWithHash recRefMaxMax = new UTMRefWithHash(ZONE, 'U',
-				(minEast + rect.x * 1000), (minNorth + rect.y * 1000 + 1000));
+				(minEast + rect.x * SQUARE_SIZE), (minNorth + rect.y * SQUARE_SIZE + SQUARE_SIZE));
 
 		log.info("Found largest square at " + rect.x + "x" + rect.y + " with size " + rect.width + "x" + rect.height
 				/*"\n" + recRefMinMin +

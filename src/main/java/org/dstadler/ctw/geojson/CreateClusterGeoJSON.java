@@ -1,6 +1,7 @@
 package org.dstadler.ctw.geojson;
 
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
+import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -66,9 +67,9 @@ public class CreateClusterGeoJSON {
 	}
 
 	private static boolean partOfCluster(UTMRefWithHash ref, Set<UTMRefWithHash> squares) {
-		return squares.contains(new UTMRefWithHash(ref.getLngZone(), ref.getLatZone(), ref.getEasting() + 1000, ref.getNorthing())) &&
-				squares.contains(new UTMRefWithHash(ref.getLngZone(), ref.getLatZone(), ref.getEasting() - 1000, ref.getNorthing())) &&
-				squares.contains(new UTMRefWithHash(ref.getLngZone(), ref.getLatZone(), ref.getEasting(), ref.getNorthing() + 1000)) &&
-				squares.contains(new UTMRefWithHash(ref.getLngZone(), ref.getLatZone(), ref.getEasting(), ref.getNorthing() - 1000));
+		return squares.contains(new UTMRefWithHash(ref.getLngZone(), ref.getLatZone(), ref.getEasting() + SQUARE_SIZE, ref.getNorthing())) &&
+				squares.contains(new UTMRefWithHash(ref.getLngZone(), ref.getLatZone(), ref.getEasting() - SQUARE_SIZE, ref.getNorthing())) &&
+				squares.contains(new UTMRefWithHash(ref.getLngZone(), ref.getLatZone(), ref.getEasting(), ref.getNorthing() + SQUARE_SIZE)) &&
+				squares.contains(new UTMRefWithHash(ref.getLngZone(), ref.getLatZone(), ref.getEasting(), ref.getNorthing() - SQUARE_SIZE));
 	}
 }

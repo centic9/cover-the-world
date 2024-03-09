@@ -2,6 +2,7 @@ package org.dstadler.ctw.utils;
 
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
+import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import static org.dstadler.ctw.utils.OSMTileTest.ASSERT_DELTA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -118,7 +119,7 @@ public class UTMRefWithHashTest {
         assertEquals(5366000.0, ref1.getNorthing(), ASSERT_DELTA);
 
 		UTMRefWithHash ref2 = new UTMRefWithHash(ref1.getLngZone(), ref1.getLatZone(),
-				ref1.getEasting() + 1000, ref1.getNorthing() + 1000);
+				ref1.getEasting() + SQUARE_SIZE, ref1.getNorthing() + SQUARE_SIZE);
 		assertEquals(33, ref2.getLngZone());
 		assertEquals('U', ref2.getLatZone());
 		assertEquals(426000.0, ref2.getEasting(), ASSERT_DELTA);

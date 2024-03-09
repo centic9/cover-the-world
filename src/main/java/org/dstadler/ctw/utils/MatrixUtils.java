@@ -1,5 +1,6 @@
 package org.dstadler.ctw.utils;
 
+import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 
 import java.awt.Rectangle;
@@ -34,8 +35,8 @@ public class MatrixUtils {
 			double maxEast,
 			double maxNorth,
 			int utmZoneFilter) {
-		int xSquares = (int) ((maxEast - minEast) / 1000) + 1;
-		int ySquares = (int) ((maxNorth - minNorth) / 1000) + 1;
+		int xSquares = (int) ((maxEast - minEast) / SQUARE_SIZE) + 1;
+		int ySquares = (int) ((maxNorth - minNorth) / SQUARE_SIZE) + 1;
 
 		log.fine("Having min/max: " +
 				"\nEasting: " + minEast + "/" + maxEast +
@@ -56,8 +57,8 @@ public class MatrixUtils {
 				continue;
 			}
 
-			int x = (int) ((square.getEasting() - minEast) / 1000);
-			int y = (int) ((square.getNorthing() - minNorth) / 1000);
+			int x = (int) ((square.getEasting() - minEast) / SQUARE_SIZE);
+			int y = (int) ((square.getNorthing() - minNorth) / SQUARE_SIZE);
 
 			Preconditions.checkState(x >= 0 && x <= xSquares,
 					"Failed with %s for %s and %s and %s",

@@ -22,4 +22,7 @@ public class Constants {
 	// main area of squares
 	// See also https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system
 	public static final int ZONE = 33;
+
+	// Define the side-length of squares
+	public static final int SQUARE_SIZE = 1000;
 }

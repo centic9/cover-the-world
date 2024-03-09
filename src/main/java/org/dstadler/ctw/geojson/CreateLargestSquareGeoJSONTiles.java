@@ -86,9 +86,9 @@ public class CreateLargestSquareGeoJSONTiles {
 		OSMTile squareMax = new OSMTile(TILE_ZOOM, minX + rect.x, minY + rect.y + 1);
 
 		/*UTMRefWithHash recRefMin = UTMRefWithHash.fromString(ZONE + "U " +
-				(minEast + (rect.x - rect.width) * 1000) + " " + (minNorth + (rect.y - rect.height) * 1000 + 1000));
+				(minEast + (rect.x - rect.width) * SQUARE_SIZE) + " " + (minNorth + (rect.y - rect.height) * SQUARE_SIZE + SQUARE_SIZE));
 		UTMRefWithHash recRefMax = UTMRefWithHash.fromString(ZONE + "U " +
-				(minEast + rect.x * 1000) + " " + (minNorth + rect.y * 1000 + 1000));*/
+				(minEast + rect.x * SQUARE_SIZE) + " " + (minNorth + rect.y * SQUARE_SIZE + SQUARE_SIZE));*/
 		log.info("Found largest square at " + rect.x + "x" + rect.y + " with size " + rect.width + "x" + rect.height
 				/*"\n" + recRefMin +
 				"\n" + recRefMax +

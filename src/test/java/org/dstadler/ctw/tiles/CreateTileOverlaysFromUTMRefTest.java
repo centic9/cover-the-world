@@ -2,6 +2,7 @@ package org.dstadler.ctw.tiles;
 
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.GPX_DIR;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NEW_TXT;
+import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import static org.dstadler.ctw.utils.OSMTileTest.ASSERT_DELTA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -62,9 +63,9 @@ public class CreateTileOverlaysFromUTMRefTest {
 		// use separate refs for easting/northing to not cause gaps
 		// caused by non-matching longitude-values
 		UTMRefWithHash ref2East = new UTMRefWithHash(ref1.getLngZone(), ref1.getLatZone(),
-				ref1.getEasting() + 1000, ref1.getNorthing());
+				ref1.getEasting() + SQUARE_SIZE, ref1.getNorthing());
 		UTMRefWithHash ref2North = new UTMRefWithHash(ref1.getLngZone(), ref1.getLatZone(),
-				ref1.getEasting(), ref1.getNorthing() + 1000);
+				ref1.getEasting(), ref1.getNorthing() + SQUARE_SIZE);
 
 		LatLng latLng1 = ref1.toLatLng();
 		LatLng latLng2 = new LatLng(ref2North.toLatLng().getLatitude(), ref2East.toLatLng().getLongitude());
@@ -85,9 +86,9 @@ public class CreateTileOverlaysFromUTMRefTest {
 		// use separate refs for easting/northing to not cause gaps
 		// caused by non-matching longitude-values
 		UTMRefWithHash ref2East = new UTMRefWithHash(ref1.getLngZone(), ref1.getLatZone(),
-				ref1.getEasting() + 1000, ref1.getNorthing());
+				ref1.getEasting() + SQUARE_SIZE, ref1.getNorthing());
 		UTMRefWithHash ref2North = new UTMRefWithHash(ref1.getLngZone(), ref1.getLatZone(),
-				ref1.getEasting(), ref1.getNorthing() + 1000);
+				ref1.getEasting(), ref1.getNorthing() + SQUARE_SIZE);
 
 		UTMRefWithHash ref3 = UTMRefWithHash.fromString("33U 430000.0 5372000.0");
 
@@ -121,9 +122,9 @@ public class CreateTileOverlaysFromUTMRefTest {
 		// use separate refs for easting/northing to not cause gaps
 		// caused by non-matching longitude-values
 		ref2East = new UTMRefWithHash(refTile.getLngZone(), refTile.getLatZone(),
-				ref1East.getEasting() + 1000, refTile.getNorthing());
+				ref1East.getEasting() + SQUARE_SIZE, refTile.getNorthing());
 		ref2North = new UTMRefWithHash(ref1.getLngZone(), ref1.getLatZone(),
-				refTile.getEasting(), ref1North.getNorthing() + 1000);
+				refTile.getEasting(), ref1North.getNorthing() + SQUARE_SIZE);
 
 		UTMRefWithHash ref3East = new UTMRefWithHash(ref1.getLngZone(), ref1.getLatZone(),
 				430000.0, refTile.getNorthing());

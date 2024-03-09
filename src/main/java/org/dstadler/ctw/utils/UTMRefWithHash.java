@@ -1,5 +1,7 @@
 package org.dstadler.ctw.utils;
 
+import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -79,7 +81,7 @@ public class UTMRefWithHash extends UTMRef {
 	 * Return the LatLonRectangle for the current UTMRef.
 	 *
 	 * This is done by using this UTMRef as one corner and
-	 * creating a second UTMRef by adding 1000 meters to
+	 * creating a second UTMRef by adding 1000 (SQUARE_SIZE) meters to
 	 * both northing and easting.
 	 *
 	 * @return A LatLonRectangle based on northing and easting
@@ -89,9 +91,9 @@ public class UTMRefWithHash extends UTMRef {
 		// use separate refs for easting/northing to not cause gaps
 		// caused by non-matching longitude-values
 		UTMRefWithHash ref2East = new UTMRefWithHash(getLngZone(), getLatZone(),
-				getEasting() + 1000, getNorthing());
+				getEasting() + SQUARE_SIZE, getNorthing());
 		UTMRefWithHash ref2North = new UTMRefWithHash(getLngZone(), getLatZone(),
-				getEasting(), getNorthing() + 1000);
+				getEasting(), getNorthing() + SQUARE_SIZE);
 
 		LatLng latLng1 = toLatLng();
 		LatLng latLng2 = new LatLng(ref2North.toLatLng().getLatitude(), ref2East.toLatLng().getLongitude());
@@ -102,24 +104,24 @@ public class UTMRefWithHash extends UTMRef {
 	}
 
 	private static double normalize(double bearing) {
-		// reduce accuracy to 1000 meters
-		return (long)(bearing / 1000) * 1000;
+		// reduce accuracy to 1000 (SQUARE_SIZE) meters
+		return (long)(bearing / SQUARE_SIZE) * SQUARE_SIZE;
 	}
 
 	public UTMRefWithHash up() {
-		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting(), getNorthing() + 1000);
+		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting(), getNorthing() + SQUARE_SIZE);
 	}
 
 	public UTMRefWithHash down() {
-		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting(), getNorthing() - 1000);
+		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting(), getNorthing() - SQUARE_SIZE);
 	}
 
 	public UTMRefWithHash right() {
-		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting() + 1000, getNorthing());
+		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting() + SQUARE_SIZE, getNorthing());
 	}
 
 	public UTMRefWithHash left() {
-		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting() - 1000, getNorthing());
+		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting() - SQUARE_SIZE, getNorthing());
 	}
 
 	@Override
