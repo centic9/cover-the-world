@@ -32,7 +32,7 @@ import uk.me.jstott.jcoord.LatLng;
  * for details and sources for fromLatLngZoom() and the other
  * conversion methods.
  */
-public class OSMTile implements Comparable<OSMTile> {
+public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 	// OSM uses zoom-levels from 0 - the whole world to 19 - very detailed
 	protected static final int OSM_MIN_ZOOM = 0;
 	protected static final int OSM_MAX_ZOOM = 19;
@@ -151,6 +151,7 @@ public class OSMTile implements Comparable<OSMTile> {
 		double n = Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, zoom);
 		return Math.toDegrees(Math.atan(Math.sinh(n)));
 	}
+
 	public OSMTile up() {
 		return new OSMTile(zoom, xTile, yTile - 1);
 	}

@@ -25,7 +25,7 @@ import uk.me.jstott.jcoord.UTMRef;
  * It also provides support for computing the 1km-"square" into which given
  * {@link uk.me.jstott.jcoord.LatLng} coordinates fall into.
  */
-public class UTMRefWithHash extends UTMRef {
+public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash> {
 	// numerical value between 1 and 60
 	private static final String LNG_ZONE_PATTERN = "(\\d{1,2})";
 	// Uppercase letter between C and X without I and O
