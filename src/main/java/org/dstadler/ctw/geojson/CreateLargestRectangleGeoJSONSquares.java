@@ -22,6 +22,10 @@ import com.github.filosganga.geogson.model.Feature;
  * Note: Currently only UTMRef-LonZone "33" is used to make
  * computation easier. If the rectangle should someday span
  * more than one Zone, this tool likely needs a major overhaul!
+ *
+ * Results are stored in a TXT file for easy diffing via version
+ * control and a JS file which can be used as overlay layer in a
+ * Leaflet-based HTML page.
  */
 public class CreateLargestRectangleGeoJSONSquares {
 	private static final Logger log = LoggerFactory.make();
@@ -39,8 +43,7 @@ public class CreateLargestRectangleGeoJSONSquares {
 		log.info("Found largest rectangle for squares: " +
 				FileUtils.readFileToString(new File(CLUSTER_RECTANGLE_TXT), "UTF-8"));
 
-		List<Feature> features = Collections.singletonList(
-				rectangle);
+		List<Feature> features = Collections.singletonList(rectangle);
 
 		// finally write out JavaScript code with embedded GeoJSON
 		GeoJSON.writeGeoJSON(CLUSTER_RECTANGLE_JSON, "rectangle", features);

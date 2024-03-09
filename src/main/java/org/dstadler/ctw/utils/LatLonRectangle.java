@@ -4,7 +4,11 @@ import com.google.common.base.Preconditions;
 
 /**
  * Simple rectangle for LatLon which handles the
- * rectangle being "downwards"
+ * rectangle being "downwards" properly.
+ *
+ * It allows to compute the "intersection" of two
+ * rectangles, i.e. the area where two rectangles
+ * overlap.
  */
 public class LatLonRectangle {
 

@@ -22,8 +22,11 @@ import com.google.common.base.Preconditions;
 import uk.me.jstott.jcoord.LatLng;
 
 /**
- * Helper class to convert from Latitude/Longitude plus Zoom-Level
- * to the OSM tile numbers for URLs
+ * Helper class to handle information about OSM-based map-tiles.
+ *
+ * It allows to convert from Latitude/Longitude plus Zoom-Level
+ * to the OSM tile numbers which are used for naming images in the
+ * file-system to use as static resources for web-pages.
  *
  * See <a href="https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames">Slippy map tilenames</a>
  * for details and sources for fromLatLngZoom() and the other

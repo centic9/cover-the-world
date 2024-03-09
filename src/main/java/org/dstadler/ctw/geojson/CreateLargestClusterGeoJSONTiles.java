@@ -31,6 +31,10 @@ import com.github.filosganga.geogson.model.Feature;
  *
  * This is computed by searching for tiles with four neighbours
  * and then expanding the cluster out as far as possible.
+ *
+ * Results are stored in a TXT file for easy diffing via version
+ * control and a JS file which can be used as overlay layer in a
+ * Leaflet-based HTML page.
  */
 public class CreateLargestClusterGeoJSONTiles {
     private static final Logger log = LoggerFactory.make();

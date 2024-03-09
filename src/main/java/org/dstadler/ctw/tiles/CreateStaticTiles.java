@@ -33,6 +33,9 @@ import com.google.common.base.Preconditions;
  * Combine the overlay tiles for Cover the World with
  * normal OSM tiles downloaded from a tile-server.
  *
+ * Resulting PNG files are stored in directories
+ * "tilesSquaresCombined" and "tilesTilesCombined".
+ *
  * This is trying to run in many threads in parallel
  * to speed up processing the large number of initial
  * tiles.

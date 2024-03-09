@@ -20,8 +20,8 @@ import uk.me.jstott.jcoord.UTMRef;
  * Helper class to provide an extension to {@link uk.me.jstott.jcoord.UTMRef}
  * which can be used in HashMap/HashSet.
  *
- * It also provides support for computing the 1km-"square" that a set of
- * {@link uk.me.jstott.jcoord.LatLng} coordinates falls into.
+ * It also provides support for computing the 1km-"square" into which given
+ * {@link uk.me.jstott.jcoord.LatLng} coordinates fall into.
  */
 public class UTMRefWithHash extends UTMRef {
 	// numerical value between 1 and 60

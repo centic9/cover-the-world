@@ -30,6 +30,9 @@ import org.dstadler.ctw.utils.UTMRefWithHash;
  * file "VisitedSquares.txt" and generates OSM tiles with
  * red semi-transparent area for any covered square.
  *
+ * Resulting PNGs are stored in directories "tilesSquares"
+ * and "tilesSquaresNew"
+ *
  * The created images consist of red transparent area for
  * covered squares.
  *

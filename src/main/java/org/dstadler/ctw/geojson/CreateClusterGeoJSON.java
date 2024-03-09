@@ -22,7 +22,11 @@ import com.github.filosganga.geogson.model.Feature;
 /**
  * Simple tool to create a list of all squares that are part
  * of a "cluster", i.e. squares which have all 4 direct
- * neighbours also covered
+ * neighbours also covered.
+ *
+ * Results are stored in a TXT file for easy diffing via version
+ * control and a JS file which can be used as overlay layer in a
+ * Leaflet-based HTML page.
  */
 public class CreateClusterGeoJSON {
 	private static final Logger log = LoggerFactory.make();

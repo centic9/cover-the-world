@@ -93,6 +93,15 @@ you want to automate things in some more advanced way.
 
     compile 'org.dstadler:cover-the-world:1.+'
 
+## Caveats
+
+### Some computations are limited to UTM zone 33 by defaults
+
+Currently computing largest squares/rectangles is limited to a given UTM zone, 
+by default zone "33" is used. You can adjust this in org.dstadler.ctw.utils.Constants.ZONE
+and re-run to produce the proper largest squares/rectangles if you are located
+in another UTM zone.
+
 ## Change it
 
 ### Grab it

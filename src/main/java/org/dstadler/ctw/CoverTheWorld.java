@@ -14,7 +14,8 @@ import org.dstadler.ctw.gpx.CreateListOfVisitedSquares;
 import org.xml.sax.SAXException;
 
 /**
- * Main application to refresh all resulting files
+ * Main application to read GPX tracks and produce the GeoJSON
+ * files for the Leaflet-based HTML page.
  */
 public class CoverTheWorld {
 

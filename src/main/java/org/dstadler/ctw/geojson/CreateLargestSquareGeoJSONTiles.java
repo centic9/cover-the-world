@@ -2,7 +2,7 @@ package org.dstadler.ctw.geojson;
 
 import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
-import static org.dstadler.ctw.utils.MatrixUtils.ZONE;
+import static org.dstadler.ctw.utils.Constants.ZONE;
 
 import java.awt.Rectangle;
 import java.io.BufferedWriter;
@@ -35,6 +35,10 @@ import uk.me.jstott.jcoord.LatLng;
  * Note: Currently only UTMRef-LonZone "33" is used to make
  * computation easier. If the rectangle should someday span
  * more than one Zone, this tool likely needs a major overhaul!
+ *
+ * Results are stored in a TXT file for easy diffing via version
+ * control and a JS file which can be used as overlay layer in a
+ * Leaflet-based HTML page.
  */
 public class CreateLargestSquareGeoJSONTiles {
 	private static final Logger log = LoggerFactory.make();

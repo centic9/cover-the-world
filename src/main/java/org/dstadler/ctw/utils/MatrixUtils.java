@@ -14,13 +14,13 @@ import com.google.common.base.Preconditions;
 /**
  * Some helpers to work with matrices for some algorithms,
  * e.g. largest rectangle and largest square.
+ *
+ * Usually the matric is populated from "tiles" or "squares"
+ * and then largest square or largest rectangle are computed
+ * in a second step.
  */
 public class MatrixUtils {
 	private static final Logger log = LoggerFactory.make();
-
-	// for now only calculate for my main Zone 33 as otherwise computing
-	// "easting" would need to take the zone into account
-	public static final int ZONE = 33;
 
 	/**
 	 * Create an 2-dimensional matrix in between of minEast/maxEast, minNorth, maxNorth

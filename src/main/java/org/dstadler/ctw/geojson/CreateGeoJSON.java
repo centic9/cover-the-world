@@ -5,7 +5,7 @@ import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NE
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
-import static org.dstadler.ctw.utils.MatrixUtils.ZONE;
+import static org.dstadler.ctw.utils.Constants.ZONE;
 
 import java.awt.Rectangle;
 import java.io.BufferedWriter;
@@ -47,6 +47,9 @@ import uk.me.jstott.jcoord.LatLng;
  * from a simple text-file and produces GeoJSON embedded in
  * a JavaScript file which can be loaded in a leaflet.js map
  * to display covered squares.
+ *
+ * Results are stored in JS files which can be used as overlay
+ * layer in a Leaflet-based HTML page.
  */
 public class CreateGeoJSON {
 	private static final Logger log = LoggerFactory.make();

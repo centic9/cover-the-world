@@ -5,7 +5,7 @@ import static org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONSquares.CLUSTER
 import static org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONTiles.CLUSTER_TILES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
-import static org.dstadler.ctw.utils.MatrixUtils.ZONE;
+import static org.dstadler.ctw.utils.Constants.ZONE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
