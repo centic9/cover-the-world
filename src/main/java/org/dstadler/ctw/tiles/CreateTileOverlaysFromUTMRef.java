@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.utils.Constants;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
@@ -100,7 +101,7 @@ public class CreateTileOverlaysFromUTMRef {
 		Set<OSMTile> allTiles = ConcurrentHashMap.newKeySet();
 
 		//for (int zoom = MIN_ZOOM; zoom <= MAX_ZOOM; zoom++)
-		IntStream.rangeClosed(CreateTileOverlaysHelper.MIN_ZOOM, CreateTileOverlaysHelper.MAX_ZOOM).
+		IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).
 				parallel().
 				forEach(zoom -> {
 					// indicate that this zoom is started

@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import org.dstadler.commons.gpx.GPXTrackpointsParser;
 import org.dstadler.commons.gpx.TrackPoint;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.utils.Constants;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
 import org.xml.sax.SAXException;
@@ -53,7 +54,6 @@ public class CreateListOfVisitedSquares {
 	// tiles
 	public static final String VISITED_TILES_TXT = "VisitedTiles.txt";
 	public static final String VISITED_TILES_NEW_TXT = "VisitedTilesNew.txt";
-	public static final int TILE_ZOOM = 14;
 
 	public static void main(String[] args) throws IOException, SAXException {
 		LoggerFactory.initLogging();
@@ -69,7 +69,7 @@ public class CreateListOfVisitedSquares {
 
 			// Tiles use OSMTile
 			visitedTiles.add(OSMTile.
-					fromLatLngZoom(trackPoint.getLatitude(), trackPoint.getLongitude(), TILE_ZOOM).
+					fromLatLngZoom(trackPoint.getLatitude(), trackPoint.getLongitude(), Constants.TILE_ZOOM).
 					toCoords());
 		};
 

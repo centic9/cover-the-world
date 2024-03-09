@@ -1,7 +1,7 @@
 package org.dstadler.ctw.tiles;
 
 import static org.dstadler.ctw.tiles.CreateStaticTiles.TILE_DIR_COMBINED_TILES;
-import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.TILE_ZOOM;
+import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 
@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.utils.Constants;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
 
@@ -100,7 +101,7 @@ public class CreateTileOverlaysFromTiles {
 		Set<OSMTile> allTiles = ConcurrentHashMap.newKeySet();
 
 		//for (int zoom = MIN_ZOOM; zoom <= MAX_ZOOM; zoom++)
-		IntStream.rangeClosed(CreateTileOverlaysHelper.MIN_ZOOM, CreateTileOverlaysHelper.MAX_ZOOM).
+		IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).
 				parallel().
 				forEach(zoom -> {
 					// indicate that this zoom is started

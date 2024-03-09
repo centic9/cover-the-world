@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.collections.ConcurrentMappedCounter;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.utils.Constants;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
 
@@ -34,9 +35,6 @@ import com.pngencoder.PngEncoder;
  */
 public class CreateTileOverlaysHelper {
 	private static final Logger log = LoggerFactory.make();
-
-	public static final int MIN_ZOOM = 0;
-	public static final int MAX_ZOOM = 18;
 
 	// Create a GradientPaint for this direction and size
 	private static final int RGB = new Color(255, 0, 0, 80).getRGB();
@@ -215,7 +213,7 @@ public class CreateTileOverlaysHelper {
 		return Arrays.compare(a1, a2) == 0;
 	}
 
-	protected static Pair<Integer, Integer> getAndCheckPixel(double lat, double lon, OSMTile tile) {
+	public static Pair<Integer, Integer> getAndCheckPixel(double lat, double lon, OSMTile tile) {
 		Pair<Integer, Integer> pixel = tile.getPixelInTile(lat, lon);
 		Preconditions.checkState(pixel.getKey() >= 0 && pixel.getKey() < 256,
 				"Had: %s", pixel);
@@ -226,7 +224,7 @@ public class CreateTileOverlaysHelper {
 
 	protected static String concatProgress() {
 		StringBuilder progress = new StringBuilder();
-		for (int zoom = MIN_ZOOM; zoom <= MAX_ZOOM; zoom++) {
+		for (int zoom = Constants.MIN_ZOOM; zoom <= Constants.MAX_ZOOM; zoom++) {
 			long actual = ACTUAL.get(zoom);
 			long expected = EXPECTED.get(zoom);
 

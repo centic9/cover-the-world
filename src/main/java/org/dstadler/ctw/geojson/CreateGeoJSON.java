@@ -1,6 +1,6 @@
 package org.dstadler.ctw.geojson;
 
-import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.TILE_ZOOM;
+import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_NEW_TXT;

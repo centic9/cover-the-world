@@ -12,6 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -23,14 +25,14 @@ import uk.me.jstott.jcoord.LatLng;
  * Helper class to convert from Latitude/Longitude plus Zoom-Level
  * to the OSM tile numbers for URLs
  *
- * See https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+ * See <a href="https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames">Slippy map tilenames</a>
  * for details and sources for fromLatLngZoom() and the other
  * conversion methods.
  */
 public class OSMTile implements Comparable<OSMTile> {
 	// OSM uses zoom-levels from 0 - the whole world to 19 - very detailed
-	public static final int MIN_ZOOM = 0;
-	public static final int MAX_ZOOM = 19;
+	protected static final int OSM_MIN_ZOOM = 0;
+	protected static final int OSM_MAX_ZOOM = 19;
 
 	private static final int PIXELS = 256;
 
@@ -42,9 +44,9 @@ public class OSMTile implements Comparable<OSMTile> {
 
 	public OSMTile(int zoom, int xTile, int yTile) {
 		// plus one for now to allow zoom 20 in some places
-		Preconditions.checkArgument(zoom >= MIN_ZOOM && zoom <= MAX_ZOOM + 1,
+		Preconditions.checkArgument(zoom >= OSM_MIN_ZOOM && zoom <= OSM_MAX_ZOOM + 1,
 				"Invalid zoom %s, needs to be between %s and %s",
-				zoom, MIN_ZOOM, MAX_ZOOM + 1);
+				zoom, OSM_MIN_ZOOM, OSM_MAX_ZOOM + 1);
 
 		int max = zoom == 0 ? 1 : 2 << (zoom - 1);
 		Preconditions.checkArgument(xTile >= 0,
@@ -115,8 +117,8 @@ public class OSMTile implements Comparable<OSMTile> {
 		if (lon < -180 || lon > 180) {
 			throw new IllegalArgumentException("Longitude needs to be in range [-180, 180], but had: " + lon);
 		}
-		if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) {
-			throw new IllegalArgumentException("Zoom needs to be in range [" + MIN_ZOOM + "," + MAX_ZOOM + "], but had: " + zoom);
+		if (zoom < OSM_MIN_ZOOM || zoom > OSM_MAX_ZOOM) {
+			throw new IllegalArgumentException("Zoom needs to be in range [" + OSM_MIN_ZOOM + "," + OSM_MAX_ZOOM + "], but had: " + zoom);
 		}
 	}
 
@@ -215,7 +217,7 @@ public class OSMTile implements Comparable<OSMTile> {
 	}
 
 	@Override
-	public int compareTo(OSMTile o) {
+	public int compareTo(@Nullable OSMTile o) {
 		if (o == null) {
 			return 1;
 		}

@@ -1,8 +1,8 @@
 package org.dstadler.ctw.utils;
 
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
-import static org.dstadler.ctw.utils.OSMTile.MAX_ZOOM;
-import static org.dstadler.ctw.utils.OSMTile.MIN_ZOOM;
+import static org.dstadler.ctw.utils.OSMTile.OSM_MAX_ZOOM;
+import static org.dstadler.ctw.utils.OSMTile.OSM_MIN_ZOOM;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
@@ -15,6 +15,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.TestHelpers;
+import org.dstadler.ctw.tiles.CreateTileOverlaysHelper;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -141,7 +142,7 @@ public class OSMTileTest {
 			double lon = RandomUtils.nextDouble(0, 2 * 180);
 			lat += MIN_LATITUDE;
 			lon -= 180;
-			int zoom = RandomUtils.nextInt(MIN_ZOOM, MAX_ZOOM + 1);
+			int zoom = RandomUtils.nextInt(OSM_MIN_ZOOM, OSM_MAX_ZOOM + 1);
 
 			OSMTile tile = OSMTile.fromLatLngZoom(lat, lon, zoom);
 			Pair<Integer, Integer> pixel = CreateTileOverlaysHelper.getAndCheckPixel(lat, lon, tile);
@@ -179,7 +180,7 @@ public class OSMTileTest {
 
 	@Test
 	public void testKleinzell() {
-		for (int zoom = MIN_ZOOM; zoom < MAX_ZOOM; zoom++) {
+		for (int zoom = OSM_MIN_ZOOM; zoom < OSM_MAX_ZOOM; zoom++) {
 			OSMTile tile = OSMTile.fromLatLngZoom(48.45616, 13.99863, zoom);
 
 			log.info(zoom + ": " + tile + ": " + tile.toCoords());
