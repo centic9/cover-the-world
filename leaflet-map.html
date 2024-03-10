@@ -64,7 +64,7 @@ const icon = new L.Icon.Default;
 
 const params = new URLSearchParams(window.location.search);
 /* supported query params:
-Base Map: bergfex, cycle, rendered, prerendered, prerenderedpure
+Base Map: squares, bergfex, cycle, renderedSquares, renderedTiles
 Overlay: tiles, mtb
 Feature:
 */
@@ -254,9 +254,9 @@ function onEachFeature(feature, layer) {
 
 var paddedRenderer = L.svg({ padding: 0.8 });
 
-var geo = L.geoJSON(squaresstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+var geoSquares = L.geoJSON(squaresstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var geoNew = L.geoJSON(squaresnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+var geoSquaresNew = L.geoJSON(squaresnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 var geoTiles = L.geoJSON(tilesstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
@@ -300,19 +300,18 @@ if (params.get("bergfex") === "1") {
     map.addLayer(osm);
 }
 
-if (params.get("tiles") === "1") {
-	map.addLayer(geoTiles);
-	map.addLayer(geoTilesNew);
-} else if (params.get("rendered") === "1") {
+if (params.get("squares") === "1") {
+	map.addLayer(geoSquares);
+	map.addLayer(geoSquaresNew);
+} else if (params.get("renderedSquares") === "1") {
 	map.addLayer(ctwSquares);
 	map.addLayer(ctwSquaresNew);
-} else if (params.get("prerendered") === "1") {
-	map.addLayer(ctwCombined);
-} else if (params.get("prerenderedpure") === "1") {
-	map.addLayer(ctwCombinedPure);
+} else if (params.get("renderedTiles") === "1") {
+	map.addLayer(ctwTiles);
+	map.addLayer(ctwTilesNew);
 } else {
-    map.addLayer(geo);
-    map.addLayer(geoNew);
+	map.addLayer(geoTiles);
+	map.addLayer(geoTilesNew);
 }
 
 if (params.get("mtb") === "1") {
@@ -332,8 +331,8 @@ const baseLayers = {
 };
 
 const overlays = {
-	'Squares': geo,
-	'New': geoNew,
+	'Squares': geoSquares,
+	'New': geoSquaresNew,
 	'Cluster': cluster,
 	'Largest Cluster': largest,
 	'Rectangle': rectangle,
@@ -430,7 +429,7 @@ L.easyButton('<strong>N</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(ctwSquaresNew);
 		map.removeLayer(ctwTilesNew);
-		map.removeLayer(geoNew);
+		map.removeLayer(geoSquaresNew);
 		if (map.hasLayer(geoTilesNew)) {
 			map.removeLayer(geoTilesNew);
 		} else {
@@ -440,10 +439,10 @@ L.easyButton('<strong>N</strong>', function(){
 		map.removeLayer(ctwSquaresNew);
 		map.removeLayer(ctwTilesNew);
 		map.removeLayer(geoTilesNew);
-		if (map.hasLayer(geoNew)) {
-			map.removeLayer(geoNew);
+		if (map.hasLayer(geoSquaresNew)) {
+			map.removeLayer(geoSquaresNew);
 		} else {
-			map.addLayer(geoNew);
+			map.addLayer(geoSquaresNew);
 		}
 	}
 }).addTo(map);
@@ -452,10 +451,10 @@ L.easyButton('<strong>S</strong>', function(){
 	map.removeLayer(ctwSquares);
 	map.removeLayer(geoTiles);
 	map.removeLayer(geoTilesNew);
-	if (map.hasLayer(geo)) {
-		map.removeLayer(geo);
+	if (map.hasLayer(geoSquares)) {
+		map.removeLayer(geoSquares);
 	} else {
-		map.addLayer(geo);
+		map.addLayer(geoSquares);
 	}
 }).addTo(map);
 
@@ -464,8 +463,8 @@ L.easyButton('<strong>T</strong>', function(){
 	map.removeLayer(ctwSquaresNew);
 	map.removeLayer(ctwTiles);
 	map.removeLayer(ctwTilesNew);
-	map.removeLayer(geo);
-	map.removeLayer(geoNew);
+	map.removeLayer(geoSquares);
+	map.removeLayer(geoSquaresNew);
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(geoTiles);
 	} else {
