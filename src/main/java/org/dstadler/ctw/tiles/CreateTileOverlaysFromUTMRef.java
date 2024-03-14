@@ -169,25 +169,7 @@ public class CreateTileOverlaysFromUTMRef {
 					continue;
 				}
 
-				boolean[][] pixel = tiles.computeIfAbsent(tile, osmTile -> new boolean[256][256]);
-				if (pixel == CreateTileOverlaysHelper.FULL) {
-					// already full, nothing to do anymore
-					continue;
-				}
-
-				LatLonRectangle recTile = tile.getRectangle();
-
-				// compute how much of the square is located in this tile
-				// so that we can fill the boolean-buffer accordingly
-				LatLonRectangle recResult = recSquare.intersect(recTile);
-
-				//log.info("For '" + square + "', zoom " + zoom + " and xy " + x + "/" + y + ": Had rect " + recResult + " for " + recSquare + " and " + recTile);
-				CreateTileOverlaysHelper.fillPixel(square, recResult, pixel, tile);
-
-				// replace a "full" array with a global instance to save main memory
-				if (CreateTileOverlaysHelper.isFull(pixel)) {
-					tiles.put(tile, CreateTileOverlaysHelper.FULL);
-				}
+				CreateTileOverlaysHelper.writePixel(tiles, tile, recSquare);
 			}
 		}
 

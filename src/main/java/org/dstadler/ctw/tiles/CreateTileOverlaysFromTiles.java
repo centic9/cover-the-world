@@ -1,9 +1,9 @@
 package org.dstadler.ctw.tiles;
 
-import static org.dstadler.ctw.tiles.CreateStaticTiles.TILE_DIR_COMBINED_TILES;
-import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
+import static org.dstadler.ctw.tiles.CreateStaticTiles.TILE_DIR_COMBINED_TILES;
+import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 
 import java.io.File;
 import java.io.IOException;
@@ -170,25 +170,7 @@ public class CreateTileOverlaysFromTiles {
 				continue;
 			}
 
-			boolean[][] pixel = tiles.computeIfAbsent(tile, osmTile -> new boolean[256][256]);
-			if (pixel == CreateTileOverlaysHelper.FULL) {
-				// already full, nothing to do anymore
-				continue;
-			}
-
-			LatLonRectangle recTile = tile.getRectangle();
-
-			// compute how much of the tileIn is located in this tile
-			// so that we can fill the boolean-buffer accordingly
-			LatLonRectangle recResult = recTileIn.intersect(recTile);
-
-			//log.info("For '" + tile + "', zoom " + zoom + " and xy " + x + "/" + y + ": Had rect " + recResult + " for " + recTile + " and " + recTile);
-			CreateTileOverlaysHelper.fillPixel(tileIn, recResult, pixel, tile);
-
-			// replace a "full" array with a global instance to save main memory
-			if (CreateTileOverlaysHelper.isFull(pixel)) {
-				tiles.put(tile, CreateTileOverlaysHelper.FULL);
-			}
+			CreateTileOverlaysHelper.writePixel(tiles, tile, recTileIn);
 		}
 
 		if (lastLogTile.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {

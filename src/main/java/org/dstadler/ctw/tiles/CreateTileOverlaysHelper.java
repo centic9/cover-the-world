@@ -102,7 +102,34 @@ public class CreateTileOverlaysHelper {
 		return full;
 	}
 
-	public static void fillPixel(String square, LatLonRectangle recResult, boolean[][] pixel, OSMTile tile) {
+	public static void writePixel(Map<OSMTile, boolean[][]> tiles, OSMTile tile, LatLonRectangle recTileIn) {
+		// ensure the tile and it's pixel-array are in the map
+		boolean[][] pixel = tiles.computeIfAbsent(tile, osmTile -> new boolean[256][256]);
+
+		if (pixel == CreateTileOverlaysHelper.FULL) {
+			// already full, nothing to do anymore
+			return;
+		}
+
+		LatLonRectangle recTile = tile.getRectangle();
+
+		// compute how much of the tileIn is located in this tile
+		// so that we can fill the boolean-buffer accordingly
+		LatLonRectangle recResult = recTileIn.intersect(recTile);
+		Preconditions.checkNotNull(recResult,
+				"Expected to have an intersection of rectangles %s and %s",
+				recTileIn, recTile);
+
+		//log.info("For '" + tile + "', zoom " + zoom + " and xy " + x + "/" + y + ": Had rect " + recResult + " for " + recTile + " and " + recTile);
+		CreateTileOverlaysHelper.fillPixel(recResult, pixel, tile);
+
+		// replace a "full" array with a global instance to save main memory
+		if (CreateTileOverlaysHelper.isFull(pixel)) {
+			tiles.put(tile, CreateTileOverlaysHelper.FULL);
+		}
+	}
+
+	public static void fillPixel(LatLonRectangle recResult, boolean[][] pixel, OSMTile tile) {
 		Pair<Integer, Integer> pixelStart = getAndCheckPixel(recResult.lat1, recResult.lon1, tile);
 		Pair<Integer, Integer> pixelEnd = getAndCheckPixel(recResult.lat2, recResult.lon2, tile);
 
@@ -112,11 +139,11 @@ public class CreateTileOverlaysHelper {
 		int startX = pixelStart.getKey();
 		int startY = pixelStart.getValue();
 		Preconditions.checkState(startX <= endX,
-				"Having: pixelStart: %s and pixelEnd %s for %s and recResult: %s",
-				pixelStart, pixelEnd, square, recResult);
+				"Having: pixelStart: %s and pixelEnd %s for recResult: %s",
+				pixelStart, pixelEnd, recResult);
 		Preconditions.checkState(startY <= endY,
-				"Having: pixelStart: %s and pixelEnd %s for %s and recResult: %s",
-				pixelStart, pixelEnd, square, recResult);
+				"Having: pixelStart: %s and pixelEnd %s for recResult: %s",
+				pixelStart, pixelEnd, recResult);
 
 		for (int xPixel = startX; xPixel <= endX; xPixel++) {
 			for (int yPixel = startY; yPixel <= endY; yPixel++) {
