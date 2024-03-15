@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -106,7 +107,7 @@ public class CreateTileOverlaysHelper {
 		// ensure the tile and it's pixel-array are in the map
 		boolean[][] pixel = tiles.computeIfAbsent(tile, osmTile -> new boolean[256][256]);
 
-		if (pixel == CreateTileOverlaysHelper.FULL) {
+		if (pixel == FULL) {
 			// already full, nothing to do anymore
 			return;
 		}
@@ -121,20 +122,20 @@ public class CreateTileOverlaysHelper {
 				recTileIn, recTile);
 
 		//log.info("For '" + tile + "', zoom " + zoom + " and xy " + x + "/" + y + ": Had rect " + recResult + " for " + recTile + " and " + recTile);
-		CreateTileOverlaysHelper.fillPixel(recResult, pixel, tile);
+		fillPixel(recResult, pixel, tile, true);
 
 		// replace a "full" array with a global instance to save main memory
-		if (CreateTileOverlaysHelper.isFull(pixel)) {
-			tiles.put(tile, CreateTileOverlaysHelper.FULL);
+		if (isFull(pixel)) {
+			tiles.put(tile, FULL);
 		}
 	}
 
-	public static void fillPixel(LatLonRectangle recResult, boolean[][] pixel, OSMTile tile) {
+	private static void fillPixel(LatLonRectangle recResult, boolean[][] pixel, OSMTile tile, boolean expand) {
 		Pair<Integer, Integer> pixelStart = getAndCheckPixel(recResult.lat1, recResult.lon1, tile);
 		Pair<Integer, Integer> pixelEnd = getAndCheckPixel(recResult.lat2, recResult.lon2, tile);
 
 		// add some pixel to avoid strange artefacts caused by changing sizes depending on latitude
-		int endX = Math.min(255, pixelEnd.getKey() + expandPixel(tile.getZoom()));
+		int endX = Math.min(255, pixelEnd.getKey() + (expand ? expandPixel(tile.getZoom()) : 0));
 		int endY = pixelEnd.getValue();
 		int startX = pixelStart.getKey();
 		int startY = pixelStart.getValue();
@@ -168,6 +169,27 @@ public class CreateTileOverlaysHelper {
 				return 36;
 			default:
 				return 0;
+		}
+	}
+
+	public static void writeBorderPixel(Map<OSMTile, boolean[][]> tiles, OSMTile tile, LatLonRectangle recArea, int zoom) {
+		// ensure the tile and it's pixel-array are in the map
+		boolean[][] pixel = tiles.computeIfAbsent(tile, osmTile -> new boolean[256][256]);
+
+		if (pixel == FULL) {
+			// already full, nothing to do anymore
+			return;
+		}
+
+		LatLonRectangle recTile = tile.getRectangle();
+
+		// compute coordinates of borders of the tile in the drawing-area
+		List<LatLonRectangle> borders = zoom >= 14 ?
+				recArea.borderInside(recTile) :
+				recTile.borderInside(recArea);
+
+		for (LatLonRectangle border : borders) {
+			fillPixel(border, pixel, tile, false);
 		}
 	}
 

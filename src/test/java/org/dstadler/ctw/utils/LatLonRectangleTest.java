@@ -1,16 +1,16 @@
 package org.dstadler.ctw.utils;
 
 import static org.dstadler.ctw.utils.OSMTileTest.ASSERT_DELTA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.dstadler.commons.testing.TestHelpers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
@@ -101,9 +101,8 @@ public class LatLonRectangleTest {
 	}
 
 	private void checkRect(LatLonRectangle ret, double lat1, double lon1, double lat2, double lon2) {
-		assertNotNull("Did not have an intersection but expected to get "
-						+ "(" + lat1 + "," + lon1 + "), (" + lat2 + "," + lon2 + ")",
-				ret);
+		assertNotNull(ret, "Did not have an intersection but expected to get "
+						+ "(" + lat1 + "," + lon1 + "), (" + lat2 + "," + lon2 + ")");
 
 		assertEquals(lat1, ret.lat1, ASSERT_DELTA);
 		assertEquals(lon1, ret.lon1, ASSERT_DELTA);
@@ -122,12 +121,10 @@ public class LatLonRectangleTest {
 				lat4, lon4);
 
 		LatLonRectangle ret = rect1.intersect(rect2);
-		assertNull("Had: " + ret,
-				ret);
+		assertNull(ret, "Had: " + ret);
 
 		ret = rect2.intersect(rect1);
-		assertNull("Had: " + ret,
-				ret);
+		assertNull(ret, "Had: " + ret);
 	}
 
 	private void checkIntersect(
@@ -264,6 +261,7 @@ public class LatLonRectangleTest {
 				ImmutableList.of(
 						new LatLonRectangle(6.0,3.0,4.0,3.0),
 						new LatLonRectangle(4.0,3.0,4.0,6.0)));
+
 		checkBordersInside(
 				6, 1, 1, 6,
 				6, 1, 1, 6,
@@ -272,10 +270,17 @@ public class LatLonRectangleTest {
 						new LatLonRectangle(6.0,1.0,1.0,1.0),
 						new LatLonRectangle(1.0,1.0,1.0,6.0),
 						new LatLonRectangle(6.0,6.0,1.0,6.0)));
+
+		checkBordersInside(
+				48.34164617237459, 14.2822265625, 48.32703913063477, 14.30419921875,
+				48.34164617237459, 14.2822265625, 48.312427904071775, 14.326171875,
+				ImmutableList.of(
+						new LatLonRectangle(48.34164617237459,14.2822265625,48.34164617237459,14.30419921875),
+						new LatLonRectangle(48.34164617237459,14.2822265625,48.32703913063477,14.2822265625)));
 	}
 
 	private void checkBordersInside(
-			int latA1, int lonA1, int latA2, int lonA2, int latB1, int lonB1, int latB2, int lonB2,
+			double latA1, double lonA1, double latA2, double lonA2, double latB1, double lonB1, double latB2, double lonB2,
 			List<LatLonRectangle> expected) {
 		LatLonRectangle rect1 = new LatLonRectangle(latA1, lonA1, latA2, lonA2);
 		LatLonRectangle rect2 = new LatLonRectangle(latB1, lonB1, latB2, lonB2);
@@ -288,9 +293,7 @@ public class LatLonRectangleTest {
 						segment.lat2 + "," + segment.lon2 + "),");
 			}
 
-			assertEquals(
-					expected.toString().replace("}, ", "\n"),
-					bordersInside.toString().replace("}, ", "\n"));
+			assertEquals(expected.toString().replace("}, ", "\n"), bordersInside.toString().replace("}, ", "\n"));
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("Failed for \n" + rect1 + "\n" + rect2, e);
 		}
