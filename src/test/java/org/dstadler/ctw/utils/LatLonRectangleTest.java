@@ -6,8 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.dstadler.commons.testing.TestHelpers;
 import org.junit.Test;
+
+import com.google.common.collect.ImmutableList;
 
 import uk.me.jstott.jcoord.LatLng;
 
@@ -42,6 +47,22 @@ public class LatLonRectangleTest {
 				48.458, 14.150, 48.400, 14.238,
 				48.450, 14.200, 48.300, 14.230,
 				48.450, 14.200, 48.400, 14.230);
+	}
+
+	@Test
+	public void testIntersect4() {
+		checkIntersect(
+				20, 0, 0, 20,
+				2, 2, 1, 3,
+				2, 2, 1, 3);
+	}
+
+	@Test
+	public void testIntersect5() {
+		checkIntersect(
+				1, 1, 1, 1,
+				1, 1, 1, 1,
+				1, 1, 1, 1);
 	}
 
 	@Test
@@ -125,17 +146,19 @@ public class LatLonRectangleTest {
 				retLat1, retLon1,
 				retLat2, retLon2);
 
-		assertTrue(ret.width() > 0);
-		assertTrue(ret.height() > 0);
+		assertTrue(ret.width() >= 0);
+		assertTrue(ret.height() >= 0);
 
-		ret = rect2.intersect(rect1);
+		LatLonRectangle ret2 = rect2.intersect(rect1);
 
-		checkRect(ret,
+		checkRect(ret2,
 				retLat1, retLon1,
 				retLat2, retLon2);
 
-		assertTrue(ret.width() > 0);
-		assertTrue(ret.height() > 0);
+		assertTrue(ret2.width() >= 0);
+		assertTrue(ret2.height() >= 0);
+
+		assertEquals(ret, ret2);
 	}
 
 	@Test
@@ -160,6 +183,34 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
+	public void testHashCode() {
+		LatLonRectangle rect = new LatLonRectangle(
+				48.458, 14.150,
+				48.400, 14.238);
+		LatLonRectangle rectEqu = new LatLonRectangle(
+				48.458, 14.150,
+				48.400, 14.238);
+
+		TestHelpers.HashCodeTest(rect, rectEqu);
+	}
+
+
+	@Test
+	public void testEquals() {
+		LatLonRectangle rect = new LatLonRectangle(
+				48.458, 14.150,
+				48.400, 14.238);
+		LatLonRectangle rectEqu = new LatLonRectangle(
+				48.458, 14.150,
+				48.400, 14.238);
+		LatLonRectangle rectNotEqu = new LatLonRectangle(
+				49.458, 14.150,
+				48.400, 14.238);
+
+		TestHelpers.EqualsTest(rect, rectEqu, rectNotEqu);
+	}
+
+	@Test
 	public void testLatLng() {
 		checkLatLng(45.091711, 7.661622, 45.091711, 7.661622, 0);
 		checkLatLng(45.091711, 7.661622, 45.055094, 7.647369, 4.2198080284070425);
@@ -172,5 +223,76 @@ public class LatLonRectangleTest {
 		LatLng dest = new LatLng(myLat2, myLng2);
 		assertEquals(distance, origin.distance(dest), ASSERT_DELTA);
 		assertEquals(distance, dest.distance(origin), ASSERT_DELTA);
+	}
+
+
+	@Test
+	public void testBordersInside() {
+		checkBordersInside(
+				20, 0, 0, 20,
+				2, 2, 1, 3,
+				ImmutableList.of(
+						new LatLonRectangle(2,2,2,3),
+						new LatLonRectangle(2,2,1,2),
+						new LatLonRectangle(1,2,1,3),
+						new LatLonRectangle(2, 3, 1, 3)));
+
+		checkBordersInside(
+				1, 1, 1, 1,
+				1, 1, 1, 1,
+				ImmutableList.of(
+					new LatLonRectangle(1.0,1.0,1.0,1.0),
+					new LatLonRectangle(1.0,1.0,1.0,1.0),
+					new LatLonRectangle(1.0,1.0,1.0,1.0),
+					new LatLonRectangle(1.0,1.0,1.0,1.0)));
+
+		checkBordersInside(
+				1, 2, 1, 3,
+				1, 1, 1, 1,
+				Collections.emptyList());
+		checkBordersInside(
+				1, 2, 1, 3,
+				1, 2, 1, 5,
+				ImmutableList.of(
+						new LatLonRectangle(1.0,2.0,1.0,3.0),
+						new LatLonRectangle(1.0,2.0,1.0,2.0),
+						new LatLonRectangle(1.0,2.0,1.0,3.0)));
+
+		checkBordersInside(
+				6, 1, 1, 6,
+				8, 3, 4, 8,
+				ImmutableList.of(
+						new LatLonRectangle(6.0,3.0,4.0,3.0),
+						new LatLonRectangle(4.0,3.0,4.0,6.0)));
+		checkBordersInside(
+				6, 1, 1, 6,
+				6, 1, 1, 6,
+				ImmutableList.of(
+						new LatLonRectangle(6.0,1.0,6.0,6.0),
+						new LatLonRectangle(6.0,1.0,1.0,1.0),
+						new LatLonRectangle(1.0,1.0,1.0,6.0),
+						new LatLonRectangle(6.0,6.0,1.0,6.0)));
+	}
+
+	private void checkBordersInside(
+			int latA1, int lonA1, int latA2, int lonA2, int latB1, int lonB1, int latB2, int lonB2,
+			List<LatLonRectangle> expected) {
+		LatLonRectangle rect1 = new LatLonRectangle(latA1, lonA1, latA2, lonA2);
+		LatLonRectangle rect2 = new LatLonRectangle(latB1, lonB1, latB2, lonB2);
+
+		try {
+			List<LatLonRectangle> bordersInside = rect1.borderInside(rect2);
+			System.out.println(bordersInside.size());
+			for (LatLonRectangle segment : bordersInside) {
+				System.out.println("new LatLonRectangle(" + segment.lat1 + "," + segment.lon1 + "," +
+						segment.lat2 + "," + segment.lon2 + "),");
+			}
+
+			assertEquals(
+					expected.toString().replace("}, ", "\n"),
+					bordersInside.toString().replace("}, ", "\n"));
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Failed for \n" + rect1 + "\n" + rect2, e);
+		}
 	}
 }
