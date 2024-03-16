@@ -16,4 +16,4 @@ permissions:
 
 jobs:
   build-and-test:
-    uses: centic9/actions/.github/workflows/gradle-build.yml@3
+    uses: centic9/actions/.github/workflows/gradle-build.yml@6
