@@ -56,12 +56,12 @@ public class CreateGeoJSON {
 	private static final Logger log = LoggerFactory.make();
 
 	// squares
-	public static final String VISITED_SQUARES_JSON = "VisitedSquares.js";
-	public static final String VISITED_SQUARES_NEW_JSON = "VisitedSquaresNew.js";
+	public static final String VISITED_SQUARES_JSON = "js/VisitedSquares.js";
+	public static final String VISITED_SQUARES_NEW_JSON = "js/VisitedSquaresNew.js";
 
 	// tiles
-	public static final String VISITED_TILES_JSON = "VisitedTiles.js";
-	public static final String VISITED_TILES_NEW_JSON = "VisitedTilesNew.js";
+	public static final String VISITED_TILES_JSON = "js/VisitedTiles.js";
+	public static final String VISITED_TILES_NEW_JSON = "js/VisitedTilesNew.js";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();

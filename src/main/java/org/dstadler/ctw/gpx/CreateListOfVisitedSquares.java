@@ -48,12 +48,12 @@ public class CreateListOfVisitedSquares {
 	public static final File GPX_DIR = new File("gpx");
 
 	// squares
-	public static final String VISITED_SQUARES_TXT = "VisitedSquares.txt";
-	public static final String VISITED_SQUARES_NEW_TXT = "VisitedSquaresNew.txt";
+	public static final String VISITED_SQUARES_TXT = "txt/VisitedSquares.txt";
+	public static final String VISITED_SQUARES_NEW_TXT = "txt/VisitedSquaresNew.txt";
 
 	// tiles
-	public static final String VISITED_TILES_TXT = "VisitedTiles.txt";
-	public static final String VISITED_TILES_NEW_TXT = "VisitedTilesNew.txt";
+	public static final String VISITED_TILES_TXT = "txt/VisitedTiles.txt";
+	public static final String VISITED_TILES_NEW_TXT = "txt/VisitedTilesNew.txt";
 
 	public static void main(String[] args) throws IOException, SAXException {
 		LoggerFactory.initLogging();

@@ -40,8 +40,8 @@ import com.github.filosganga.geogson.model.Feature;
 public class CreateLargestClusterGeoJSONSquares {
     private static final Logger log = LoggerFactory.make();
 
-    public static final String LARGEST_CLUSTER_SQUARES_JSON = "LargestClusterSquares.js";
-    public static final String LARGEST_CLUSTER_SQUARES_TXT = "LargestClusterSquares.txt";
+    public static final String LARGEST_CLUSTER_SQUARES_JSON = "js/LargestClusterSquares.js";
+    public static final String LARGEST_CLUSTER_SQUARES_TXT = "txt/LargestClusterSquares.txt";
 
     public static void main(String[] args) throws IOException {
         LoggerFactory.initLogging();

@@ -31,8 +31,8 @@ import com.github.filosganga.geogson.model.Feature;
 public class CreateClusterGeoJSON {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_SQUARES_JSON = "ClusterSquares.js";
-	public static final String CLUSTER_SQUARES_TXT = "ClusterSquares.txt";
+	public static final String CLUSTER_SQUARES_JSON = "js/ClusterSquares.js";
+	public static final String CLUSTER_SQUARES_TXT = "txt/ClusterSquares.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();

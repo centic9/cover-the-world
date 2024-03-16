@@ -41,8 +41,8 @@ import com.google.gson.JsonPrimitive;
 public class CreateLargestSquareGeoJSONSquares {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_SQUARE_JSON = "LargestSquareSquares.js";
-	public static final String CLUSTER_SQUARE_TXT = "LargestSquareSquares.txt";
+	public static final String CLUSTER_SQUARE_JSON = "js/LargestSquareSquares.js";
+	public static final String CLUSTER_SQUARE_TXT = "txt/LargestSquareSquares.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();

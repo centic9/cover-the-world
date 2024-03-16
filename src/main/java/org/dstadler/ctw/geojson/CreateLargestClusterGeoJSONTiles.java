@@ -39,8 +39,8 @@ import com.github.filosganga.geogson.model.Feature;
 public class CreateLargestClusterGeoJSONTiles {
     private static final Logger log = LoggerFactory.make();
 
-    public static final String LARGEST_CLUSTER_TILES_JSON = "LargestClusterTiles.js";
-    public static final String LARGEST_CLUSTER_TILES_TXT = "LargestClusterTiles.txt";
+    public static final String LARGEST_CLUSTER_TILES_JSON = "js/LargestClusterTiles.js";
+    public static final String LARGEST_CLUSTER_TILES_TXT = "txt/LargestClusterTiles.txt";
 
     public static void main(String[] args) throws IOException {
         LoggerFactory.initLogging();

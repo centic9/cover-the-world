@@ -30,8 +30,8 @@ import com.github.filosganga.geogson.model.Feature;
 public class CreateLargestRectangleGeoJSONSquares {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_RECTANGLE_JSON = "LargestRectangleSquares.js";
-	public static final String CLUSTER_RECTANGLE_TXT = "LargestRectangleSquares.txt";
+	public static final String CLUSTER_RECTANGLE_JSON = "js/LargestRectangleSquares.js";
+	public static final String CLUSTER_RECTANGLE_TXT = "txt/LargestRectangleSquares.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
