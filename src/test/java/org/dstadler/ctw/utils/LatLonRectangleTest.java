@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.dstadler.commons.testing.TestHelpers;
+import org.dstadler.commons.util.SuppressForbidden;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -279,6 +280,7 @@ public class LatLonRectangleTest {
 						new LatLonRectangle(48.34164617237459,14.2822265625,48.32703913063477,14.2822265625)));
 	}
 
+	@SuppressForbidden(reason = "Uses System.out on purpose")
 	private void checkBordersInside(
 			double latA1, double lonA1, double latA2, double lonA2, double latB1, double lonB1, double latB2, double lonB2,
 			List<LatLonRectangle> expected) {
