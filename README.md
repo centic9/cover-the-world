@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/centic9/cover-the-world/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/centic9/cover-the-world/actions)
-[![Gradle Status](https://gradleupdate.appspot.com/centic9/cover-the-world/status.svg?branch=master)](https://gradleupdate.appspot.com/centic9/cover-the-world/status)
+[![Gradle Status](https://gradleupdate.appspot.com/centic9/cover-the-world/status.svg?branch=main)](https://gradleupdate.appspot.com/centic9/cover-the-world/status)
 [![Release](https://img.shields.io/github/release/centic9/cover-the-world.svg)](https://github.com/centic9/cover-the-world/releases)
 [![GitHub release](https://img.shields.io/github/release/centic9/cover-the-world.svg?label=changelog)](https://github.com/centic9/cover-the-world/releases/latest)
 [![Tag](https://img.shields.io/github/tag/centic9/cover-the-world.svg)](https://github.com/centic9/cover-the-world/tags)

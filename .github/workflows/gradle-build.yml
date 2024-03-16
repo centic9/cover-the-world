@@ -4,9 +4,9 @@ name: Build and check
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   # Allows to run from the Actions tab
   workflow_dispatch:
 

@@ -115,7 +115,7 @@ java {
 
 release {
     git {
-        requireBranch.set('master')
+        requireBranch.set('main')
     }
 }
 
@@ -132,7 +132,7 @@ publishing {
                 licenses {
                     license {
                         name = 'BSD 2-Clause "Simplified" License'
-                        url = 'https://github.com/centic9/cover-the-world/blob/master/LICENSE.md'
+                        url = 'https://github.com/centic9/cover-the-world/blob/main/LICENSE.md'
                     }
                 }
                 developers {
