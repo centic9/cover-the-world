@@ -145,7 +145,7 @@ public class CreateTileOverlaysFromTiles {
 								addAdjacentTiles(tilesIn, adjacentTiles, tile.right());
 							}
 
-							log.info("Having " + adjacentTiles + " adjacent tiles");
+							log.info("Having " + adjacentTiles.size() + " adjacent tiles");
 							for (String tileIn : adjacentTiles) {
 								handleAdjacentTile(tileIn, zoom, tilesOut, tilesNr, tilesCount, filter);
 								tilesNr++;
