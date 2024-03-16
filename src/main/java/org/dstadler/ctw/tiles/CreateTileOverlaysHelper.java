@@ -283,6 +283,11 @@ public class CreateTileOverlaysHelper {
 		StringBuilder progress = new StringBuilder();
 		for (int zoom = Constants.MIN_ZOOM; zoom <= Constants.MAX_ZOOM; zoom++) {
 			long actual = ACTUAL.get(zoom);
+			if (actual == -1) {
+				progress.append(", ").append(zoom).append(":N/A");
+				continue;
+			}
+
 			long expected = EXPECTED.get(zoom);
 
 			// include if not started yet

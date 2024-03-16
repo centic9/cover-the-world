@@ -110,13 +110,15 @@ public class CreateTileOverlaysFromTiles {
 				forEach(zoom -> {
 					// indicate that this zoom is started
 					CreateTileOverlaysHelper.EXPECTED.add(zoom, 0);
-					CreateTileOverlaysHelper.ACTUAL.add(zoom, 0);
+					CreateTileOverlaysHelper.ACTUAL.add(zoom, -1);
 
 					Thread thread = Thread.currentThread();
 					thread.setName(thread.getName() + " zoom " + zoom);
 
 					SEM_ZOOMS.acquireUninterruptibly(zoom);
 					try {
+						CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
+
 						log.info("Start processing of " + tilesIn.size() + " tiles at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 
 						Map<OSMTile, boolean[][]> tilesOut = new TreeMap<>();
