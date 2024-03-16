@@ -291,6 +291,22 @@ gridOsm.createTile = function (coords) {
 	return tile;
 };
 
+// create a 2nd grid option where the grid sticks to zoom 14
+var gridOsmFixed = L.gridLayer({
+	minNativeZoom: 14,
+	maxNativeZoom: 14,
+	minZoom: 14
+});
+
+gridOsmFixed.createTile = function (coords) {
+	const tile = document.createElement('div');
+	tile.style.outline = '1px solid green';
+	//tile.style.fontWeight = 'bold';
+	tile.style.fontSize = '10pt';
+	tile.innerHTML = [coords.z, coords.x, coords.y].join('/');
+	return tile;
+};
+
 // default layers OSM + CTW-GeoJSON + CTWNew-GeoJSON
 if (params.get("bergfex") === "1") {
     map.addLayer(bergfex);
@@ -351,6 +367,7 @@ const overlays = {
 	'-- Other --': empty,
 	'MTB': mtb,
 	'Grid': gridOsm,
+	'Grid 14': gridOsmFixed,
 	'-- -- --': empty,
 };
 
