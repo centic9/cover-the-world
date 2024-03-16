@@ -128,7 +128,6 @@ public class CreateTileOverlaysFromTiles {
 							tilesNr++;
 						}
 
-						CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
 						log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 
 						// add adjacent tiles with borders
@@ -151,6 +150,9 @@ public class CreateTileOverlaysFromTiles {
 								tilesNr++;
 							}
 						}
+
+						log.info("Having " + tilesOut.size() + " touched and adjacent tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+						CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
 
 						try {
 							CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, zoom);
