@@ -137,10 +137,12 @@ public class CreateTileOverlaysFromTiles {
 							Set<String> adjacentTiles = new HashSet<>();
 							for (String tileIn : tilesIn) {
 								OSMTile tile = OSMTile.fromString(tileIn);
-								addAdjacentTile(tilesIn, adjacentTiles, tile.up().toCoords());
-								addAdjacentTile(tilesIn, adjacentTiles, tile.down().toCoords());
-								addAdjacentTile(tilesIn, adjacentTiles, tile.left().toCoords());
-								addAdjacentTile(tilesIn, adjacentTiles, tile.right().toCoords());
+
+								addAdjacentTiles(tilesIn, adjacentTiles, tile);
+								addAdjacentTiles(tilesIn, adjacentTiles, tile.up());
+								addAdjacentTiles(tilesIn, adjacentTiles, tile.down());
+								addAdjacentTiles(tilesIn, adjacentTiles, tile.left());
+								addAdjacentTiles(tilesIn, adjacentTiles, tile.right());
 							}
 
 							log.info("Having " + adjacentTiles + " adjacent tiles");
@@ -167,6 +169,13 @@ public class CreateTileOverlaysFromTiles {
 				);
 
 		return allTiles;
+	}
+
+	private static void addAdjacentTiles(Set<String> tilesIn, Set<String> adjacentTiles, OSMTile tile) {
+		addAdjacentTile(tilesIn, adjacentTiles, tile.up().toCoords());
+		addAdjacentTile(tilesIn, adjacentTiles, tile.down().toCoords());
+		addAdjacentTile(tilesIn, adjacentTiles, tile.left().toCoords());
+		addAdjacentTile(tilesIn, adjacentTiles, tile.right().toCoords());
 	}
 
 	private static void addAdjacentTile(Set<String> tilesIn, Set<String> adjacentTiles, String newTile) {
@@ -222,7 +231,7 @@ public class CreateTileOverlaysFromTiles {
 				continue;
 			}
 
-			CreateTileOverlaysHelper.writeBorderPixel(tiles, tile, recTileIn, zoom);
+			CreateTileOverlaysHelper.writeBorderPixel(tiles, tile, recTileIn);
 		}
 
 		if (lastLogTile.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {

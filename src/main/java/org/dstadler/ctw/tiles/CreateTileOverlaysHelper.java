@@ -172,7 +172,7 @@ public class CreateTileOverlaysHelper {
 		}
 	}
 
-	public static void writeBorderPixel(Map<OSMTile, boolean[][]> tiles, OSMTile tile, LatLonRectangle recArea, int zoom) {
+	public static void writeBorderPixel(Map<OSMTile, boolean[][]> tiles, OSMTile tile, LatLonRectangle recArea) {
 		// ensure the tile and it's pixel-array are in the map
 		boolean[][] pixel = tiles.computeIfAbsent(tile, osmTile -> new boolean[256][256]);
 
@@ -184,9 +184,7 @@ public class CreateTileOverlaysHelper {
 		LatLonRectangle recTile = tile.getRectangle();
 
 		// compute coordinates of borders of the tile in the drawing-area
-		List<LatLonRectangle> borders = zoom >= 14 ?
-				recArea.borderInside(recTile) :
-				recTile.borderInside(recArea);
+		List<LatLonRectangle> borders = recTile.borderInside(recArea);
 
 		for (LatLonRectangle border : borders) {
 			fillPixel(border, pixel, tile, false);
