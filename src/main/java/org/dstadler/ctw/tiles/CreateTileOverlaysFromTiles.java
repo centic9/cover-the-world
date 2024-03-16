@@ -154,16 +154,17 @@ public class CreateTileOverlaysFromTiles {
 						log.info("Having " + tilesOut.size() + " touched and adjacent tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 						CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
 
+						allTiles.addAll(tilesOut.keySet());
+						int tilesOutSize = tilesOut.size();
+						tilesOverall.addAndGet(tilesOutSize);
+
 						try {
 							CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, zoom);
 						} catch (IOException e) {
 							throw new RuntimeException(e);
 						}
 
-						allTiles.addAll(tilesOut.keySet());
-						tilesOverall.addAndGet(tilesOut.size());
-
-						log.info("Wrote " + tilesOut.size() + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+						log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 					} finally {
 						SEM_ZOOMS.release(zoom);
 					}

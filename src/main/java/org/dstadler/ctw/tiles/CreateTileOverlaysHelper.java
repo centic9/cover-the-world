@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -194,7 +195,16 @@ public class CreateTileOverlaysHelper {
 	protected static void writeTilesToFiles(File dir, Map<OSMTile, boolean[][]> tiles, File tileDir, int zoom) throws IOException {
 		int tileCount = tiles.size();
 		int tileNr = 1;
-		for (Map.Entry<OSMTile, boolean[][]> entry : tiles.entrySet()) {
+
+		Iterator<Map.Entry<OSMTile, boolean[][]>> it = tiles.entrySet().iterator();
+
+		while (it.hasNext()) {
+			Map.Entry<OSMTile, boolean[][]> entry = it.next();
+
+			// reduce memory usage by removing items quickly from map again
+			// so the map cannot be used any more afterwards
+			it.remove();
+
 			boolean written = writePNG(entry.getKey().toFile(tileDir), entry.getValue(), tileNr, tileCount);
 
 			// whenever writing a tile, remove the combined overlay to re-create it in a follow-up step

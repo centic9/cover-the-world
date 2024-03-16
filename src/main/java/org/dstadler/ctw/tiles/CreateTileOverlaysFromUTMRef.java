@@ -118,28 +118,29 @@ public class CreateTileOverlaysFromUTMRef {
 					try {
 						log.info("Start processing of " + squares.size() + " squares at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 
-						Map<OSMTile, boolean[][]> tiles = new TreeMap<>();
+						Map<OSMTile, boolean[][]> tilesOut = new TreeMap<>();
 
 						int squareCount = squares.size();
 						int squareNr = 1;
 						for (String square : squares) {
-							handleSquare(square, zoom, tiles, squareNr, squareCount, filter);
+							handleSquare(square, zoom, tilesOut, squareNr, squareCount, filter);
 							squareNr++;
 						}
 
-						CreateTileOverlaysHelper.EXPECTED.add(zoom, tiles.size());
-						log.info("Having " + tiles.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+						CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
+						log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+
+						allTiles.addAll(tilesOut.keySet());
+						int tilesOutSize = tilesOut.size();
+						tilesOverall.addAndGet(tilesOutSize);
 
 						try {
-							CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tiles, tileDir, zoom);
+							CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, zoom);
 						} catch (IOException e) {
 							throw new RuntimeException(e);
 						}
 
-						allTiles.addAll(tiles.keySet());
-						tilesOverall.addAndGet(tiles.size());
-
-						log.info("Wrote " + tiles.size() + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+						log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 					} finally {
 						SEM_ZOOMS.release(zoom);
 					}
