@@ -129,3 +129,6 @@ If you find this library useful and would like to support it, you can [Sponsor t
 * cover-the-world is licensed under the [BSD 2-Clause License].
 
 [BSD 2-Clause License]: https://www.opensource.org/licenses/bsd-license.php
+
+
+* Currently includes a compiled version of [jCoords](https://github.com/xni06/JCoord/)
