@@ -210,3 +210,21 @@ tasks.register('createNewTiles', JavaExec) {
 	mainClass = 'org.dstadler.ctw.tiles.CreateTileOverlaysFromTiles'
 	classpath = sourceSets.main.runtimeClasspath
 }
+
+tasks.register('removeTiles', Exec) {
+	description = 'Remove all pre-built tiles to rebuild them from scratch'
+
+	workingDir '.'
+
+	commandLine 'bash', '-c',
+			'rm -rf tilesSquares tilesSquaresNew tilesSquaresCombined tilesTiles tilesTilesNew tilesTilesCombined'
+}
+
+updateFiles.mustRunAfter removeTiles
+
+tasks.register('rebuildTiles') {
+	dependsOn removeTiles,
+		updateFiles,
+		createAllSquares, createAllTiles,
+		createNewSquares, createNewTiles
+}
