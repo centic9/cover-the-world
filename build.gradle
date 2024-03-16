@@ -126,8 +126,8 @@ publishing {
             from components.java
 
             pom {
-                name = 'Common Autio Utilities'
-                description = 'Common utilities I find useful when developing audio-related projects.'
+                name = 'cover-the-world'
+                description = 'Read GPX tracks and produce a world-map with covered tiles.'
                 url = 'https://github.com/centic9/cover-the-world'
                 licenses {
                     license {
