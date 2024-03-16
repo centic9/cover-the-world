@@ -179,3 +179,34 @@ tasks.register('updateFiles', JavaExec) {
 	mainClass = 'org.dstadler.ctw.CoverTheWorld'
 	classpath = sourceSets.main.runtimeClasspath
 }
+
+
+tasks.register('createAllSquares', JavaExec) {
+	description = 'Create covered squares for all supported zooms'
+
+	mainClass = 'org.dstadler.ctw.tiles.CreateTileOverlaysFromUTMRef'
+	classpath = sourceSets.main.runtimeClasspath
+	args "all"
+}
+
+tasks.register('createNewSquares', JavaExec) {
+	description = 'Create covered squares for all supported zooms'
+
+	mainClass = 'org.dstadler.ctw.tiles.CreateTileOverlaysFromUTMRef'
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.register('createAllTiles', JavaExec) {
+	description = 'Create covered tiles for all supported zooms'
+
+	mainClass = 'org.dstadler.ctw.tiles.CreateTileOverlaysFromTiles'
+	classpath = sourceSets.main.runtimeClasspath
+	args "all"
+}
+
+tasks.register('createNewTiles', JavaExec) {
+	description = 'Create covered tiles for all supported zooms'
+
+	mainClass = 'org.dstadler.ctw.tiles.CreateTileOverlaysFromTiles'
+	classpath = sourceSets.main.runtimeClasspath
+}
