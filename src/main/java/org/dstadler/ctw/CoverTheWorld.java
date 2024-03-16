@@ -21,24 +21,24 @@ public class CoverTheWorld {
 
 	public static void main(String[] args) throws IOException, SAXException {
 		// this needs to run first to compute "Visited*.txt"
-		CreateListOfVisitedSquares.main(new String[0]);
+		CreateListOfVisitedSquares.main(args);
 
 		// produce Visited*.js
-		CreateGeoJSON.main(new String[0]);
+		CreateGeoJSON.main(args);
 
 		// produce ClusterSquares.*
-		CreateClusterGeoJSON.main(new String[0]);
+		CreateClusterGeoJSON.main(args);
 
 		// produce "LargestCluster*"
-		CreateLargestClusterGeoJSONSquares.main(new String[0]);
-		CreateLargestClusterGeoJSONTiles.main(new String[0]);
+		CreateLargestClusterGeoJSONSquares.main(args);
+		CreateLargestClusterGeoJSONTiles.main(args);
 
 		// produce "LargestRectangle*"
-		CreateLargestRectangleGeoJSONSquares.main(new String[0]);
-		CreateLargestRectangleGeoJSONTiles.main(new String[0]);
+		CreateLargestRectangleGeoJSONSquares.main(args);
+		CreateLargestRectangleGeoJSONTiles.main(args);
 
 		// produce "LargestSquare*"
-		CreateLargestSquareGeoJSONSquares.main(new String[0]);
-		CreateLargestSquareGeoJSONTiles.main(new String[0]);
+		CreateLargestSquareGeoJSONSquares.main(args);
+		CreateLargestSquareGeoJSONTiles.main(args);
 	}
 }
