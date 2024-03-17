@@ -7,17 +7,21 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
 import org.junit.Test;
 
 import com.github.filosganga.geogson.model.Feature;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class GeoJSONTest {
 	@Test
@@ -86,6 +90,21 @@ public class GeoJSONTest {
 		} finally {
 			assertTrue("Had: " + temp.getAbsolutePath(),
 					!temp.exists() || temp.delete());
+		}
+	}
+
+	@Test
+	public void testGetGeoJSON() throws IOException {
+		LatLonRectangle rect = UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle();
+
+		List<Feature> features = new ArrayList<>();
+		features.add(GeoJSON.createSquare(rect, null));
+
+		try (InputStream input = GeoJSON.getGeoJSON(features)) {
+			String json = IOUtils.toString(input, StandardCharsets.UTF_8);
+			assertEquals(
+					"{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]]}}]}",
+					json);
 		}
 	}
 }

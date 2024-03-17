@@ -1,11 +1,11 @@
 package org.dstadler.ctw.geojson;
 
-import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
-import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
+import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
+import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.utils.Constants.ZONE;
 
 import java.awt.Rectangle;
@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.utils.LatLonRectangle;
@@ -127,6 +128,10 @@ public class CreateGeoJSON {
 
 		// finally write out JavaScript code with embedded GeoJSON
 		GeoJSON.writeGeoJSON(jsonOutputFile, varPrefix, features);
+
+		// also write the file in pure JSON for use in later steps
+		FileUtils.copyToFile(GeoJSON.getGeoJSON(features), new File(
+				StringUtils.removeEnd(jsonOutputFile, ".js") + ".json"));
 
 		log.info("Wrote " + squares.size() + " " + title + " from " + squaresFile + " to " + jsonOutputFile);
 	}

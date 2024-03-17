@@ -1,8 +1,12 @@
 package org.dstadler.ctw.geojson;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -87,6 +91,19 @@ public class GeoJSON {
 			writer.write("var " + varPrefix + "states=[");
 			gson.toJson(collection, writer);
 			writer.write("];");
+		}
+	}
+
+	public static InputStream getGeoJSON(List<Feature> features) throws IOException {
+		FeatureCollection collection = new FeatureCollection(features);
+		try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			Writer writer = new BufferedWriter(new OutputStreamWriter(stream))) {
+			gson.toJson(collection, writer);
+
+			writer.flush();
+			stream.flush();
+
+			return new ByteArrayInputStream(stream.toByteArray());
 		}
 	}
 }
