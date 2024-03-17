@@ -63,6 +63,7 @@ public class CreateStaticTiles {
 	private static long existsCount = 0;
 	private static final AtomicLong exceptionCount = new AtomicLong();
 	private static final AtomicLong filesDone = new AtomicLong();
+	private static final AtomicReference<String> lastFile = new AtomicReference<>();
 	private static long lastLog = 0;
 
 	private static final AtomicReference<Throwable> exception = new AtomicReference<>();
@@ -131,6 +132,7 @@ public class CreateStaticTiles {
 						writeOSMCombined(coords, ImageIO.read(file.toFile()), tileDirCombined);
 
 						filesDone.incrementAndGet();
+						lastFile.set(coords);
 					} catch (IOException e) {
 						exception.set(new IOException("Failed for " + file + ": " + e, e));
 						exceptionCount.incrementAndGet();
@@ -187,13 +189,14 @@ public class CreateStaticTiles {
 	private static void log(String x, File dir) {
 		double percent = ((double)filesDone.get()) / (fileCount - existsCount) * 100;
 
-		log.info(x + String.format(" %,d waiting tasks after %,d files in %s, "
-						+ "%,d existing, %,d done, %,.2f per second, "
+		log.info(x + String.format(" %,d files in %s at %s, "
+						+ "%,d existing, %,d done, %,d waiting, %,.2f per second, "
 						+ "%,.2f%% done, "
 						+ (exceptionCount.get() != 0 ?
 							exceptionCount.get() + " exceptions: " + exception.get() :
 							""),
-				commonPool.getQueuedSubmissionCount(), fileCount, dir, existsCount, filesDone.get(),
+				fileCount, dir, lastFile.get(),
+				existsCount, filesDone.get(), commonPool.getQueuedSubmissionCount(),
 				((double) filesDone.get()) / ((System.currentTimeMillis() - start) / 1000),
 				percent));
 	}
