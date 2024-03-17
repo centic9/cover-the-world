@@ -192,7 +192,7 @@ public class CreateTileOverlaysHelper {
 		}
 	}
 
-	protected static void writeTilesToFiles(File dir, Map<OSMTile, boolean[][]> tiles, File tileDir, int zoom) throws IOException {
+	protected static void writeTilesToFiles(File combinedDir, Map<OSMTile, boolean[][]> tiles, File tileDir, int zoom) throws IOException {
 		int tileCount = tiles.size();
 		int tileNr = 1;
 
@@ -211,7 +211,7 @@ public class CreateTileOverlaysHelper {
 
 				// whenever writing a tile, remove the combined overlay to re-create it in a follow-up step
 				if (written) {
-					File combinedTile = new File(dir, entry.getKey().toCoords() + ".png");
+					File combinedTile = new File(combinedDir, entry.getKey().toCoords() + ".png");
 					if (combinedTile.exists()) {
 						if (!combinedTile.delete()) {
 							throw new IOException("Could not delete file " + combinedTile);
