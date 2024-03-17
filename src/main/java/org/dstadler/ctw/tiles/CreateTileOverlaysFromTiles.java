@@ -114,17 +114,17 @@ public class CreateTileOverlaysFromTiles {
 		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
 		aList.forEach(zoom ->
 				customThreadPool.submit(() ->
-						processTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, allTiles)));
+						generateTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, allTiles)));
 
 		customThreadPool.shutdown();
-		if (!customThreadPool.awaitTermination(30,TimeUnit.MINUTES)) {
+		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
 			throw new IllegalStateException("Timed out while waiting for all tasks to finish");
 		}
 
 		return allTiles;
 	}
 
-	private static void processTilesForOneZoom(int zoom, Set<String> tilesIn,
+	private static void generateTilesForOneZoom(int zoom, Set<String> tilesIn,
 			AtomicInteger tilesOverall,
 			File tileDir,
 			Predicate<OSMTile> filter,
