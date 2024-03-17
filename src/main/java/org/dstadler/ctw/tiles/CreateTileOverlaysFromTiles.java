@@ -7,17 +7,20 @@ import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
@@ -53,7 +56,7 @@ public class CreateTileOverlaysFromTiles {
 	// at the same time
 	private static final Semaphore SEM_ZOOMS = new Semaphore(33);
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		LoggerFactory.initLogging();
 
 		boolean onlyNewTiles = !(args.length > 0 && "all".equals(args[0]));
@@ -100,56 +103,77 @@ public class CreateTileOverlaysFromTiles {
 	}
 
 	private static Set<OSMTile> generateTiles(Set<String> tilesIn, AtomicInteger tilesOverall, File tileDir,
-			Predicate<OSMTile> filter) {
+			Predicate<OSMTile> filter) throws InterruptedException {
 		Set<OSMTile> allTiles = ConcurrentHashMap.newKeySet();
 
-		//for (int zoom = MIN_ZOOM; zoom <= MAX_ZOOM; zoom++)
+		// prepare counters
 		IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).
-				parallel().
 				forEach(zoom -> {
-					// indicate that this zoom is started
-					CreateTileOverlaysHelper.EXPECTED.add(zoom, 0);
-					CreateTileOverlaysHelper.ACTUAL.add(zoom, -1);
+							// indicate that this zoom is started
+							CreateTileOverlaysHelper.EXPECTED.add(zoom, 0);
+							CreateTileOverlaysHelper.ACTUAL.add(zoom, -1);
+						});
 
-					Thread thread = Thread.currentThread();
-					thread.setName(thread.getName() + " zoom " + zoom);
+		List<Integer> aList = IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).boxed()
+				.collect(Collectors.toList());
 
-					SEM_ZOOMS.acquireUninterruptibly(zoom);
-					try {
-						CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
+		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
+		aList.forEach(zoom ->
+				customThreadPool.submit(() ->
+						processTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, allTiles)));
 
-						log.info("Start processing of " + tilesIn.size() + " tiles at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+		customThreadPool.shutdown();
+		if (!customThreadPool.awaitTermination(30,TimeUnit.MINUTES)) {
+			throw new IllegalStateException("Timed out while waiting for all tasks to finish");
+		}
 
-						Map<OSMTile, boolean[][]> tilesOut = new TreeMap<>();
+		return allTiles;
+	}
 
-						int tilesCount = tilesIn.size();
-						int tilesNr = 1;
-						for (String tileIn : tilesIn) {
-							handleTile(tileIn, zoom, tilesOut, tilesNr, tilesCount, filter);
-							tilesNr++;
-						}
+	private static void processTilesForOneZoom(int zoom, Set<String> tilesIn,
+			AtomicInteger tilesOverall,
+			File tileDir,
+			Predicate<OSMTile> filter,
+			Set<OSMTile> allTiles) {
+		Thread thread = Thread.currentThread();
+		thread.setName(thread.getName().
+				// remove previous thread-name
+						replaceAll("(.*) zoom \\d+(?: - active)?", "$1")
+				+ " zoom " + zoom);
 
-						log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
-						CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
+		SEM_ZOOMS.acquireUninterruptibly(zoom);
+		try {
+			thread.setName(thread.getName() + " - active");
+			CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
+
+			log.info("Start processing of " + tilesIn.size() + " tiles at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+
+			Map<OSMTile, boolean[][]> tilesOut = new TreeMap<>();
+
+			int tilesCount = tilesIn.size();
+			int tilesNr = 1;
+			for (String tileIn : tilesIn) {
+				handleTile(tileIn, zoom, tilesOut, tilesNr, tilesCount, filter);
+				tilesNr++;
+			}
+
+			log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+			CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
 
 						allTiles.addAll(tilesOut.keySet());
 						int tilesOutSize = tilesOut.size();
 						tilesOverall.addAndGet(tilesOutSize);
 
-						try {
-							CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, zoom);
-						} catch (IOException e) {
-							throw new RuntimeException(e);
-						}
+			try {
+				CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, zoom);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 
 						log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
-					} finally {
-						SEM_ZOOMS.release(zoom);
-					}
-				}
-				);
-
-		return allTiles;
+		} finally {
+			SEM_ZOOMS.release(zoom);
+		}
 	}
 
 	private static void handleTile(String tileIn, int zoom, Map<OSMTile,boolean[][]> tiles, int tilesNr, int tilesCount,
