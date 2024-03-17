@@ -7,7 +7,6 @@ import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -131,29 +130,6 @@ public class CreateTileOverlaysFromTiles {
 						}
 
 						log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
-
-						// add adjacent tiles with borders
-						// do not generate for zoom 12 and lower
-						if (zoom > 12) {
-							Set<String> adjacentTiles = new HashSet<>();
-							for (String tileIn : tilesIn) {
-								OSMTile tile = OSMTile.fromString(tileIn);
-
-								addAdjacentTiles(tilesIn, adjacentTiles, tile);
-								addAdjacentTiles(tilesIn, adjacentTiles, tile.up());
-								addAdjacentTiles(tilesIn, adjacentTiles, tile.down());
-								addAdjacentTiles(tilesIn, adjacentTiles, tile.left());
-								addAdjacentTiles(tilesIn, adjacentTiles, tile.right());
-							}
-
-							log.info("Having " + adjacentTiles.size() + " adjacent tiles");
-							for (String tileIn : adjacentTiles) {
-								handleAdjacentTile(tileIn, zoom, tilesOut, tilesNr, tilesCount, filter);
-								tilesNr++;
-							}
-						}
-
-						log.info("Having " + tilesOut.size() + " touched and adjacent tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 						CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
 
 						allTiles.addAll(tilesOut.keySet());
@@ -174,19 +150,6 @@ public class CreateTileOverlaysFromTiles {
 				);
 
 		return allTiles;
-	}
-
-	private static void addAdjacentTiles(Set<String> tilesIn, Set<String> adjacentTiles, OSMTile tile) {
-		addAdjacentTile(tilesIn, adjacentTiles, tile.up().toCoords());
-		addAdjacentTile(tilesIn, adjacentTiles, tile.down().toCoords());
-		addAdjacentTile(tilesIn, adjacentTiles, tile.left().toCoords());
-		addAdjacentTile(tilesIn, adjacentTiles, tile.right().toCoords());
-	}
-
-	private static void addAdjacentTile(Set<String> tilesIn, Set<String> adjacentTiles, String newTile) {
-		if (!tilesIn.contains(newTile)) {
-			adjacentTiles.add(newTile);
-		}
 	}
 
 	private static void handleTile(String tileIn, int zoom, Map<OSMTile,boolean[][]> tiles, int tilesNr, int tilesCount,
@@ -211,32 +174,6 @@ public class CreateTileOverlaysFromTiles {
 			}
 
 			CreateTileOverlaysHelper.writePixel(tiles, tile, recTileIn);
-		}
-
-		if (lastLogTile.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-			log.info(String.format(Locale.US, tilesNr + " of " + tilesCount + ": %s - zoom %d: %,d",
-					tileIn, zoom, tiles.size()));
-
-			lastLogTile.set(System.currentTimeMillis());
-		}
-	}
-
-	private static void handleAdjacentTile(String tileIn, int zoom, Map<OSMTile,boolean[][]> tiles, int tilesNr, int tilesCount,
-			Predicate<OSMTile> filter) {
-		// select starting and ending tile
-		OSMTile ref = OSMTile.fromString(tileIn);
-
-		LatLonRectangle recTileIn = ref.getRectangle();
-
-		// iterate over all "bounding" tiles at the given zoom
-		// for zoom less or equal to TILE_ZOOM, this will be a single tile
-		for (OSMTile tile : ref.getTilesAtZoom(zoom)) {
-			// check if this tile should be included
-			if (!filter.test(tile)) {
-				continue;
-			}
-
-			CreateTileOverlaysHelper.writeBorderPixel(tiles, tile, recTileIn);
 		}
 
 		if (lastLogTile.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
