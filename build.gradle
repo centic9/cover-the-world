@@ -18,6 +18,7 @@ plugins {
 apply plugin: 'de.thetaphi.forbiddenapis'
 apply plugin: 'jacoco'
 apply plugin: 'signing'
+apply plugin: 'idea'
 
 sourceCompatibility = JavaVersion.VERSION_11
 group = 'org.dstadler'
@@ -162,6 +163,20 @@ publishing {
 
 signing {
     sign publishing.publications.mavenJava
+}
+
+
+idea {
+  module {
+    excludeDirs += [
+        file("tilesSquares"),
+        file("tilesSquaresCombined"),
+        file("tilesSquaresNew"),
+        file("tilesTiles"),
+        file("tilesTilesCombined"),
+        file("tilesTilesNew"),
+    ]
+  }
 }
 
 afterReleaseBuild.dependsOn publish
