@@ -125,7 +125,15 @@ public class CreateTileOverlaysFromUTMRef {
 						int squareCount = squares.size();
 						int squareNr = 1;
 						for (String square : squares) {
-							handleSquare(square, zoom, tilesOut, squareNr, squareCount, filter);
+							handleSquare(square, zoom, tilesOut, filter);
+
+							if (lastLogSquare.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
+								log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s - %,d",
+										zoom, squareNr, squareCount, square, tilesOut.size()));
+
+								lastLogSquare.set(System.currentTimeMillis());
+							}
+
 							squareNr++;
 						}
 
@@ -152,8 +160,7 @@ public class CreateTileOverlaysFromUTMRef {
 		return allTiles;
 	}
 
-	private static void handleSquare(String square, int zoom, Map<OSMTile,boolean[][]> tiles, int squareNr, int squareCount,
-			Predicate<OSMTile> filter) {
+	private static void handleSquare(String square, int zoom, Map<OSMTile,boolean[][]> tiles, Predicate<OSMTile> filter) {
 		// select starting and ending tile
 		UTMRefWithHash ref1 = UTMRefWithHash.fromString(square);
 
@@ -175,13 +182,5 @@ public class CreateTileOverlaysFromUTMRef {
 				CreateTileOverlaysHelper.writePixel(tiles, tile, recSquare);
 			}
 		}
-
-		if (lastLogSquare.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-			log.info(String.format(Locale.US, squareNr + " of " + squareCount + ": %s - zoom %d: %,d",
-					square, zoom, tiles.size()));
-
-			lastLogSquare.set(System.currentTimeMillis());
-		}
-
 	}
 }

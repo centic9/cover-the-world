@@ -141,7 +141,15 @@ public class CreateTileOverlaysFromTiles {
 		int tilesCount = tilesIn.size();
 		int tilesNr = 1;
 		for (String tileIn : tilesIn) {
-			handleTile(tileIn, zoom, tilesOut, tilesNr, tilesCount, filter);
+			handleTile(tileIn, zoom, tilesOut, filter);
+
+			if (lastLogTile.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
+				log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s - %,d",
+						zoom, tilesNr, tilesCount, tileIn, tilesOut.size()));
+
+				lastLogTile.set(System.currentTimeMillis());
+			}
+
 			tilesNr++;
 		}
 
@@ -161,8 +169,7 @@ public class CreateTileOverlaysFromTiles {
 		log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 	}
 
-	private static void handleTile(String tileIn, int zoom, Map<OSMTile,boolean[][]> tiles, int tilesNr, int tilesCount,
-			Predicate<OSMTile> filter) {
+	private static void handleTile(String tileIn, int zoom, Map<OSMTile,boolean[][]> tiles, Predicate<OSMTile> filter) {
 		// select starting and ending tile
 		OSMTile ref = OSMTile.fromString(tileIn);
 
@@ -183,13 +190,6 @@ public class CreateTileOverlaysFromTiles {
 			}
 
 			CreateTileOverlaysHelper.writePixel(tiles, tile, recTileIn);
-		}
-
-		if (lastLogTile.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-			log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s - %,d",
-					zoom, tilesNr, tilesCount, tileIn, tiles.size()));
-
-			lastLogTile.set(System.currentTimeMillis());
 		}
 	}
 }
