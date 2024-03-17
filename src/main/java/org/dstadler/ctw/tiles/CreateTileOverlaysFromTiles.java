@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -50,11 +49,6 @@ public class CreateTileOverlaysFromTiles {
 
 	// for printing stats when writing tiles
 	private static final AtomicLong lastLogTile = new AtomicLong();
-
-	// prevent higher zoom levels to be processed concurrently as this puts a large
-	// burden on main memory, by limiting it to 32, we avoid running 16-17 and 18
-	// at the same time
-	private static final Semaphore SEM_ZOOMS = new Semaphore(33);
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		LoggerFactory.initLogging();
@@ -136,44 +130,35 @@ public class CreateTileOverlaysFromTiles {
 			Predicate<OSMTile> filter,
 			Set<OSMTile> allTiles) {
 		Thread thread = Thread.currentThread();
-		thread.setName(thread.getName().
-				// remove previous thread-name
-						replaceAll("(.*) zoom \\d+(?: - active)?", "$1")
-				+ " zoom " + zoom);
+		thread.setName(thread.getName() + " zoom " + zoom);
 
-		SEM_ZOOMS.acquireUninterruptibly(zoom);
-		try {
-			thread.setName(thread.getName() + " - active");
-			CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
+		CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
 
-			log.info("Start processing of " + tilesIn.size() + " tiles at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+		log.info("Start processing of " + tilesIn.size() + " tiles at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 
-			Map<OSMTile, boolean[][]> tilesOut = new TreeMap<>();
+		Map<OSMTile, boolean[][]> tilesOut = new TreeMap<>();
 
-			int tilesCount = tilesIn.size();
-			int tilesNr = 1;
-			for (String tileIn : tilesIn) {
-				handleTile(tileIn, zoom, tilesOut, tilesNr, tilesCount, filter);
-				tilesNr++;
-			}
-
-			log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
-			CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
-
-						allTiles.addAll(tilesOut.keySet());
-						int tilesOutSize = tilesOut.size();
-						tilesOverall.addAndGet(tilesOutSize);
-
-			try {
-				CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, zoom);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-
-						log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
-		} finally {
-			SEM_ZOOMS.release(zoom);
+		int tilesCount = tilesIn.size();
+		int tilesNr = 1;
+		for (String tileIn : tilesIn) {
+			handleTile(tileIn, zoom, tilesOut, tilesNr, tilesCount, filter);
+			tilesNr++;
 		}
+
+		log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+		CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
+
+					allTiles.addAll(tilesOut.keySet());
+					int tilesOutSize = tilesOut.size();
+					tilesOverall.addAndGet(tilesOutSize);
+
+		try {
+			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, zoom);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 	}
 
 	private static void handleTile(String tileIn, int zoom, Map<OSMTile,boolean[][]> tiles, int tilesNr, int tilesCount,
