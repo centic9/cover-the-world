@@ -6,24 +6,27 @@ import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TX
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.geotools.GeoTools;
 import org.dstadler.ctw.utils.Constants;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
+import org.geotools.feature.FeatureCollection;
 
 /**
  * This application takes the list of covered squares from
@@ -42,24 +45,23 @@ import org.dstadler.ctw.utils.UTMRefWithHash;
 public class CreateTileOverlaysFromUTMRef {
 	private static final Logger log = LoggerFactory.make();
 
+	public static final File VISITED_SQUARES_JSON = new File("js/VisitedSquares.json");
+	public static final File VISITED_SQUARES_NEW_JSON = new File("js/VisitedSquaresNew.json");
+
 	public static final File TILES_SQUARES_DIR = new File("tilesSquares");
 	public static final File TILES_SQUARES_DIR_NEW = new File("tilesSquaresNew");
 
 	// for printing stats when writing tiles
 	private static final AtomicLong lastLogSquare = new AtomicLong();
 
-	// prevent higher zoom levels to be processed concurrently as this puts a large
-	// burden on main memory, by limiting it to 33, we avoid running 16-17 and 18
-	// at the same time
-	private static final Semaphore SEM_ZOOMS = new Semaphore(33);
-
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		LoggerFactory.initLogging();
 
 		boolean onlyNewTiles = !(args.length > 0 && "all".equals(args[0]));
 
 		File tileDir = onlyNewTiles ? TILES_SQUARES_DIR_NEW : TILES_SQUARES_DIR;
 		String squaresFile = onlyNewTiles ? VISITED_SQUARES_NEW_TXT : VISITED_SQUARES_TXT;
+		File jsonFile = onlyNewTiles ? VISITED_SQUARES_NEW_JSON : VISITED_SQUARES_JSON;
 
 		if (onlyNewTiles) {
 			log.info("Writing only new tiles to directory " + tileDir);
@@ -80,7 +82,7 @@ public class CreateTileOverlaysFromUTMRef {
 
 		AtomicInteger tilesOverall = new AtomicInteger();
 		// t.toCoords().equals("17/70647/45300")
-		Set<OSMTile> newTiles = generateTiles(squares, tilesOverall, tileDir, t -> true);
+		Set<OSMTile> newTiles = generateSquares(squares, tilesOverall, tileDir, jsonFile, t -> true);
 
 		log.info(String.format(Locale.US, "Wrote %,d files overall in %,dms",
 				tilesOverall.get(), System.currentTimeMillis() - start));
@@ -92,75 +94,91 @@ public class CreateTileOverlaysFromUTMRef {
 					squares.size(), newTiles.size()));
 
 			tilesOverall = new AtomicInteger();
-			generateTiles(CreateTileOverlaysHelper.read(VISITED_SQUARES_TXT, "squares"), tilesOverall, TILES_SQUARES_DIR, newTiles::contains);
+			generateSquares(CreateTileOverlaysHelper.read(VISITED_SQUARES_TXT, "squares"), tilesOverall, TILES_SQUARES_DIR,
+					jsonFile, newTiles::contains);
 
 			log.info(String.format(Locale.US, "Wrote %,d files for changed tiles in %,dms",
 					tilesOverall.get(), System.currentTimeMillis() - start));
 		}
 	}
 
-	private static Set<OSMTile> generateTiles(Set<String> squares, AtomicInteger tilesOverall, File tileDir,
-			Predicate<OSMTile> filter) {
+	private static Set<OSMTile> generateSquares(Set<String> squares, AtomicInteger tilesOverall, File tileDir,
+			File jsonFile, Predicate<OSMTile> filter) throws InterruptedException, IOException {
+		// read GeoJSON from file to use it for rendering overlay images
+		final FeatureCollection<?, ?> features = GeoTools.parseFeatureCollection(jsonFile);
+
 		Set<OSMTile> allTiles = ConcurrentHashMap.newKeySet();
 
-		//for (int zoom = MIN_ZOOM; zoom <= MAX_ZOOM; zoom++)
+		// prepare counters
 		IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).
-				parallel().
 				forEach(zoom -> {
 					// indicate that this zoom is started
 					CreateTileOverlaysHelper.EXPECTED.add(zoom, 0);
 					CreateTileOverlaysHelper.ACTUAL.add(zoom, -1);
+				});
 
-					Thread thread = Thread.currentThread();
-					thread.setName(thread.getName() + " zoom " + zoom);
+		List<Integer> aList = IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).boxed()
+				.collect(Collectors.toList());
 
-					SEM_ZOOMS.acquireUninterruptibly(zoom);
-					try {
-						CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
+		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
+		aList.forEach(zoom ->
+				customThreadPool.submit(() ->
+						generateTilesForOneZoom(zoom, squares, tilesOverall, tileDir, filter, features, allTiles)));
 
-						log.info("Start processing of " + squares.size() + " squares at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
-
-						Map<OSMTile, boolean[][]> tilesOut = new TreeMap<>();
-
-						int squareCount = squares.size();
-						int squareNr = 1;
-						for (String square : squares) {
-							handleSquare(square, zoom, tilesOut, filter);
-
-							if (lastLogSquare.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-								log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s - %,d",
-										zoom, squareNr, squareCount, square, tilesOut.size()));
-
-								lastLogSquare.set(System.currentTimeMillis());
-							}
-
-							squareNr++;
-						}
-
-						CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
-						log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
-
-						allTiles.addAll(tilesOut.keySet());
-						int tilesOutSize = tilesOut.size();
-						tilesOverall.addAndGet(tilesOutSize);
-
-						try {
-							CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, zoom);
-						} catch (IOException e) {
-							throw new RuntimeException(e);
-						}
-
-						log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
-					} finally {
-						SEM_ZOOMS.release(zoom);
-					}
-				}
-				);
+		customThreadPool.shutdown();
+		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
+			throw new IllegalStateException("Timed out while waiting for all tasks to finish");
+		}
 
 		return allTiles;
 	}
 
-	private static void handleSquare(String square, int zoom, Map<OSMTile,boolean[][]> tiles, Predicate<OSMTile> filter) {
+	private static void generateTilesForOneZoom(int zoom, Set<String> squares,
+			AtomicInteger tilesOverall,
+			File tileDir,
+			Predicate<OSMTile> filter,
+			FeatureCollection<?, ?> features, Set<OSMTile> allTiles) {
+		Thread thread = Thread.currentThread();
+		thread.setName(thread.getName() + " zoom " + zoom);
+
+		CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
+
+		log.info("Start processing of " + squares.size() + " squares at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+
+		Set<OSMTile> tilesOut = new HashSet<>();
+
+		int squareCount = squares.size();
+		int squareNr = 1;
+		for (String square : squares) {
+			handleSquare(square, zoom, tilesOut, filter);
+
+			if (lastLogSquare.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
+				log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s - %,d",
+						zoom, squareNr, squareCount, square, tilesOut.size()));
+
+				lastLogSquare.set(System.currentTimeMillis());
+			}
+
+			squareNr++;
+		}
+
+		log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+		CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
+
+		allTiles.addAll(tilesOut);
+		int tilesOutSize = tilesOut.size();
+		tilesOverall.addAndGet(tilesOutSize);
+
+		try {
+			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, features);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+	}
+
+	private static void handleSquare(String square, int zoom, Set<OSMTile> tiles, Predicate<OSMTile> filter) {
 		// select starting and ending tile
 		UTMRefWithHash ref1 = UTMRefWithHash.fromString(square);
 
@@ -179,7 +197,7 @@ public class CreateTileOverlaysFromUTMRef {
 					continue;
 				}
 
-				CreateTileOverlaysHelper.writePixel(tiles, tile, recSquare);
+				tiles.add(tile);
 			}
 		}
 	}

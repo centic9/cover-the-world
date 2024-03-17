@@ -24,9 +24,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.collections.ConcurrentMappedCounter;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.geotools.GeoTools;
 import org.dstadler.ctw.utils.Constants;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
+import org.geotools.feature.FeatureCollection;
 
 import com.google.common.base.Preconditions;
 import com.pngencoder.PngEncoder;
@@ -284,6 +286,51 @@ public class CreateTileOverlaysHelper {
 		return pixel;
 	}
 
+	public static void writeTilesToFiles(File combinedDir, Set<OSMTile> tilesOut, File tileDir,
+			FeatureCollection<?, ?> features) throws IOException {
+		int tilesNr = 1;
+		for (OSMTile tile : tilesOut) {
+			writeTileToFile(combinedDir, tilesOut, tileDir, features, tile, tilesNr);
+
+			tilesNr++;
+			CreateTileOverlaysHelper.ACTUAL.inc(tile.getZoom());
+		}
+	}
+
+	private static void writeTileToFile(File combinedDir,
+			Set<OSMTile> tilesOut,
+			File tileDir,
+			FeatureCollection<?, ?> features,
+			OSMTile tile,
+			int tilesNr) throws IOException {
+		File file = tile.toFile(tileDir);
+
+		// Save the image in PNG format using the javax.imageio API
+		if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+			throw new IOException("Could not create directory at " + file.getParentFile());
+		}
+
+		GeoTools.writeImage(features, tile.getRectangle(), file);
+
+		// whenever writing a tile, remove the combined overlay to re-create it in a follow-up step
+		/*if (written)*/
+		{
+			File combinedTile = new File(combinedDir, tile.toCoords() + ".png");
+			if (combinedTile.exists()) {
+				if (!combinedTile.delete()) {
+					throw new IOException("Could not delete file " + combinedTile);
+				}
+			}
+		}
+
+		if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
+			log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s%s",
+					tile.getZoom(), tilesNr, tilesOut.size(), tile.toCoords(), CreateTileOverlaysHelper.concatProgress()));
+
+			lastLog.set(System.currentTimeMillis());
+		}
+	}
+
 	protected static String concatProgress() {
 		StringBuilder progress = new StringBuilder();
 		for (int zoom = Constants.MIN_ZOOM; zoom <= Constants.MAX_ZOOM; zoom++) {
@@ -308,5 +355,4 @@ public class CreateTileOverlaysHelper {
 
 		return progress.toString();
 	}
-
 }

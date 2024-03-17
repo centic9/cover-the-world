@@ -3,15 +3,13 @@ package org.dstadler.ctw.tiles;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 import static org.dstadler.ctw.tiles.CreateStaticTiles.TILE_DIR_COMBINED_TILES;
-import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -23,9 +21,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.geotools.GeoTools;
 import org.dstadler.ctw.utils.Constants;
-import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
+import org.geotools.feature.FeatureCollection;
 
 /**
  * This application takes the list of covered tiles from
@@ -44,6 +43,9 @@ import org.dstadler.ctw.utils.OSMTile;
 public class CreateTileOverlaysFromTiles {
 	private static final Logger log = LoggerFactory.make();
 
+	public static final File VISITED_TILES_JSON = new File("js/VisitedTiles.json");
+	public static final File VISITED_TILES_NEW_JSON = new File("js/VisitedTilesNew.json");
+
 	public static final File TILES_TILES_DIR = new File("tilesTiles");
 	public static final File TILES_TILES_DIR_NEW = new File("tilesTilesNew");
 
@@ -57,6 +59,7 @@ public class CreateTileOverlaysFromTiles {
 
 		File tileDir = onlyNewTiles ? TILES_TILES_DIR_NEW : TILES_TILES_DIR;
 		String tilesFile = onlyNewTiles ? VISITED_TILES_NEW_TXT : VISITED_TILES_TXT;
+		File jsonFile = onlyNewTiles ? VISITED_TILES_NEW_JSON : VISITED_TILES_JSON;
 
 		if (onlyNewTiles) {
 			log.info("Writing only new tiles to directory " + tileDir);
@@ -77,7 +80,7 @@ public class CreateTileOverlaysFromTiles {
 
 		AtomicInteger tilesOverall = new AtomicInteger();
 		// t.toCoords().equals("17/70647/45300")
-		Set<OSMTile> newTiles = generateTiles(tiles, tilesOverall, tileDir, t -> true);
+		Set<OSMTile> newTiles = generateTiles(tiles, tilesOverall, tileDir, jsonFile, t -> true);
 
 		log.info(String.format(Locale.US, "Wrote %,d files overall in %,dms",
 				tilesOverall.get(), System.currentTimeMillis() - start));
@@ -89,7 +92,8 @@ public class CreateTileOverlaysFromTiles {
 					tiles.size(), newTiles.size()));
 
 			tilesOverall = new AtomicInteger();
-			generateTiles(CreateTileOverlaysHelper.read(VISITED_TILES_TXT, "tiles"), tilesOverall, TILES_TILES_DIR, newTiles::contains);
+			generateTiles(CreateTileOverlaysHelper.read(VISITED_TILES_TXT, "tiles"), tilesOverall, TILES_TILES_DIR,
+					jsonFile, newTiles::contains);
 
 			log.info(String.format(Locale.US, "Wrote %,d files for changed tiles in %,dms",
 					tilesOverall.get(), System.currentTimeMillis() - start));
@@ -97,7 +101,10 @@ public class CreateTileOverlaysFromTiles {
 	}
 
 	private static Set<OSMTile> generateTiles(Set<String> tilesIn, AtomicInteger tilesOverall, File tileDir,
-			Predicate<OSMTile> filter) throws InterruptedException {
+			File jsonFile, Predicate<OSMTile> filter) throws InterruptedException, IOException {
+		// read GeoJSON from file to use it for rendering overlay images
+		final FeatureCollection<?, ?> features = GeoTools.parseFeatureCollection(jsonFile);
+
 		Set<OSMTile> allTiles = ConcurrentHashMap.newKeySet();
 
 		// prepare counters
@@ -114,7 +121,7 @@ public class CreateTileOverlaysFromTiles {
 		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
 		aList.forEach(zoom ->
 				customThreadPool.submit(() ->
-						generateTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, allTiles)));
+						generateTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, features, allTiles)));
 
 		customThreadPool.shutdown();
 		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
@@ -128,7 +135,7 @@ public class CreateTileOverlaysFromTiles {
 			AtomicInteger tilesOverall,
 			File tileDir,
 			Predicate<OSMTile> filter,
-			Set<OSMTile> allTiles) {
+			FeatureCollection<?, ?> features, Set<OSMTile> allTiles) {
 		Thread thread = Thread.currentThread();
 		thread.setName(thread.getName() + " zoom " + zoom);
 
@@ -136,7 +143,7 @@ public class CreateTileOverlaysFromTiles {
 
 		log.info("Start processing of " + tilesIn.size() + " tiles at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 
-		Map<OSMTile, boolean[][]> tilesOut = new TreeMap<>();
+		Set<OSMTile> tilesOut = new HashSet<>();
 
 		int tilesCount = tilesIn.size();
 		int tilesNr = 1;
@@ -156,12 +163,12 @@ public class CreateTileOverlaysFromTiles {
 		log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 		CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
 
-		allTiles.addAll(tilesOut.keySet());
+		allTiles.addAll(tilesOut);
 		int tilesOutSize = tilesOut.size();
 		tilesOverall.addAndGet(tilesOutSize);
 
 		try {
-			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, zoom);
+			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, features);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -169,11 +176,9 @@ public class CreateTileOverlaysFromTiles {
 		log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 	}
 
-	private static void handleTile(String tileIn, int zoom, Map<OSMTile,boolean[][]> tiles, Predicate<OSMTile> filter) {
+	private static void handleTile(String tileIn, int zoom, Set<OSMTile> tiles, Predicate<OSMTile> filter) {
 		// select starting and ending tile
 		OSMTile ref = OSMTile.fromString(tileIn);
-
-		LatLonRectangle recTileIn = ref.getRectangle();
 
 		// iterate over all "bounding" tiles at the given zoom
 		// for zoom less or equal to TILE_ZOOM, this will be a single tile
@@ -183,13 +188,7 @@ public class CreateTileOverlaysFromTiles {
 				continue;
 			}
 
-			// for zoom 14 and higher, we always have full tiles
-			if (zoom >= TILE_ZOOM) {
-				tiles.put(tile, CreateTileOverlaysHelper.FULL);
-				continue;
-			}
-
-			CreateTileOverlaysHelper.writePixel(tiles, tile, recTileIn);
+			tiles.add(tile);
 		}
 	}
 }

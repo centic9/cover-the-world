@@ -25,6 +25,9 @@ group = 'org.dstadler'
 archivesBaseName = 'cover-the-world'
 
 repositories {
+	// for geotools (needs to appear before mavenCentral)
+	maven { url 'https://repo.osgeo.org/repository/release/' }
+
     mavenCentral()
 }
 
@@ -48,6 +51,9 @@ dependencies {
     implementation 'com.pngencoder:pngencoder:0.14.0'
 	// https://github.com/filosganga/geogson
 	implementation 'com.github.filosganga:geogson-core:1.4.31'
+    implementation 'org.geotools:gt-main:30.0'
+    implementation 'org.geotools:gt-geojson:30.0'
+    implementation 'org.geotools:gt-render:30.0'
 
     // provide a logging.properties only when running the example, but
     // don't include it in the jar-file
