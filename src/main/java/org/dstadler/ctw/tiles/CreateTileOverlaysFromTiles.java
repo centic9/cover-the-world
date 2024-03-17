@@ -156,9 +156,9 @@ public class CreateTileOverlaysFromTiles {
 		log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 		CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
 
-					allTiles.addAll(tilesOut.keySet());
-					int tilesOutSize = tilesOut.size();
-					tilesOverall.addAndGet(tilesOutSize);
+		allTiles.addAll(tilesOut.keySet());
+		int tilesOutSize = tilesOut.size();
+		tilesOverall.addAndGet(tilesOutSize);
 
 		try {
 			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, zoom);
