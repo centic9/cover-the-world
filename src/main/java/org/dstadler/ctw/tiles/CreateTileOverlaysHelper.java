@@ -205,7 +205,8 @@ public class CreateTileOverlaysHelper {
 			// so the map cannot be used any more afterwards
 			it.remove();
 
-			boolean written = writePNG(entry.getKey().toFile(tileDir), entry.getValue(), tileNr, tileCount);
+			File file = entry.getKey().toFile(tileDir);
+			boolean written = writePNG(file, entry.getValue());
 
 			// whenever writing a tile, remove the combined overlay to re-create it in a follow-up step
 			if (written) {
@@ -217,12 +218,19 @@ public class CreateTileOverlaysHelper {
 				}
 			}
 
+			if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
+				log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s%s",
+						zoom, tileNr, tileCount, file, concatProgress()));
+
+				lastLog.set(System.currentTimeMillis());
+			}
+
 			tileNr++;
 			ACTUAL.inc(zoom);
 		}
 	}
 
-	public static boolean writePNG(File file, boolean[][] pixel, int tileNr, int tileCount) throws IOException {
+	public static boolean writePNG(File file, boolean[][] pixel) throws IOException {
 		BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
 
 		for (int x = 0; x < 256; x++) {
@@ -237,13 +245,6 @@ public class CreateTileOverlaysHelper {
 		// Save the image in PNG format using the javax.imageio API
 		if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
 			throw new IOException("Could not create directory at " + file.getParentFile());
-		}
-
-		if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-			log.info(String.format(Locale.US, "%,d of %,d: %s%s",
-					tileNr, tileCount, file, concatProgress()));
-
-			lastLog.set(System.currentTimeMillis());
 		}
 
 		// skip if existing Image is equal to not change the "last modified" date
@@ -284,7 +285,7 @@ public class CreateTileOverlaysHelper {
 		for (int zoom = Constants.MIN_ZOOM; zoom <= Constants.MAX_ZOOM; zoom++) {
 			long actual = ACTUAL.get(zoom);
 			if (actual == -1) {
-				progress.append(", ").append(zoom).append(":N/A");
+				progress.append(", ").append(zoom).append(":_");
 				continue;
 			}
 

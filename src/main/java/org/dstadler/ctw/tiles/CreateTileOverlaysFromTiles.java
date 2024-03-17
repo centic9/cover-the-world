@@ -201,8 +201,8 @@ public class CreateTileOverlaysFromTiles {
 		}
 
 		if (lastLogTile.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-			log.info(String.format(Locale.US, tilesNr + " of " + tilesCount + ": %s - zoom %d: %,d",
-					tileIn, zoom, tiles.size()));
+			log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s - %,d",
+					zoom, tilesNr, tilesCount, tileIn, tiles.size()));
 
 			lastLogTile.set(System.currentTimeMillis());
 		}
