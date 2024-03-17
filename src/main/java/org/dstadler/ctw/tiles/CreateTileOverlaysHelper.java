@@ -206,23 +206,27 @@ public class CreateTileOverlaysHelper {
 			it.remove();
 
 			File file = entry.getKey().toFile(tileDir);
-			boolean written = writePNG(file, entry.getValue());
+			try {
+				boolean written = writePNG(file, entry.getValue());
 
-			// whenever writing a tile, remove the combined overlay to re-create it in a follow-up step
-			if (written) {
-				File combinedTile = new File(dir, entry.getKey().toCoords() + ".png");
-				if (combinedTile.exists()) {
-					if (!combinedTile.delete()) {
-						throw new IOException("Could not delete file " + combinedTile);
+				// whenever writing a tile, remove the combined overlay to re-create it in a follow-up step
+				if (written) {
+					File combinedTile = new File(dir, entry.getKey().toCoords() + ".png");
+					if (combinedTile.exists()) {
+						if (!combinedTile.delete()) {
+							throw new IOException("Could not delete file " + combinedTile);
+						}
 					}
 				}
-			}
 
-			if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-				log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s%s",
-						zoom, tileNr, tileCount, file, concatProgress()));
+				if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
+					log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s%s",
+							zoom, tileNr, tileCount, file, concatProgress()));
 
-				lastLog.set(System.currentTimeMillis());
+					lastLog.set(System.currentTimeMillis());
+				}
+			} catch (IOException e) {
+				throw new IOException("While handling file: " + file, e);
 			}
 
 			tileNr++;
