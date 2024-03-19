@@ -101,15 +101,17 @@ you want to automate things in some more advanced way.
 
 ## Caveats
 
-### Some computations are limited to UTM zone 33 by defaults
+### Some computations are limited to UTM zone 33 for 1km x 1km squares
 
-Currently computing largest squares/rectangles is limited to a given UTM zone, 
-by default zone "33" is used. You can adjust this in `org.dstadler.ctw.utils.Constants.ZONE`
-and re-run to produce the proper largest squares/rectangles if you are located
-in another UTM zone.
+Currently, computing the largest squares is limited to a single zone of
+the UTM coordinate system. By default zone "33" is used. You can adjust 
+this in `org.dstadler.ctw.utils.Constants.ZONE` and re-run to produce the 
+proper largest squares if you are located in another UTM zone.
 
-The limitation is caused by the matrix-based algorithms used for largest square and 
-rectangle which would become larger than available memory if not constrained.
+This limitation does not apply for the 1mile x 1mile tiles.
+
+The limitation is needed because the algorithms for computing distances 
+would become much more complicated.
 
 Would be cool to get rid of this limitation, let me know via issues/PRs if you have ideas
 how to do a whole-world computation efficiently.
