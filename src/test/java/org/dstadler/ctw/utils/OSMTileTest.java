@@ -3,9 +3,9 @@ package org.dstadler.ctw.utils;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 import static org.dstadler.ctw.utils.OSMTile.OSM_MAX_ZOOM;
 import static org.dstadler.ctw.utils.OSMTile.OSM_MIN_ZOOM;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +16,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.ctw.tiles.CreateTileOverlaysHelper;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import uk.me.jstott.jcoord.LatLng;
 
@@ -30,34 +30,34 @@ public class OSMTileTest {
 	private final static int MIN_LATITUDE = -80;
 	private final static int MAX_LATITUDE = 84;
 
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() throws IOException {
 		LoggerFactory.initLogging();
 	}
 
 	@Test
-	public void test() {
+	void test() {
 		OSMTile nr = OSMTile.fromLatLngZoom(2, 3, 10);
 		assertNotNull(nr);
-		assertEquals("Having: " + nr.toCoords(),
-				520, nr.getXTile());
-		assertEquals("Having: " + nr.toCoords(),
-				506, nr.getYTile());
-		assertEquals("Having: " + nr.toCoords(),
-				10, nr.getZoom());
+		assertEquals(520, nr.getXTile(),
+				"Having: " + nr.toCoords());
+		assertEquals(506, nr.getYTile(),
+				"Having: " + nr.toCoords());
+		assertEquals(10, nr.getZoom(),
+				"Having: " + nr.toCoords());
 
-		assertEquals("Having: " + nr.toCoords(),
-				"10/520", nr.toDirName());
-		assertEquals("Having: " + nr.toCoords(),
-				"10/520/506", nr.toCoords());
-		assertEquals("Having: " + nr.toCoords(),
-				new File("./10/520/506.png"), nr.toFile(new File(".")));
-		assertEquals("Having: " + nr.toCoords(),
-				"10/520", nr.toDirName());
+		assertEquals("10/520", nr.toDirName(),
+				"Having: " + nr.toCoords());
+		assertEquals("10/520/506", nr.toCoords(),
+				"Having: " + nr.toCoords());
+		assertEquals(new File("./10/520/506.png"), nr.toFile(new File(".")),
+				"Having: " + nr.toCoords());
+		assertEquals("10/520", nr.toDirName(),
+				"Having: " + nr.toCoords());
 	}
 
 	@Test
-	public void testHashCodeEquals() {
+	void testHashCodeEquals() {
 		OSMTile nr1 = OSMTile.fromLatLngZoom(34, 3, 10);
 		OSMTile nr2 = OSMTile.fromLatLngZoom(34, 3, 10);
 		TestHelpers.HashCodeTest(nr1, nr2);
@@ -73,7 +73,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testComparator() {
+	void testComparator() {
 		OSMTile nr1 = OSMTile.fromLatLngZoom(34, 3, 10);
 		OSMTile nr2 = OSMTile.fromLatLngZoom(34, 3, 10);
 
@@ -91,7 +91,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testInvalidValuesFromLatLngZoom() {
+	void testInvalidValuesFromLatLngZoom() {
 		assertThrows(IllegalArgumentException.class,
 				() -> OSMTile.fromLatLngZoom(2432, 1, 1));
 		assertThrows(IllegalArgumentException.class,
@@ -101,7 +101,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testInvalidValuesGetPixel() {
+	void testInvalidValuesGetPixel() {
 		OSMTile tile = OSMTile.fromLatLngZoom(1, 1, 1);
 		assertThrows(IllegalArgumentException.class,
 				() -> tile.getPixelInTile(2432, 1));
@@ -110,7 +110,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testGetPixelInTile() {
+	void testGetPixelInTile() {
 		//checkPixel(35.234, 3.23423, 10, 51, 202);
 		checkPixel(53.09391806811101, -8.223464321282336, 5, 68, 105);
 		checkPixel(53.102901220952205, -8.208504993347152, 5, 69, 104);
@@ -128,15 +128,15 @@ public class OSMTileTest {
 		Pair<Integer, Integer> pixel = tile.getPixelInTile(lat, lon);
 		assertNotNull(pixel);
 
-		assertEquals("Having: " + pixel,
-				Integer.valueOf(pixelX), pixel.getKey());
-		assertEquals("Having: " + pixel,
-				Integer.valueOf(pixelY), pixel.getValue());
+		assertEquals(Integer.valueOf(pixelX), pixel.getKey(),
+				"Having: " + pixel);
+		assertEquals(Integer.valueOf(pixelY), pixel.getValue(),
+				"Having: " + pixel);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void testRandom() {
+	void testRandom() {
 		for (int i = 0; i < 100_000; i++) {
 			double lat = RandomUtils.nextDouble(0, (-1) * MIN_LATITUDE + MAX_LATITUDE);
 			double lon = RandomUtils.nextDouble(0, 2 * 180);
@@ -151,7 +151,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testGetLatLon() {
+	void testGetLatLon() {
 		checkStartEndLatLon(2.0, 3.0, 10,
 				2.1088986, 2.8125,
 				1.757536811308323, 3.1640625);
@@ -179,7 +179,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testKleinzell() {
+	void testKleinzell() {
 		for (int zoom = OSM_MIN_ZOOM; zoom < OSM_MAX_ZOOM; zoom++) {
 			OSMTile tile = OSMTile.fromLatLngZoom(48.45616, 13.99863, zoom);
 
@@ -195,7 +195,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testFromString() {
+	void testFromString() {
 		OSMTile tile = OSMTile.fromString("1/1/1");
 		assertEquals(1, tile.getZoom());
 		assertEquals(1, tile.getXTile());
@@ -217,7 +217,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testInvalidValuesFromString() {
+	void testInvalidValuesFromString() {
 		assertThrows(IllegalArgumentException.class,
 				() -> OSMTile.fromString(""));
 		assertThrows(IllegalArgumentException.class,
@@ -244,14 +244,14 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testReadTiles() throws IOException {
-		Assume.assumeTrue("Cannot run test, file " + VISITED_TILES_TXT + " not found",
-				new File(VISITED_TILES_TXT).exists());
+	void testReadTiles() throws IOException {
+		Assumptions.assumeTrue(new File(VISITED_TILES_TXT).exists(),
+				"Cannot run test, file " + VISITED_TILES_TXT + " not found");
 		OSMTile.readTiles(new File(VISITED_TILES_TXT));
 	}
 
 	@Test
-	public void testUpDownLeftRight() {
+	void testUpDownLeftRight() {
 		OSMTile tile = new OSMTile(14, 2343, 2343);
 		assertEquals("14/2343/2342", tile.up().toCoords());
 		assertEquals("14/2343/2344", tile.down().toCoords());
@@ -260,7 +260,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void testGetTilesAtZoom() {
+	void testGetTilesAtZoom() {
 		assertThrows(IllegalArgumentException.class,
 				() -> new OSMTile(0, 0, 0).getTilesAtZoom(-1));
 
@@ -279,6 +279,6 @@ public class OSMTileTest {
 				+ "OSMTile{zoom=15, xTile=17675, yTile=11321}"
 				+ "]", tile.getTilesAtZoom(15).toString());
 
-		assertEquals(/* 4*4*4*4*4*4 => */ 4096, tile.getTilesAtZoom(20).size());
+		assertEquals(4096, tile.getTilesAtZoom(20).size());
 	}
 }

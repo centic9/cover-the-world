@@ -1,17 +1,17 @@
 package org.dstadler.ctw.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.EmptyStackException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IntStackTest {
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         IntStack stack = new IntStack();
         assertTrue(stack.isEmpty());
         assertThrows(EmptyStackException.class,
@@ -25,7 +25,7 @@ public class IntStackTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         IntStack stack = new IntStack();
         stack.push(9);
 
@@ -50,7 +50,7 @@ public class IntStackTest {
     }
 
 	@Test
-	public void testMany() {
+	void testMany() {
 		IntStack stack = new IntStack();
 		for (int i = 0; i < 10_000; i++) {
 			stack.push(i);
@@ -82,7 +82,7 @@ public class IntStackTest {
 	}
 
     @Test
-    public void testInitial() {
+    void testInitial() {
         IntStack stack = new IntStack(123);
         assertTrue(stack.isEmpty());
         assertThrows(EmptyStackException.class,

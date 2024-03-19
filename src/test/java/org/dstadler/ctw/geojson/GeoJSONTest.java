@@ -1,9 +1,9 @@
 package org.dstadler.ctw.geojson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,15 +17,13 @@ import org.apache.commons.io.IOUtils;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.filosganga.geogson.model.Feature;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class GeoJSONTest {
 	@Test
-	public void testCreateSquare() {
+	void testCreateSquare() {
 		Feature square = GeoJSON.createSquare(UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle(), null);
 		assertNotNull(square);
 		assertTrue(square.properties().isEmpty());
@@ -36,19 +34,18 @@ public class GeoJSONTest {
 	}
 
 	@Test
-	public void testCreateSquareWithProperty() {
+	void testCreateSquareWithProperty() {
 		Feature square = GeoJSON.createSquare(UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle(),
 				"property 1");
 		assertNotNull(square);
-		assertFalse("Had: " + square.properties(),
-				square.properties().isEmpty());
+		assertFalse(square.properties().isEmpty(), "Had: " + square.properties());
 
 		assertNotNull(square.properties().get("popupContent"));
 		assertEquals("property 1", square.properties().get("popupContent").getAsString());
 	}
 
 	@Test
-	public void testCreateSquareOSMTile() {
+	void testCreateSquareOSMTile() {
 		Feature square = GeoJSON.createSquare(OSMTile.fromString("1/1/1").getRectangle(), null);
 		assertNotNull(square);
 		assertTrue(square.properties().isEmpty());
@@ -59,7 +56,7 @@ public class GeoJSONTest {
 	}
 
 	@Test
-	public void testFormatDecimal() {
+	void testFormatDecimal() {
 		assertEquals(1.0, GeoJSON.formatDecimal(1.0d), 0.000001);
 		assertEquals(1.12345, GeoJSON.formatDecimal(1.1234547890d), 0.000001);
 		assertEquals(1.12345, GeoJSON.formatDecimal(1.1234507890d), 0.000001);
@@ -69,7 +66,7 @@ public class GeoJSONTest {
 	}
 
 	@Test
-	public void testWrite() throws IOException {
+	void testWrite() throws IOException {
 		File temp = File.createTempFile("GeoJSONTest", ".js");
 		try {
 			assertTrue(temp.delete());
@@ -82,19 +79,18 @@ public class GeoJSONTest {
 
 			assertTrue(temp.exists());
 			String js = FileUtils.readFileToString(temp, StandardCharsets.UTF_8);
-			assertTrue("Had: " + js,
-					js.contains("\"features\""));
+			assertTrue(js.contains("\"features\""), "Had: " + js);
 
-			assertTrue("Should have only 5 decimal digits for \nrect " + rect + ", but had: \n" + js,
-					js.contains("[" + GeoJSON.formatDecimal(rect.lon1) + "," + GeoJSON.formatDecimal(rect.lat1) + "]"));
+			assertTrue(
+					js.contains("[" + GeoJSON.formatDecimal(rect.lon1) + "," + GeoJSON.formatDecimal(rect.lat1) + "]"),
+					"Should have only 5 decimal digits for \nrect " + rect + ", but had: \n" + js);
 		} finally {
-			assertTrue("Had: " + temp.getAbsolutePath(),
-					!temp.exists() || temp.delete());
+			assertTrue(!temp.exists() || temp.delete(), "Had: " + temp.getAbsolutePath());
 		}
 	}
 
 	@Test
-	public void testGetGeoJSON() throws IOException {
+	void testGetGeoJSON() throws IOException {
 		LatLonRectangle rect = UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle();
 
 		List<Feature> features = new ArrayList<>();

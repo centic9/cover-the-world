@@ -4,10 +4,10 @@ import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NE
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import static org.dstadler.ctw.utils.OSMTileTest.ASSERT_DELTA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.RandomUtils;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.util.SuppressForbidden;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
@@ -29,12 +29,12 @@ public class UTMRefWithHashTest {
     private final static int MIN_LATITUDE = -80;
     private final static int MAX_LATITUDE = 84;
 
-	// getting closer to 180 causes failurs due to rounding errors lead to values > 180
+	// getting closer to 180 causes failures due to rounding errors lead to values > 180
     private final static double MIN_LONGITUDE = -179.9;
     private final static double MAX_LONGITUDE = 179.9;
 
     @Test
-    public void test() {
+    void test() {
         UTMRefWithHash ref = new UTMRefWithHash(1, 'U', 23423.23, 5234.233);
         assertEquals(1, ref.getLngZone());
         assertEquals('U', ref.getLatZone());
@@ -43,7 +43,7 @@ public class UTMRefWithHashTest {
     }
 
     @Test
-    public void testHashAndEquals() {
+    void testHashAndEquals() {
         UTMRefWithHash ref1 = new UTMRefWithHash(1, 'U', 23423.23, 5234.233);
         UTMRefWithHash ref2 = new UTMRefWithHash(1, 'U', 23423.23, 5234.233);
 
@@ -63,18 +63,18 @@ public class UTMRefWithHashTest {
     }
 
     @Test
-    public void testGetSquareString() {
+    void testGetSquareString() {
         String strRef = UTMRefWithHash.getSquareString(new LatLng(23.43, 54.23));
         UTMRefWithHash ref = UTMRefWithHash.fromString(strRef);
 
-        assertEquals("Had: " + ref,
-                40, ref.getLngZone());
-        assertEquals("Had: " + ref,
-                'Q', ref.getLatZone());
-        assertEquals("Had: " + ref,
-                216000.0, ref.getEasting(), ASSERT_DELTA);
-        assertEquals("Had: " + ref,
-                2593000.0, ref.getNorthing(), ASSERT_DELTA);
+        assertEquals(40, ref.getLngZone(),
+				"Had: " + ref);
+        assertEquals('Q', ref.getLatZone(),
+				"Had: " + ref);
+        assertEquals(216000.0, ref.getEasting(), ASSERT_DELTA,
+				"Had: " + ref);
+        assertEquals(2593000.0, ref.getNorthing(), ASSERT_DELTA,
+				"Had: " + ref);
 
         // ensure that we get values at km-boundary
         // https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system#Latitude_bands
@@ -82,7 +82,7 @@ public class UTMRefWithHashTest {
     }
 
     @Test
-    public void testFromString() {
+    void testFromString() {
 		checkFromString("33U 428000.0 5366000.0", 33, 'U', 428000.0, 5366000.0);
 		checkFromString("33U 428001 5366001", 33, 'U', 428001.0, 5366001.0);
 		checkFromString("1C 428001 5366001", 1, 'C', 428001.0, 5366001.0);
@@ -97,21 +97,21 @@ public class UTMRefWithHashTest {
 	}
 
 	@Test
-    public void testGetRectangle() {
+    void testGetRectangle() {
         UTMRefWithHash ref = UTMRefWithHash.fromString("33U 428000.0 5366000.0");
 		LatLonRectangle rec = ref.getRectangle();
-		assertEquals("Had: " + rec,
-				48.45201761091308, rec.lat1, ASSERT_DELTA);
-		assertEquals("Had: " + rec,
-				14.026424192067552, rec.lon1, ASSERT_DELTA);
-		assertEquals("Had: " + rec,
-				48.44302242806286, rec.lat2, ASSERT_DELTA);
-		assertEquals("Had: " + rec,
-				14.039944088630683, rec.lon2, ASSERT_DELTA);
+		assertEquals(48.45201761091308, rec.lat1, ASSERT_DELTA,
+				"Had: " + rec);
+		assertEquals(14.026424192067552, rec.lon1, ASSERT_DELTA,
+				"Had: " + rec);
+		assertEquals(48.44302242806286, rec.lat2, ASSERT_DELTA,
+				"Had: " + rec);
+		assertEquals(14.039944088630683, rec.lon2, ASSERT_DELTA,
+				"Had: " + rec);
 	}
 
     @Test
-    public void testFromString2() {
+    void testFromString2() {
         UTMRefWithHash ref1 = UTMRefWithHash.fromString("33U 425000.0 5366000.0");
         assertEquals(33, ref1.getLngZone());
         assertEquals('U', ref1.getLatZone());
@@ -127,7 +127,7 @@ public class UTMRefWithHashTest {
     }
 
     @Test
-    public void testFromStringInvalid() {
+    void testFromStringInvalid() {
         assertThrows(IllegalArgumentException.class,
                 () -> UTMRefWithHash.fromString("33I 428000.0 5366000.0"));
         assertThrows(IllegalArgumentException.class,
@@ -150,7 +150,7 @@ public class UTMRefWithHashTest {
     }
 
 	@Test
-	public void testDirections() {
+	void testDirections() {
 		UTMRefWithHash ref = UTMRefWithHash.fromString("33U 428000.0 5366000.0");
 
 		check(ref.up(),    33, 'U', 428000.0, 5367000.0);
@@ -175,7 +175,7 @@ public class UTMRefWithHashTest {
 
 	@SuppressForbidden(reason = "Uses System.out on purpose")
 	@Test
-	public void testPrintUTMRefs() {
+	void testPrintUTMRefs() {
 		UTMRef ref = UTMRefWithHash.fromString("32U 0.0 0.0");
 		System.out.printf("Ref: %40s: %s: %s%n", ref, ref.toLatLng(), ref.toLatLng().toUTMRef());
 
@@ -230,7 +230,7 @@ public class UTMRefWithHashTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testRandom() {
+    void testRandom() {
         for (int i = 0; i < 100_000; i++) {
             double lat = RandomUtils.nextDouble(0, (-1)*MIN_LATITUDE + MAX_LATITUDE);
             double lon = RandomUtils.nextDouble(0, (-1)*MIN_LONGITUDE + MAX_LONGITUDE);
@@ -238,8 +238,8 @@ public class UTMRefWithHashTest {
             lon += MIN_LONGITUDE;
             String ref = UTMRefWithHash.getSquareString(new LatLng(lat, lon));
 
-            assertTrue("Failed for lat " + lat + ", lon " + lon + ": " + ref,
-                    UTMREF_SQUARE_PATTERN.matcher(ref).matches());
+            assertTrue(UTMREF_SQUARE_PATTERN.matcher(ref).matches(),
+					"Failed for lat " + lat + ", lon " + lon + ": " + ref);
 
 			UTMRefWithHash ref1 = UTMRefWithHash.fromString(ref);
 			assertNotNull(ref1);
@@ -249,7 +249,7 @@ public class UTMRefWithHashTest {
     }
 
 	@Test
-	public void testConvertBackAndForth() {
+	void testConvertBackAndForth() {
 		// Kansas USA (Consistent):
 		checkConvertBackAndForth(39.964463, -99.820180);
 		// Rio De Janeiro Brazil
@@ -266,30 +266,28 @@ public class UTMRefWithHashTest {
 
 		UTMRef refBack = UTMRefWithHash.fromString(ref.toString());
 
-		assertEquals("Having " + ref + " and " + refBack,
-				ref.getLngZone(), refBack.getLngZone());
-		assertEquals("Having " + ref + " and " + refBack,
-				ref.getLatZone(), refBack.getLatZone());
-		assertEquals("Having " + ref + " and " + refBack,
-				ref.getEasting(), refBack.getEasting(), ASSERT_DELTA);
-		assertEquals("Having " + ref + " and " + refBack,
-				ref.getNorthing(), refBack.getNorthing(), ASSERT_DELTA);
+		assertEquals(ref.getLngZone(), refBack.getLngZone(),
+				"Having " + ref + " and " + refBack);
+		assertEquals(ref.getLatZone(), refBack.getLatZone(),
+				"Having " + ref + " and " + refBack);
+		assertEquals(ref.getEasting(), refBack.getEasting(), ASSERT_DELTA,
+				"Having " + ref + " and " + refBack);
+		assertEquals(ref.getNorthing(), refBack.getNorthing(), ASSERT_DELTA,
+				"Having " + ref + " and " + refBack);
 	}
 
 	@Test
-	public void testReadSquares() throws IOException {
+	void testReadSquares() throws IOException {
 		assertThrows(NoSuchFileException.class,
-				() -> UTMRefWithHash.readSquares(new File("notexist")));
+				() -> UTMRefWithHash.readSquares(new File("not exist")));
 
 		Set<UTMRefWithHash> squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_TXT));
 		assertNotNull(squares);
-		assertTrue("Had: " + squares.size(),
-				squares.size() > 15);
+		assertTrue(squares.size() > 15, "Had: " + squares.size());
 
 		squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_NEW_TXT));
 		assertNotNull(squares);
 		//noinspection ConstantValue
-		assertTrue("Had: " + squares.size(),
-				squares.size() >= 0);
+		assertTrue(squares.size() >= 0, "Had: " + squares.size());
 	}
 }

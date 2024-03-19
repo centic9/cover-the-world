@@ -14,7 +14,7 @@ class CreateLargestSquareGeoJSONSquaresTest {
 
 	// helper method to get coverage of the unused constructor
 	@Test
-	public void testPrivateConstructor() throws Exception {
+	void testPrivateConstructor() throws Exception {
 		PrivateConstructorCoverage.executePrivateConstructor(CreateLargestSquareGeoJSONSquares.class);
 	}
 }

@@ -53,8 +53,6 @@ dependencies {
     // don't include it in the jar-file
     runtimeOnly files('src/runtime/resources')
 
-    testImplementation 'org.junit.vintage:junit-vintage-engine:5.10.2'
-    testImplementation 'org.junit.vintage:junit-vintage-engine:5.10.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
     testImplementation 'org.dstadler:commons-test:1.0.0.20'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.22.1'

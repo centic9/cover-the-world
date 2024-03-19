@@ -4,8 +4,8 @@ import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.GPX_DIR;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NEW_TXT;
 import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import static org.dstadler.ctw.utils.OSMTileTest.ASSERT_DELTA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,9 +27,9 @@ import org.dstadler.commons.util.SuppressForbidden;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import uk.me.jstott.jcoord.LatLng;
@@ -38,13 +38,13 @@ import uk.me.jstott.jcoord.UTMRef;
 public class CreateTileOverlaysFromUTMRefTest {
 	private static final Logger log = LoggerFactory.make();
 
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() throws IOException {
 		LoggerFactory.initLogging();
 	}
 
 	@Test
-	public void testComputeSquare() {
+	void testComputeSquare() {
 		LatLonRectangle recSquare1 = createSquare("33U 425000.0 5366000.0");
 		LatLonRectangle recSquare2 = createSquare("33U 426000.0 5366000.0");
 
@@ -79,7 +79,7 @@ public class CreateTileOverlaysFromUTMRefTest {
 
 	@SuppressForbidden(reason = "Uses System.out on purpose")
 	@Test
-	public void testValues() {
+	void testValues() {
 		// select starting and ending tile
 		UTMRefWithHash ref1 = UTMRefWithHash.fromString("33U 429000.0 5371000.0");
 
@@ -97,10 +97,10 @@ public class CreateTileOverlaysFromUTMRefTest {
 		System.out.println("LatLng2n: " + ref2North.toLatLng() + " - " + ref2North);
 		System.out.println("LatLng3 : " + ref3.toLatLng() + " - " + ref3);
 
-		assertNotEquals("Would be expected, but isn't due to earth being a sphere/ellipsoid",
-				ref2East.toLatLng().getLongitude(), ref3.toLatLng().getLongitude());
-		assertNotEquals("Would be expected, but isn't due to earth being a sphere/ellipsoid",
-				ref2North.toLatLng().getLatitude(), ref3.toLatLng().getLatitude());
+		assertNotEquals(ref2East.toLatLng().getLongitude(), ref3.toLatLng().getLongitude(),
+				"Would be expected, but isn't due to earth being a sphere/ellipsoid");
+		assertNotEquals(ref2North.toLatLng().getLatitude(), ref3.toLatLng().getLatitude(),
+				"Would be expected, but isn't due to earth being a sphere/ellipsoid");
 
 		System.out.println();
 
@@ -138,15 +138,15 @@ public class CreateTileOverlaysFromUTMRefTest {
 		System.out.println("LatLng3e: " + ref3East.toLatLng() + " - " + ref3East);
 		System.out.println("LatLng3n: " + ref3North.toLatLng() + " - " + ref3North);
 
-		assertEquals("Adjusted lat/lon should match",
-				ref2North.toLatLng().getLatitude(), ref3North.toLatLng().getLatitude(), ASSERT_DELTA);
-		assertEquals("Adjusted lat/lon should match",
-				ref2East.toLatLng().getLongitude(), ref3East.toLatLng().getLongitude(), ASSERT_DELTA);
+		assertEquals(ref2North.toLatLng().getLatitude(), ref3North.toLatLng().getLatitude(), ASSERT_DELTA,
+				"Adjusted lat/lon should match");
+		assertEquals(ref2East.toLatLng().getLongitude(), ref3East.toLatLng().getLongitude(), ASSERT_DELTA,
+				"Adjusted lat/lon should match");
 	}
 
-	@Ignore("Used to find tracks for a given Tile")
+	@Disabled("Used to find tracks for a given Tile")
 	@Test
-	public void testFromXYZoom() throws IOException {
+	void testFromXYZoom() throws IOException {
 		OSMTile tile = new OSMTile(11, 1107, 714);
 
 		LatLonRectangle recTile = tile.getRectangle();

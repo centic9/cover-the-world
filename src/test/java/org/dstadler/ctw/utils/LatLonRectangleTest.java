@@ -19,7 +19,7 @@ import uk.me.jstott.jcoord.LatLng;
 
 public class LatLonRectangleTest {
 	@Test
-	public void testIntersectItself() {
+	void testIntersectItself() {
 		checkIntersect(
 				48.458, 14.150, 48.400, 14.238,
 				48.458, 14.150, 48.400, 14.238,
@@ -27,7 +27,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testIntersect() {
+	void testIntersect() {
 		checkIntersect(
 				48.458, 14.150, 48.400, 14.238,
 				48.500, 14.200, 48.450, 14.338,
@@ -35,7 +35,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testIntersect2() {
+	void testIntersect2() {
 		checkIntersect(
 				48.458, 14.150, 48.400, 14.238,
 				48.450, 14.200, 48.300, 14.338,
@@ -43,7 +43,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testIntersect3() {
+	void testIntersect3() {
 		checkIntersect(
 				48.458, 14.150, 48.400, 14.238,
 				48.450, 14.200, 48.300, 14.230,
@@ -51,7 +51,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testIntersect4() {
+	void testIntersect4() {
 		checkIntersect(
 				20, 0, 0, 20,
 				2, 2, 1, 3,
@@ -59,7 +59,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testIntersect5() {
+	void testIntersect5() {
 		checkIntersect(
 				1, 1, 1, 1,
 				1, 1, 1, 1,
@@ -67,7 +67,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testIntersectNegative() {
+	void testIntersectNegative() {
 		checkIntersectEmpty(
 				-48.400, -14.238, -48.458, -14.150,
 				48.450, 14.200, 48.300, 14.230
@@ -80,7 +80,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testIntersectEmpty() {
+	void testIntersectEmpty() {
 		checkIntersectEmpty(
 				48.458, 14.150, 48.400, 14.238,
 				48.500, 14.239, 48.450, 14.338
@@ -88,7 +88,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void test() {
+	void test() {
 		LatLonRectangle rect = new LatLonRectangle(
 				48.458, 14.150,
 				48.400, 14.238);
@@ -160,7 +160,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testToString() {
+	void testToString() {
 		LatLonRectangle rect = new LatLonRectangle(
 				48.458, 14.150,
 				48.400, 14.238);
@@ -181,7 +181,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testHashCode() {
+	void testHashCode() {
 		LatLonRectangle rect = new LatLonRectangle(
 				48.458, 14.150,
 				48.400, 14.238);
@@ -194,7 +194,7 @@ public class LatLonRectangleTest {
 
 
 	@Test
-	public void testEquals() {
+	void testEquals() {
 		LatLonRectangle rect = new LatLonRectangle(
 				48.458, 14.150,
 				48.400, 14.238);
@@ -209,7 +209,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testLatLng() {
+	void testLatLng() {
 		checkLatLng(45.091711, 7.661622, 45.091711, 7.661622, 0);
 		checkLatLng(45.091711, 7.661622, 45.055094, 7.647369, 4.2198080284070425);
 		checkLatLng(45, 7, 45.055094, 7.647369, 51.20884014453142);
@@ -225,7 +225,7 @@ public class LatLonRectangleTest {
 
 
 	@Test
-	public void testBordersInside() {
+	void testBordersInside() {
 		checkBordersInside(
 				20, 0, 0, 20,
 				2, 2, 1, 3,
