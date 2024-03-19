@@ -1,5 +1,6 @@
 package org.dstadler.ctw.geojson;
 
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 import static org.dstadler.ctw.utils.Constants.ZONE;
@@ -24,6 +25,7 @@ import com.github.filosganga.geogson.model.Feature;
 import com.github.filosganga.geogson.model.LinearRing;
 import com.github.filosganga.geogson.model.Point;
 import com.github.filosganga.geogson.model.Polygon;
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonPrimitive;
 
 import uk.me.jstott.jcoord.LatLng;
@@ -50,6 +52,8 @@ public class CreateLargestSquareGeoJSONTiles {
 		LoggerFactory.initLogging();
 
 		Set<OSMTile> tiles = OSMTile.readTiles(new File(VISITED_TILES_TXT));
+		Preconditions.checkState(tiles.size() > 0,
+				"Did not read any tiles from " + VISITED_SQUARES_TXT);
 
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE,
 				minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;

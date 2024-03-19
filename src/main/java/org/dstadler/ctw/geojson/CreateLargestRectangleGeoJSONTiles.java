@@ -1,5 +1,6 @@
 package org.dstadler.ctw.geojson;
 
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.utils.OSMTile;
 
 import com.github.filosganga.geogson.model.Feature;
+import com.google.common.base.Preconditions;
 
 /**
  * This application reads the list of covered tiles and
@@ -37,6 +39,8 @@ public class CreateLargestRectangleGeoJSONTiles {
 		LoggerFactory.initLogging();
 
 		Set<OSMTile> tiles = OSMTile.readTiles(new File(VISITED_TILES_TXT));
+		Preconditions.checkState(tiles.size() > 0,
+				"Did not read any tiles from " + VISITED_SQUARES_TXT);
 
 		// produce the GeoJSON for the rectangle
 		Feature rectangle = CreateGeoJSON.getTileRectangle(tiles, CLUSTER_RECTANGLE_TILE_TXT, "rectangle");

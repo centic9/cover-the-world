@@ -24,6 +24,7 @@ import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
 
 import com.github.filosganga.geogson.model.Feature;
+import com.google.common.base.Preconditions;
 
 /**
  * Small application to compute the largest cluster of squares
@@ -96,6 +97,9 @@ public class CreateLargestClusterGeoJSONSquares {
 		List<List<UTMRefWithHash>> clusters = new ArrayList<>();
 
 		Set<UTMRefWithHash> squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_TXT));
+		Preconditions.checkState(squares.size() > 0,
+				"Did not read any squares from " + VISITED_SQUARES_TXT);
+
 		Set<UTMRefWithHash> allSquares = new HashSet<>(squares);
 
 		// check each square

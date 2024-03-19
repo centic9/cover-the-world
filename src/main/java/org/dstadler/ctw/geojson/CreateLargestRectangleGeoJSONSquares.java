@@ -14,6 +14,7 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.utils.UTMRefWithHash;
 
 import com.github.filosganga.geogson.model.Feature;
+import com.google.common.base.Preconditions;
 
 /**
  * This application reads the list of covered squares and
@@ -37,6 +38,8 @@ public class CreateLargestRectangleGeoJSONSquares {
 		LoggerFactory.initLogging();
 
 		Set<UTMRefWithHash> squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_TXT));
+		Preconditions.checkState(squares.size() > 0,
+				"Did not read any squares from " + VISITED_SQUARES_TXT);
 
 		// produce the GeoJSON for the rectangle
 		Feature rectangle = CreateGeoJSON.getSquareRectangle(squares, CLUSTER_RECTANGLE_TXT, "rectangle");

@@ -24,6 +24,7 @@ import com.github.filosganga.geogson.model.Feature;
 import com.github.filosganga.geogson.model.LinearRing;
 import com.github.filosganga.geogson.model.Point;
 import com.github.filosganga.geogson.model.Polygon;
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonPrimitive;
 
 /**
@@ -48,6 +49,8 @@ public class CreateLargestSquareGeoJSONSquares {
 		LoggerFactory.initLogging();
 
 		Set<UTMRefWithHash> squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_TXT));
+		Preconditions.checkState(squares.size() > 0,
+				"Did not read any squares from " + VISITED_SQUARES_TXT);
 
 		double minEast = Double.MAX_VALUE, maxEast = Double.MIN_VALUE,
 				minNorth = Double.MAX_VALUE, maxNorth = Double.MIN_VALUE;

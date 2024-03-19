@@ -18,6 +18,7 @@ import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
 
 import com.github.filosganga.geogson.model.Feature;
+import com.google.common.base.Preconditions;
 
 /**
  * Simple tool to create a list of all squares that are part
@@ -38,6 +39,8 @@ public class CreateClusterGeoJSON {
 		LoggerFactory.initLogging();
 
 		Set<UTMRefWithHash> squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_TXT));
+		Preconditions.checkState(squares.size() > 0,
+				"Did not read any squares from " + VISITED_SQUARES_TXT);
 
 		Set<String> clusterSquares = new TreeSet<>();
 		List<Feature> features = new ArrayList<>();
