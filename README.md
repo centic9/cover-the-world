@@ -36,7 +36,7 @@ You can directly open the provided file [leaflet-map.html](leaflet-map.html) loc
 
 A sample image with the two sample GPX tracks looks as follows 
 
-<img src="https://raw.githubusercontent.com/centic9/cover-the-world/main/Cover%20the%20World.png" width="50%"/>
+<img src="https://raw.githubusercontent.com/centic9/cover-the-world/main/Cover%20the%20World.png" width="50%" alt="World map with some covered tiles"/>
 
 You can also host the resulting files on a web-server to make your covered tiles available online.
 
