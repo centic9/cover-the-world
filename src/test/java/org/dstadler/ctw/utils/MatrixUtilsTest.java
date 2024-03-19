@@ -109,6 +109,67 @@ public class MatrixUtilsTest {
     }
 
 	@Test
+	public void testMaxSubSquareMinimal() {
+		int [][] matrix = new int[1][1];
+		assertEquals("(java.awt.Rectangle[x=1,y=0,width=0,height=0],0)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix[0][0] = 1;
+		assertEquals("(java.awt.Rectangle[x=1,y=0,width=1,height=1],1)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix = new int[2][2];
+		assertEquals("(java.awt.Rectangle[x=1,y=0,width=0,height=0],0)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix[0][0] = 1;
+		assertEquals("(java.awt.Rectangle[x=1,y=0,width=1,height=1],1)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix[1][0] = 1;
+		assertEquals("(java.awt.Rectangle[x=1,y=0,width=1,height=1],1)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix[0][1] = 1;
+		matrix[1][1] = 1;
+		assertEquals("(java.awt.Rectangle[x=2,y=1,width=2,height=2],4)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix = new int[5][5];
+		matrix[1][2] = 1;
+		matrix[2][2] = 1;
+		assertEquals("(java.awt.Rectangle[x=3,y=1,width=1,height=1],1)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix[1][1] = 1;
+		matrix[2][1] = 1;
+		assertEquals("(java.awt.Rectangle[x=3,y=2,width=2,height=2],4)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix = new int[100][100];
+		matrix[5][5] = 1;
+		matrix[5][6] = 1;
+		matrix[6][5] = 1;
+		matrix[6][6] = 1;
+		assertEquals("(java.awt.Rectangle[x=7,y=6,width=2,height=2],4)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix[6][6] = 1;
+		matrix[6][7] = 1;
+		matrix[7][6] = 1;
+		matrix[7][7] = 1;
+		assertEquals("(java.awt.Rectangle[x=7,y=6,width=2,height=2],4)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+
+		matrix[6][66] = 1;
+		matrix[6][67] = 1;
+		matrix[7][66] = 1;
+		matrix[7][67] = 1;
+		assertEquals("(java.awt.Rectangle[x=7,y=6,width=2,height=2],4)",
+			MatrixUtils.maxSubSquare(matrix).toString());
+	}
+
+	@Test
 	public void testMaxSubSquare() throws IOException {
 		int[][] matrix = MatrixUtils.populateMatrix(squares,
 				minEast, minNorth, maxEast, maxNorth, ZONE);
@@ -151,6 +212,90 @@ public class MatrixUtilsTest {
 	}
 
 	@Test
+	public void testMaxRectangleMinimal() {
+		int[][] matrix = new int[1][1];
+		assertEquals("(java.awt.Rectangle[x=0,y=0,width=0,height=0],0)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix[0][0] = 1;
+		assertEquals("(java.awt.Rectangle[x=1,y=0,width=1,height=1],1)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix = new int[2][2];
+		assertEquals("(java.awt.Rectangle[x=0,y=0,width=0,height=0],0)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix[0][0] = 1;
+		assertEquals("(java.awt.Rectangle[x=1,y=0,width=1,height=1],1)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix[1][0] = 1;
+		assertEquals("(java.awt.Rectangle[x=1,y=1,width=1,height=2],2)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix[1][1] = 1;
+		assertEquals("(java.awt.Rectangle[x=1,y=1,width=1,height=2],2)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix[0][1] = 1;
+		assertEquals("(java.awt.Rectangle[x=2,y=1,width=2,height=2],4)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+
+		matrix = new int[5][5];
+		assertEquals("(java.awt.Rectangle[x=0,y=0,width=0,height=0],0)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix[1][0] = 1;
+		matrix[2][0] = 1;
+		matrix[3][0] = 1;
+		matrix[4][0] = 1;
+		assertEquals("(java.awt.Rectangle[x=1,y=4,width=1,height=4],4)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix[0][0] = 1;
+		matrix[0][1] = 1;
+		matrix[0][2] = 1;
+		matrix[0][3] = 1;
+		matrix[0][4] = 1;
+		assertEquals("(java.awt.Rectangle[x=5,y=0,width=5,height=1],5)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix = new int[100][100];
+		matrix[50][20] = 1;
+		matrix[50][21] = 1;
+		matrix[50][22] = 1;
+		matrix[50][23] = 1;
+		matrix[50][24] = 1;
+		assertEquals("(java.awt.Rectangle[x=25,y=50,width=5,height=1],5)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix[51][20] = 1;
+		matrix[51][21] = 1;
+		matrix[51][22] = 1;
+		matrix[51][23] = 1;
+		matrix[51][24] = 1;
+		assertEquals("(java.awt.Rectangle[x=25,y=51,width=5,height=2],10)",
+				MatrixUtils.maxRectangle(matrix).toString());
+
+		matrix[71][20] = 1;
+		matrix[72][20] = 1;
+		matrix[73][20] = 1;
+		matrix[74][20] = 1;
+		matrix[75][20] = 1;
+		matrix[76][20] = 1;
+
+		matrix[71][21] = 1;
+		matrix[72][21] = 1;
+		matrix[73][21] = 1;
+		matrix[74][21] = 1;
+		matrix[75][21] = 1;
+		matrix[76][21] = 1;
+		assertEquals("(java.awt.Rectangle[x=22,y=76,width=2,height=6],12)",
+				MatrixUtils.maxRectangle(matrix).toString());
+	}
+
+	@Test
 	public void testMaxRectangle() throws IOException {
 		int[][] matrix = MatrixUtils.populateMatrix(squares,
 				minEast, minNorth, maxEast, maxNorth, ZONE);
@@ -174,8 +319,8 @@ public class MatrixUtilsTest {
 
 	@Test
 	public void testMaxRectangleTiles() throws IOException {
-		int[][] matrix = MatrixUtils.populateMatrix(squares,
-				minEast, minNorth, maxEast, maxNorth, ZONE);
+		int[][] matrix = MatrixUtils.populateMatrix(tiles,
+				minX, minY, maxX, maxY);
 
 
 		Pair<Rectangle, Integer> result = MatrixUtils.maxRectangle(matrix);
