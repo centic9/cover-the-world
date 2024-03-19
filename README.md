@@ -1,5 +1,4 @@
 [![Build Status](https://github.com/centic9/cover-the-world/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/centic9/cover-the-world/actions)
-[![Gradle Status](https://gradleupdate.appspot.com/centic9/cover-the-world/status.svg?branch=main)](https://gradleupdate.appspot.com/centic9/cover-the-world/status)
 [![Release](https://img.shields.io/github/release/centic9/cover-the-world.svg)](https://github.com/centic9/cover-the-world/releases)
 [![GitHub release](https://img.shields.io/github/release/centic9/cover-the-world.svg?label=changelog)](https://github.com/centic9/cover-the-world/releases/latest)
 [![Tag](https://img.shields.io/github/tag/centic9/cover-the-world.svg)](https://github.com/centic9/cover-the-world/tags)
@@ -14,7 +13,7 @@ displays covered "tiles" on a world map.
 The sport of physically visiting as many tiles (i.e. square areas) as possible on the 
 map is often known as "tile-hunting".
 
-This project can be used both as library in other project and directly as a set of 
+This project can be used both as library in other projects and directly as a set of 
 applications which process data so that it can be visualized on a web page.
 
 The flow of data is roughly as follows
@@ -98,9 +97,15 @@ you want to automate things in some more advanced way.
 ### Some computations are limited to UTM zone 33 by defaults
 
 Currently computing largest squares/rectangles is limited to a given UTM zone, 
-by default zone "33" is used. You can adjust this in org.dstadler.ctw.utils.Constants.ZONE
+by default zone "33" is used. You can adjust this in `org.dstadler.ctw.utils.Constants.ZONE`
 and re-run to produce the proper largest squares/rectangles if you are located
 in another UTM zone.
+
+The limitation is caused by the matrix-based algorithms used for largest square and 
+rectangle which would become larger than available memory if not constrained.
+
+Would be cool to get rid of this limitation, let me know via issues/PRs if you have ideas
+how to do a whole-world computation efficiently.
 
 ## Change it
 
@@ -129,6 +134,5 @@ If you find this library useful and would like to support it, you can [Sponsor t
 * cover-the-world is licensed under the [BSD 2-Clause License].
 
 [BSD 2-Clause License]: https://www.opensource.org/licenses/bsd-license.php
-
 
 * Currently includes a compiled version of [jCoords](https://github.com/xni06/JCoord/)
