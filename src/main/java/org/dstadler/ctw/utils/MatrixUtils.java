@@ -51,7 +51,7 @@ public class MatrixUtils {
 
 		int[][] M = new int[ySquares][xSquares];
 		for (UTMRefWithHash square : squares) {
-			// for now only calculate for Zone 32 as otherwise computing
+			// for now only calculate for Zone 33 as otherwise computing
 			// easting would need to take the zone into account
 			if (square.getLngZone() != utmZoneFilter) {
 				continue;
@@ -101,7 +101,7 @@ public class MatrixUtils {
 
 		int[][] M = new int[ySquares][xSquares];
 		for (OSMTile square : squares) {
-			// for now only calculate for Zone 32 as otherwise computing
+			// for now only calculate for Zone 33 as otherwise computing
 			// easting would need to take the zone into account
 			if (square.toLatLng().toUTMRef().getLngZone() != utmZoneFilter) {
 				continue;

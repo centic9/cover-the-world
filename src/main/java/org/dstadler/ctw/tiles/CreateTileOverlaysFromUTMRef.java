@@ -49,7 +49,7 @@ public class CreateTileOverlaysFromUTMRef {
 	private static final AtomicLong lastLogSquare = new AtomicLong();
 
 	// prevent higher zoom levels to be processed concurrently as this puts a large
-	// burden on main memory, by limiting it to 32, we avoid running 16-17 and 18
+	// burden on main memory, by limiting it to 33, we avoid running 16-17 and 18
 	// at the same time
 	private static final Semaphore SEM_ZOOMS = new Semaphore(33);
 
