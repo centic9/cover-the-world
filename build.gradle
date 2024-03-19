@@ -63,7 +63,7 @@ wrapper {
 }
 
 test {
-    maxHeapSize = "256m"
+    maxHeapSize = "512m"
     systemProperties = System.properties
 
     // enable to show standard out and standard error of the test JVM(s) on the console
