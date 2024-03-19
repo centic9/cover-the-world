@@ -29,6 +29,8 @@ import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Preconditions;
+
 import uk.me.jstott.jcoord.LatLng;
 
 /**
@@ -74,6 +76,11 @@ public class CreateListOfVisitedSquares {
 		};
 
 		readVisitedSquares(consumer);
+
+		Preconditions.checkState(visitedSquares.size() > 0,
+				"Did not read any square from GPX tracks in directory '" + GPX_DIR + "'");
+		Preconditions.checkState(visitedTiles.size() > 0,
+				"Did not read any tile from GPX tracks in '" + GPX_DIR + "'");
 
 		// Squares
 		processVisitedArea(VISITED_SQUARES_TXT, VISITED_SQUARES_NEW_TXT, "squares", visitedSquares);
