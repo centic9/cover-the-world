@@ -99,6 +99,36 @@ public class CreateGeoJSON {
 		// build an optimized GeoJSON as including all squares/tiles lead to a fairly large GeoJSON
 		// which causes performance issues e.g. on Smartphone-Browsers
 
+		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE,
+				minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+
+		boolean found = false;
+		boolean[] isY = null;
+		if (!(squares.iterator().next() instanceof UTMRefWithHash)) {
+			for (OSMTile tile : (Set<OSMTile>) squares) {
+				if (tile.getXTile() > maxX) {
+					maxX = tile.getXTile();
+				}
+				if (tile.getXTile() < minX) {
+					minX = tile.getXTile();
+				}
+
+				if (tile.getYTile() > maxY) {
+					maxY = tile.getYTile();
+				}
+				if (tile.getYTile() < minY) {
+					minY = tile.getYTile();
+				}
+
+				found = true;
+			}
+
+			int[][] M = MatrixUtils.populateMatrix((Set<OSMTile>) squares, minX, minY, maxX, maxY);
+
+			isY = new boolean[M.length];
+			MatrixUtils.findPopulatedRows(M, isY);
+		}
+
 		// first create as many rectangles as possible to minimize the resulting GeoJSON
 		List<Feature> features = new ArrayList<>();
 		while (squares.size() > 0) {
@@ -108,8 +138,16 @@ public class CreateGeoJSON {
 				//noinspection unchecked
 				rectangle = getSquareRectangle((Set<UTMRefWithHash>) squares, null, "squares");
 			} else {
+				// stop if all the remaining tiles are outside the default UTM-zone
+				if (!found) {
+					break;
+
+				}
+
 				//noinspection unchecked
-				rectangle = getTileRectangle((Set<OSMTile>) squares, null, "tiles");
+				rectangle = getTileRectangleInternal((Set<OSMTile>) squares, null, "tiles", minX, minY, maxX, maxY, isY);
+
+				//log.info("Remaining " + squares.size() + ", found: " + rectangle);
 			}
 
 			if (rectangle == null) {
@@ -180,9 +218,20 @@ public class CreateGeoJSON {
 			return null;
 		}
 
+		return getTileRectangleInternal(tiles, textFile, title, minX, minY, maxX, maxY, null);
+	}
+
+	private static Feature getTileRectangleInternal(Set<OSMTile> tiles, String textFile, String title, int minX, int minY, int maxX, int maxY,
+			boolean[] isY)
+			throws IOException {
 		int[][] M = MatrixUtils.populateMatrix(tiles, minX, minY, maxX, maxY);
 
-		Pair<Rectangle,Integer> result = MatrixUtils.maxRectangle(M);
+		if (isY == null) {
+			isY = new boolean[M.length];
+			MatrixUtils.findPopulatedRows(M, isY);
+		}
+
+		Pair<Rectangle,Integer> result = MatrixUtils.maxRectangle(M, isY);
 		Rectangle rect = result.getKey();
 
 		// stop when we do not find any real rectangles any more

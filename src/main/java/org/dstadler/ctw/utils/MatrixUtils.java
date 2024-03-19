@@ -237,6 +237,17 @@ public class MatrixUtils {
 		return max_area;
 	}
 
+	public static void findPopulatedRows(int[][] A, boolean[] isRowValue) {
+		for (int i = 1; i < A.length; i++) {
+			for (int j = 0; j < A[0].length; j++) {
+				if (A[i][j] == 1) {
+					isRowValue[i] = true;
+					break;
+				}
+			}
+		}
+	}
+
 	/**
 	 * Returns area of the largest rectangle with all 1s in A[][]
 	 *
@@ -244,6 +255,21 @@ public class MatrixUtils {
 	 * @return The rectangle and the covered area of the rectangle
 	 */
 	public static Pair<Rectangle, Integer> maxRectangle(int[][] A) {
+		boolean[] isY = new boolean[A.length];
+		findPopulatedRows(A, isY);
+
+		return maxRectangle(A, isY);
+	}
+
+	/**
+	 * Returns area of the largest rectangle with all 1s in A[][]
+	 *
+	 * @param A The matrix with "1" for covered and "0" for not covered
+	 * @param isY An array indicating which rows have values. This can be
+	 *            used to skip iterating those rows to improve performance
+	 * @return The rectangle and the covered area of the rectangle
+	 */
+	public static Pair<Rectangle, Integer> maxRectangle(int[][] A, boolean[] isY) {
 		// Calculate area for first row and initialize it as
 		// result
 		Pair<Integer,Rectangle> ret = maxHist(A[0]);
@@ -255,6 +281,11 @@ public class MatrixUtils {
 		// iterate over row to find maximum rectangular area
 		// considering each row as histogram
 		for (int i = 1; i < A.length; i++) {
+			// we can skip processing if there is no single item set for this row
+			if (!isY[i]) {
+				continue;
+			}
+
 			for (int j = 0; j < A[0].length; j++) {
 				// if A[i][j] is 1 then add A[i -1][j]
 				if (A[i][j] == 1) {
