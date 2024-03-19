@@ -41,8 +41,6 @@ import com.github.filosganga.geogson.model.Polygon;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonPrimitive;
 
-import uk.me.jstott.jcoord.LatLng;
-
 /**
  * Small application which reads the list of covered squares
  * (twice for all covered and only new squares)
@@ -148,11 +146,6 @@ public class CreateGeoJSON {
 
 		boolean found = false;
 		for (OSMTile tile : tiles) {
-			LatLng latLng = tile.toLatLng();
-			if (latLng.toUTMRef().getLngZone() != ZONE) {
-				continue;
-			}
-
 			if (tile.getXTile() > maxX) {
 				maxX = tile.getXTile();
 			}
@@ -175,7 +168,7 @@ public class CreateGeoJSON {
 			return null;
 		}
 
-		int[][] M = MatrixUtils.populateMatrix(tiles, minX, minY, maxX, maxY, ZONE);
+		int[][] M = MatrixUtils.populateMatrix(tiles, minX, minY, maxX, maxY);
 
 		Pair<Rectangle,Integer> result = MatrixUtils.maxRectangle(M);
 		Rectangle rect = result.getKey();

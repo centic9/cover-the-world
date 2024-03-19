@@ -3,7 +3,6 @@ package org.dstadler.ctw.geojson;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
-import static org.dstadler.ctw.utils.Constants.ZONE;
 
 import java.awt.Rectangle;
 import java.io.BufferedWriter;
@@ -27,8 +26,6 @@ import com.github.filosganga.geogson.model.Point;
 import com.github.filosganga.geogson.model.Polygon;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonPrimitive;
-
-import uk.me.jstott.jcoord.LatLng;
 
 /**
  * This application reads the list of covered squares and
@@ -58,11 +55,6 @@ public class CreateLargestSquareGeoJSONTiles {
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE,
 				minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
 		for (OSMTile tile : tiles) {
-			LatLng latLng = tile.toLatLng();
-			if (latLng.toUTMRef().getLngZone() != ZONE) {
-				continue;
-			}
-
 			if (tile.getXTile() > maxX) {
 				maxX = tile.getXTile();
 			}
@@ -78,7 +70,7 @@ public class CreateLargestSquareGeoJSONTiles {
 			}
 		}
 
-		int[][] M = MatrixUtils.populateMatrix(tiles, minX, minY, maxX, maxY, ZONE);
+		int[][] M = MatrixUtils.populateMatrix(tiles, minX, minY, maxX, maxY);
 
 		Pair<Rectangle,Integer> result = MatrixUtils.maxSubSquare(M);
 		Rectangle rect = result.getKey();

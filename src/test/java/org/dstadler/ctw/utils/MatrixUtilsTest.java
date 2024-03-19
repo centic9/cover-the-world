@@ -24,8 +24,6 @@ import org.junit.Test;
 
 import com.google.common.io.Files;
 
-import uk.me.jstott.jcoord.LatLng;
-
 public class MatrixUtilsTest {
 	private Set<UTMRefWithHash> squares;
 	private Set<OSMTile> tiles;
@@ -62,11 +60,6 @@ public class MatrixUtilsTest {
 		}
 
 		for (OSMTile tile : tiles) {
-			LatLng latLng = tile.toLatLng();
-			if (latLng.toUTMRef().getLngZone() != ZONE) {
-				continue;
-			}
-
 			if (tile.getXTile() > maxX) {
 				maxX = tile.getXTile();
 			}
@@ -88,6 +81,9 @@ public class MatrixUtilsTest {
 		assertThrows(IllegalStateException.class,
 				() -> MatrixUtils.populateMatrix(squares,
 						0, 0, 0, 0, ZONE));
+		assertThrows(IllegalStateException.class,
+				() -> MatrixUtils.populateMatrix(tiles,
+						0, 0, 0, 0));
 	}
 
 	@Test
@@ -104,7 +100,7 @@ public class MatrixUtilsTest {
 	@Test
     public void testPopulateMatrixTiles() {
         int[][] matrix = MatrixUtils.populateMatrix(tiles,
-                minX, minY, maxX, maxY, ZONE);
+                minX, minY, maxX, maxY);
         assertNotNull(matrix);
         assertTrue("Having: " + matrix.length,
 				matrix.length > 5);
@@ -136,7 +132,7 @@ public class MatrixUtilsTest {
 	@Test
 	public void testMaxSubSquareTile() throws IOException {
 		int[][] matrix = MatrixUtils.populateMatrix(tiles,
-				minX, minY, maxX, maxY, ZONE);
+				minX, minY, maxX, maxY);
 
 		Pair<Rectangle, Integer> result = MatrixUtils.maxSubSquare(matrix);
 

@@ -85,8 +85,7 @@ public class MatrixUtils {
 			int minX,
 			int minY,
 			int maxX,
-			int maxY,
-			int utmZoneFilter) {
+			int maxY) {
 		int xSquares = (maxX - minX) + 1;
 		int ySquares = (maxY - minY) + 1;
 
@@ -101,12 +100,6 @@ public class MatrixUtils {
 
 		int[][] M = new int[ySquares][xSquares];
 		for (OSMTile square : squares) {
-			// for now only calculate for Zone 33 as otherwise computing
-			// easting would need to take the zone into account
-			if (square.toLatLng().toUTMRef().getLngZone() != utmZoneFilter) {
-				continue;
-			}
-
 			int x = (square.getXTile() - minX);
 			int y = (square.getYTile() - minY);
 
