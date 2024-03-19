@@ -14,7 +14,7 @@ The sport of physically visiting as many tiles (i.e. square areas) as possible o
 map is often known as "tile-hunting".
 
 This project can be used both as library in other projects and directly as a set of 
-applications which process data so that it can be visualized on a web page.
+applications which process data so that you can visualize your covered "tiles" on a web page.
 
 The flow of data is roughly as follows
 `GPX files -> list of covered tiles (txt) -> GeoJSON file for map-display (js) -> HTML page`
@@ -31,7 +31,12 @@ The flow of data is roughly as follows
 
 ## How does it look like?
 
-You can directly open the provided file [leaflet-map.html](leaflet-map.html) in a web-browser to see how this looks like.
+You can directly open the provided file [leaflet-map.html](leaflet-map.html) locally in a web-browser to see how this looks like.
+(It won't work on Github directly because it would need files to be served with proper content type).
+
+A sample image with the two sample GPX tracks looks as follows ![resulting map view](/Cover%20the%20World.png).
+
+You can also host the resulting files on a web-server to make your covered tiles available online.
 
 ### Features of the web page
 
