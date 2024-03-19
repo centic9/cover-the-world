@@ -34,7 +34,9 @@ The flow of data is roughly as follows
 You can directly open the provided file [leaflet-map.html](leaflet-map.html) locally in a web-browser to see how this looks like.
 (It won't work on Github directly because it would need files to be served with proper content type).
 
-A sample image with the two sample GPX tracks looks as follows ![resulting map view](/Cover%20the%20World.png).
+A sample image with the two sample GPX tracks looks as follows 
+
+<img src="https://raw.githubusercontent.com/centic9/cover-the-world/main/Cover%20the%20World.png" width="50%"/>
 
 You can also host the resulting files on a web-server to make your covered tiles available online.
 
