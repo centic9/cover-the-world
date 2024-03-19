@@ -1,6 +1,5 @@
 package org.dstadler.ctw.geojson;
 
-import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 
@@ -28,12 +27,8 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonPrimitive;
 
 /**
- * This application reads the list of covered squares and
- * tries to find the largest area covered by a square.
- *
- * Note: Currently only UTMRef-LonZone "33" is used to make
- * computation easier. If the rectangle should someday span
- * more than one Zone, this tool likely needs a major overhaul!
+ * This application reads the list of covered tiles and
+ * tries to find the largest area covered by a big square.
  *
  * Results are stored in a TXT file for easy diffing via version
  * control and a JS file which can be used as overlay layer in a
@@ -42,8 +37,8 @@ import com.google.gson.JsonPrimitive;
 public class CreateLargestSquareGeoJSONTiles {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_TILES_JSON = "js/LargestSquareTiles.js";
-	public static final String CLUSTER_TILES_TXT = "txt/LargestSquareTiles.txt";
+	public static final String LARGEST_SQUARE_TILES_JSON = "js/LargestSquareTiles.js";
+	public static final String LARGEST_SQUARE_TILES_TXT = "txt/LargestSquareTiles.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
@@ -52,7 +47,7 @@ public class CreateLargestSquareGeoJSONTiles {
 
 		Set<OSMTile> tiles = OSMTile.readTiles(new File(VISITED_TILES_TXT));
 		Preconditions.checkState(tiles.size() > 0,
-				"Did not read any tiles from " + VISITED_SQUARES_TXT);
+				"Did not read any tiles from " + VISITED_TILES_TXT);
 
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE,
 				minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
@@ -108,10 +103,10 @@ public class CreateLargestSquareGeoJSONTiles {
 				result.getValue() + " tiles: " + rect.width + "x" + rect.height)).build());
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(CLUSTER_TILES_JSON, "tilesquare", features);
+		GeoJSON.writeGeoJSON(LARGEST_SQUARE_TILES_JSON, "tilesquare", features);
 
 		// create list of latLngBounds for SVG elements to overlay
-		try (Writer writer = new BufferedWriter(new FileWriter(CLUSTER_TILES_TXT))) {
+		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_SQUARE_TILES_TXT))) {
 			writer.write(squareMin.toCoords());
 			writer.write('\n');
 			writer.write(squareMax.toCoords());

@@ -1,6 +1,5 @@
 package org.dstadler.ctw.geojson;
 
-import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 
 import java.io.File;
@@ -32,8 +31,8 @@ import com.google.common.base.Preconditions;
 public class CreateLargestRectangleGeoJSONTiles {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_RECTANGLE_TILE_JSON = "js/LargestRectangleTiles.js";
-	public static final String CLUSTER_RECTANGLE_TILE_TXT = "txt/LargestRectangleTiles.txt";
+	public static final String LARGEST_RECTANGLE_TILES_JSON = "js/LargestRectangleTiles.js";
+	public static final String LARGEST_RECTANGLE_TILES_TXT = "txt/LargestRectangleTiles.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
@@ -42,16 +41,16 @@ public class CreateLargestRectangleGeoJSONTiles {
 
 		Set<OSMTile> tiles = OSMTile.readTiles(new File(VISITED_TILES_TXT));
 		Preconditions.checkState(tiles.size() > 0,
-				"Did not read any tiles from " + VISITED_SQUARES_TXT);
+				"Did not read any tiles from " + VISITED_TILES_TXT);
 
 		// produce the GeoJSON for the rectangle
-		Feature rectangle = CreateGeoJSON.getTileRectangle(tiles, CLUSTER_RECTANGLE_TILE_TXT, "rectangle");
+		Feature rectangle = CreateGeoJSON.getTileRectangle(tiles, LARGEST_RECTANGLE_TILES_TXT, "rectangle");
 		log.info("Found largest rectangle for tiles: " +
-				FileUtils.readFileToString(new File(CLUSTER_RECTANGLE_TILE_TXT), "UTF-8"));
+				FileUtils.readFileToString(new File(LARGEST_RECTANGLE_TILES_TXT), "UTF-8"));
 
 		List<Feature> features = Collections.singletonList(rectangle);
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(CLUSTER_RECTANGLE_TILE_JSON, "tilerectangle", features);
+		GeoJSON.writeGeoJSON(LARGEST_RECTANGLE_TILES_JSON, "tilerectangle", features);
 	}
 }

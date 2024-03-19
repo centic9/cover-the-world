@@ -1,8 +1,9 @@
 package org.dstadler.ctw.utils;
 
-import static org.dstadler.ctw.geojson.CreateLargestRectangleGeoJSONSquares.CLUSTER_RECTANGLE_TXT;
-import static org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONSquares.CLUSTER_SQUARE_TXT;
-import static org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONTiles.CLUSTER_TILES_TXT;
+import static org.dstadler.ctw.geojson.CreateLargestRectangleGeoJSONSquares.LARGEST_RECTANGLE_SQUARES_TXT;
+import static org.dstadler.ctw.geojson.CreateLargestRectangleGeoJSONTiles.LARGEST_RECTANGLE_TILES_TXT;
+import static org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONSquares.LARGEST_SQUARE_SQUARES_TXT;
+import static org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONTiles.LARGEST_SQUARE_TILES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 import static org.dstadler.ctw.utils.Constants.ZONE;
@@ -87,7 +88,7 @@ public class MatrixUtilsTest {
 	}
 
 	@Test
-    void testPopulateMatrix() {
+    void testPopulateMatrixSquares() {
         int[][] matrix = MatrixUtils.populateMatrix(squares,
                 minEast, minNorth, maxEast, maxNorth, ZONE);
         assertNotNull(matrix);
@@ -166,7 +167,7 @@ public class MatrixUtilsTest {
 	}
 
 	@Test
-	void testMaxSubSquare() throws IOException {
+	void testMaxSubSquareSquares() throws IOException {
 		int[][] matrix = MatrixUtils.populateMatrix(squares,
 				minEast, minNorth, maxEast, maxNorth, ZONE);
 
@@ -180,14 +181,14 @@ public class MatrixUtilsTest {
 225
 		 */
 		// try to read current square from text-file
-		Rectangle expected = readRectangle(new File(CLUSTER_SQUARE_TXT),
+		Rectangle expected = readRectangle(new File(LARGEST_SQUARE_SQUARES_TXT),
 				new Rectangle(5, 2, 3, 3));
 		assertEquals(expected, result.getLeft());
 		assertEquals((Integer)(expected.width * expected.height), result.getRight());
 	}
 
 	@Test
-	void testMaxSubSquareTile() throws IOException {
+	void testMaxSubSquareTiles() throws IOException {
 		int[][] matrix = MatrixUtils.populateMatrix(tiles,
 				minX, minY, maxX, maxY);
 
@@ -201,7 +202,7 @@ public class MatrixUtilsTest {
 100
 		 */
 		// try to read current square from text-file
-		Rectangle expected = readRectangle(new File(CLUSTER_TILES_TXT),
+		Rectangle expected = readRectangle(new File(LARGEST_SQUARE_TILES_TXT),
 				new Rectangle(3, 5, 2, 2));
 		assertEquals(expected, result.getLeft());
 		assertEquals((Integer)(expected.width * expected.height), result.getRight());
@@ -306,8 +307,8 @@ public class MatrixUtilsTest {
 18x15
 270
 		 */
-		// try to read current square from text-file
-		Rectangle expected = readRectangle(new File(CLUSTER_RECTANGLE_TXT),
+		// try to read current rectangle from text-file
+		Rectangle expected = readRectangle(new File(LARGEST_RECTANGLE_SQUARES_TXT),
 				new Rectangle(5, 2, 3, 3));
 		assertEquals(expected, result.getLeft());
 		assertEquals((Integer)(expected.width * expected.height), result.getRight());
@@ -328,8 +329,8 @@ public class MatrixUtilsTest {
 13x10
 130
 		 */
-		// try to read current square from text-file
-		Rectangle expected = readRectangle(new File(CLUSTER_RECTANGLE_TXT),
+		// try to read current rectangle from text-file
+		Rectangle expected = readRectangle(new File(LARGEST_RECTANGLE_TILES_TXT),
 				new Rectangle(5, 2, 3, 3));
 		assertEquals(expected, result.getLeft());
 		assertEquals((Integer)(expected.width * expected.height), result.getRight());

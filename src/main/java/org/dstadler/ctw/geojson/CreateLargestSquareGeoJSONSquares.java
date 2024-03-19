@@ -42,8 +42,8 @@ import com.google.gson.JsonPrimitive;
 public class CreateLargestSquareGeoJSONSquares {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_SQUARE_JSON = "js/LargestSquareSquares.js";
-	public static final String CLUSTER_SQUARE_TXT = "txt/LargestSquareSquares.txt";
+	public static final String LARGEST_SQUARE_SQUARES_JSON = "js/LargestSquareSquares.js";
+	public static final String LARGEST_SQUARE_SQUARES_TXT = "txt/LargestSquareSquares.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
@@ -120,10 +120,10 @@ public class CreateLargestSquareGeoJSONSquares {
 				result.getValue() + " squares: " + rect.width + "x" + rect.height)).build());
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(CLUSTER_SQUARE_JSON, "square", features);
+		GeoJSON.writeGeoJSON(LARGEST_SQUARE_SQUARES_JSON, "square", features);
 
 		// create list of latLngBounds for SVG elements to overlay
-		try (Writer writer = new BufferedWriter(new FileWriter(CLUSTER_SQUARE_TXT))) {
+		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_SQUARE_SQUARES_TXT))) {
 			writer.write(recRefMinMin.toString());
 			writer.write('\n');
 			writer.write(recRefMaxMax.toString());

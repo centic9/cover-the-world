@@ -138,7 +138,7 @@ public class CreateLargestClusterGeoJSONSquares {
 					clusters.add(cluster);
 					foundCluster = cluster;
 				} else {
-					log.info("Found square in exising cluster: " + square + ": " + OSMTile.fromLatLngZoom(
+					log.info("Found square in existing cluster: " + square + ": " + OSMTile.fromLatLngZoom(
 							square.toLatLng().getLatitude(),
 							square.toLatLng().getLongitude(), 12));
 				}

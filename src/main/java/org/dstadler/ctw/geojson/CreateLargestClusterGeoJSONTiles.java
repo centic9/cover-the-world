@@ -1,6 +1,5 @@
 package org.dstadler.ctw.geojson;
 
-import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 
 import java.io.BufferedWriter;
@@ -76,10 +75,10 @@ public class CreateLargestClusterGeoJSONTiles {
 		List<Feature> features = new ArrayList<>();
 		List<OSMTile> largestCluster = clusters.get(clusters.size() - 1);
 		Set<String> largestClusterStr = new TreeSet<>();
-		for (OSMTile square : largestCluster) {
-			features.add(GeoJSON.createSquare(square.getRectangle(),
+		for (OSMTile tile : largestCluster) {
+			features.add(GeoJSON.createSquare(tile.getRectangle(),
 					"Largest Cluster: " + largestCluster.size() + " tiles"));
-			largestClusterStr.add(square.toCoords());
+			largestClusterStr.add(tile.toCoords());
 		}
 
 		// finally write out JavaScript code with embedded GeoJSON
@@ -87,8 +86,8 @@ public class CreateLargestClusterGeoJSONTiles {
 
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_CLUSTER_TILES_TXT))) {
-			for (String square : largestClusterStr) {
-				writer.write(square);
+			for (String tile : largestClusterStr) {
+				writer.write(tile);
 				writer.write('\n');
 			}
 		}
@@ -99,11 +98,11 @@ public class CreateLargestClusterGeoJSONTiles {
 
 		Set<OSMTile> tiles = OSMTile.readTiles(new File(VISITED_TILES_TXT));
 		Preconditions.checkState(tiles.size() > 0,
-				"Did not read any tiles from " + VISITED_SQUARES_TXT);
+				"Did not read any tiles from " + VISITED_TILES_TXT);
 
 		Set<OSMTile> allTiles = new HashSet<>(tiles);
 
-		// check each square
+		// check each tile
 		while (tiles.size() > 0) {
 			Iterator<OSMTile> it = tiles.iterator();
 			OSMTile tile = it.next();
@@ -119,7 +118,7 @@ public class CreateLargestClusterGeoJSONTiles {
 				List<OSMTile> foundCluster = null;
 				for (List<OSMTile> cluster : clusters) {
 					if (isAdjacent(cluster, tile)) {
-						//log.info("Square: " + square + ": cluster: " + cluster);
+						//log.info("Tile: " + tile + ": cluster: " + cluster);
 						cluster.add(tile);
 						found = true;
 						foundCluster = cluster;
@@ -128,14 +127,14 @@ public class CreateLargestClusterGeoJSONTiles {
 				}
 
 				if (!found) {
-					log.info("Found square in new cluster: " + tile);
+					log.info("Found tile in new cluster: " + tile);
 
 					List<OSMTile> cluster = new ArrayList<>();
 					cluster.add(tile);
 					clusters.add(cluster);
 					foundCluster = cluster;
 				} else {
-					log.info("Found square in exising cluster: " + tile);
+					log.info("Found tile in existing cluster: " + tile);
 				}
 
 				extendCluster(tiles, allTiles, foundCluster);
@@ -154,7 +153,7 @@ public class CreateLargestClusterGeoJSONTiles {
 			while (it.hasNext()) {
 				OSMTile tile = it.next();
 
-				// if this square has 4 neighbours and is adjacent to
+				// if this tile has 4 neighbours and is adjacent to
 				// the current cluster, then add it
 				if (partOfCluster(tile, allTiles) && isAdjacent(foundCluster, tile)) {
 					foundCluster.add(tile);
@@ -167,7 +166,7 @@ public class CreateLargestClusterGeoJSONTiles {
 				break;
 			}
 
-			log.info("Added " + count + " additional squares to the cluster");
+			log.info("Added " + count + " additional tiles to the cluster");
 		}
 	}
 
@@ -178,10 +177,10 @@ public class CreateLargestClusterGeoJSONTiles {
 				cluster.contains(ref.left());
 	}
 
-	private static boolean partOfCluster(OSMTile ref, Set<OSMTile> squares) {
-        return squares.contains(ref.up()) &&
-                squares.contains(ref.down()) &&
-                squares.contains(ref.right()) &&
-                squares.contains(ref.left());
+	private static boolean partOfCluster(OSMTile ref, Set<OSMTile> tiles) {
+        return tiles.contains(ref.up()) &&
+                tiles.contains(ref.down()) &&
+                tiles.contains(ref.right()) &&
+                tiles.contains(ref.left());
     }
 }

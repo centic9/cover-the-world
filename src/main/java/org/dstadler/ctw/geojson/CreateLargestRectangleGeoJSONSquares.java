@@ -31,8 +31,8 @@ import com.google.common.base.Preconditions;
 public class CreateLargestRectangleGeoJSONSquares {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final String CLUSTER_RECTANGLE_JSON = "js/LargestRectangleSquares.js";
-	public static final String CLUSTER_RECTANGLE_TXT = "txt/LargestRectangleSquares.txt";
+	public static final String LARGEST_RECTANGLE_SQUARES_JSON = "js/LargestRectangleSquares.js";
+	public static final String LARGEST_RECTANGLE_SQUARES_TXT = "txt/LargestRectangleSquares.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
@@ -44,13 +44,13 @@ public class CreateLargestRectangleGeoJSONSquares {
 				"Did not read any squares from " + VISITED_SQUARES_TXT);
 
 		// produce the GeoJSON for the rectangle
-		Feature rectangle = CreateGeoJSON.getSquareRectangle(squares, CLUSTER_RECTANGLE_TXT, "rectangle");
+		Feature rectangle = CreateGeoJSON.getSquareRectangle(squares, LARGEST_RECTANGLE_SQUARES_TXT, "rectangle");
 		log.info("Found largest rectangle for squares: " +
-				FileUtils.readFileToString(new File(CLUSTER_RECTANGLE_TXT), "UTF-8"));
+				FileUtils.readFileToString(new File(LARGEST_RECTANGLE_SQUARES_TXT), "UTF-8"));
 
 		List<Feature> features = Collections.singletonList(rectangle);
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(CLUSTER_RECTANGLE_JSON, "rectangle", features);
+		GeoJSON.writeGeoJSON(LARGEST_RECTANGLE_SQUARES_JSON, "rectangle", features);
 	}
 }
