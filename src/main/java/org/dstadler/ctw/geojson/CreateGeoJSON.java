@@ -17,10 +17,11 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -62,6 +63,9 @@ public class CreateGeoJSON {
 	public static final String VISITED_TILES_JSON = "js/VisitedTiles.js";
 	public static final String VISITED_TILES_NEW_JSON = "js/VisitedTilesNew.js";
 
+	// for printing stats when writing tiles
+	private static final AtomicLong lastLog = new AtomicLong();
+
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
 
@@ -98,7 +102,8 @@ public class CreateGeoJSON {
 		List<Feature> features = new ArrayList<>();
 		while (squares.size() > 0) {
 			final Feature rectangle;
-			if (squares.iterator().next() instanceof UTMRefWithHash) {
+			final T next = squares.iterator().next();
+			if (next instanceof UTMRefWithHash) {
 				//noinspection unchecked
 				rectangle = getSquareRectangle((Set<UTMRefWithHash>) squares, null, "squares");
 			} else {
@@ -110,14 +115,18 @@ public class CreateGeoJSON {
 				break;
 			}
 
-			Iterator<T> it = squares.iterator();
-			log.fine("Found rectangle " + rectangle.properties() + ", having " + squares.size() + " " +
-					(it.hasNext() && it.next() instanceof UTMRefWithHash ? "squares" : "tiles") +
-					" remaining");
 			features.add(rectangle);
+
+			if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
+				log.info("Found " + features.size() + " features, having " + squares.size() + " " +
+						(next instanceof UTMRefWithHash ? "squares" : "tiles") +
+						" remaining, details: " + rectangle);
+
+				lastLog.set(System.currentTimeMillis());
+			}
 		}
 
-		log.info("Found " + features.size() + " rectangles, havgin " + squares.size() + " single squares remaining");
+		log.info("Found " + features.size() + " rectangles, having " + squares.size() + " single squares remaining");
 
 		// then add all remaining single-squares
 		for (T square : squares) {
