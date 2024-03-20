@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.imageio.ImageIO;
+
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.geotools.GeoTools;
 import org.dstadler.ctw.utils.Constants;
@@ -56,6 +58,9 @@ public class CreateTileOverlaysFromUTMRef {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		LoggerFactory.initLogging();
+
+		// as we write many small files, we do not want to use disk-based caching
+		ImageIO.setUseCache(false);
 
 		boolean onlyNewTiles = !(args.length > 0 && "all".equals(args[0]));
 
