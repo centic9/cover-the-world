@@ -80,6 +80,7 @@ public class CreateTileOverlaysHelper {
 
 	protected static void cleanTiles(File tileDir) {
 		if (tileDir.exists()) {
+			log.info("Removing previous tiles at " + tileDir);
 			Arrays.stream(Objects.requireNonNull(tileDir.listFiles())).forEach(s -> {
 				try {
 					FileUtils.deleteDirectory(s);
