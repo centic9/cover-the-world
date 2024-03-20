@@ -47,6 +47,8 @@ public class CreateLargestClusterGeoJSONSquares {
     public static void main(String[] args) throws IOException {
         LoggerFactory.initLogging();
 
+		log.info("Computing largest cluster squares");
+
 		List<List<UTMRefWithHash>> clusters = computeLargestCluster();
 
 		clusters.sort(Comparator.

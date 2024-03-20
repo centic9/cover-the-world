@@ -38,6 +38,8 @@ public class CreateLargestRectangleGeoJSONTiles {
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
 
+		log.info("Computing largest rectangle for tiles");
+
 		Set<OSMTile> tiles = OSMTile.readTiles(new File(VISITED_TILES_TXT));
 		Preconditions.checkState(tiles.size() > 0,
 				"Did not read any tiles from " + VISITED_SQUARES_TXT);

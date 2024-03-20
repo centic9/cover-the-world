@@ -126,7 +126,7 @@ public class CreateListOfVisitedSquares {
 	private static void readVisitedSquares(Consumer<TrackPoint> toStringFun) throws IOException {
 		AtomicInteger i = new AtomicInteger(0);
 
-		log.info("Searching " + GPX_DIR + " for GPX tracks");
+		log.info("Searching directory '" + GPX_DIR + "' for GPX tracks");
 		try (Stream<Path> walk = Files.walk(GPX_DIR.toPath(), FileVisitOption.FOLLOW_LINKS)) {
 			walk.
 				parallel().

@@ -47,6 +47,8 @@ public class CreateLargestClusterGeoJSONTiles {
     public static void main(String[] args) throws IOException {
         LoggerFactory.initLogging();
 
+		log.info("Computing largest cluster tiles");
+
 		List<List<OSMTile>> clusters = computeLargestCluster();
 
 		clusters.sort(Comparator.

@@ -38,6 +38,8 @@ public class CreateClusterGeoJSON {
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
 
+		log.info("Computing all cluster squares");
+
 		Set<UTMRefWithHash> squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_TXT));
 		Preconditions.checkState(squares.size() > 0,
 				"Did not read any squares from " + VISITED_SQUARES_TXT);
@@ -46,13 +48,15 @@ public class CreateClusterGeoJSON {
 		List<Feature> features = new ArrayList<>();
 		for (UTMRefWithHash ref : squares) {
 			if (partOfCluster(ref, squares)) {
-				log.info("Found square in cluster: " + ref + ": " + OSMTile.fromLatLngZoom(
+				log.fine("Found square in cluster: " + ref + ": " + OSMTile.fromLatLngZoom(
 						ref.toLatLng().getLatitude(),
 						ref.toLatLng().getLongitude(), 12));
 				features.add(GeoJSON.createSquare(ref.getRectangle(), null));
 				clusterSquares.add(ref.toString());
 			}
 		}
+
+		log.info("Found " + clusterSquares.size() + " cluster-squares for " + squares.size() + " squares");
 
 		// finally write out JavaScript code with embedded GeoJSON
 		GeoJSON.writeGeoJSON(CLUSTER_SQUARES_JSON, "cluster", features);

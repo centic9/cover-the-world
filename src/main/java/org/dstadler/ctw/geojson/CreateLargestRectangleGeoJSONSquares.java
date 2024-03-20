@@ -37,6 +37,8 @@ public class CreateLargestRectangleGeoJSONSquares {
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
 
+		log.info("Computing largest rectangle for squares");
+
 		Set<UTMRefWithHash> squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_TXT));
 		Preconditions.checkState(squares.size() > 0,
 				"Did not read any squares from " + VISITED_SQUARES_TXT);
