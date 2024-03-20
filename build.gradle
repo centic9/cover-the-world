@@ -240,6 +240,10 @@ tasks.register('removeTiles', Exec) {
 }
 
 updateFiles.mustRunAfter removeTiles
+createAllSquares.mustRunAfter updateFiles
+createAllTiles.mustRunAfter updateFiles
+createNewSquares.mustRunAfter updateFiles
+createNewTiles.mustRunAfter updateFiles
 
 tasks.register('rebuildTiles') {
 	dependsOn removeTiles,
