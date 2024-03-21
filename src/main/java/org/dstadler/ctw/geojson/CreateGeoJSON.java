@@ -57,12 +57,12 @@ public class CreateGeoJSON {
 	private static final Logger log = LoggerFactory.make();
 
 	// squares
-	public static final String VISITED_SQUARES_JSON = "js/VisitedSquares.js";
-	public static final String VISITED_SQUARES_NEW_JSON = "js/VisitedSquaresNew.js";
+	public static final String VISITED_SQUARES_JS = "js/VisitedSquares.js";
+	public static final String VISITED_SQUARES_NEW_JS = "js/VisitedSquaresNew.js";
 
 	// tiles
-	public static final String VISITED_TILES_JSON = "js/VisitedTiles.js";
-	public static final String VISITED_TILES_NEW_JSON = "js/VisitedTilesNew.js";
+	public static final String VISITED_TILES_JS = "js/VisitedTiles.js";
+	public static final String VISITED_TILES_NEW_JS = "js/VisitedTilesNew.js";
 
 	// for printing stats when writing tiles
 	private static final AtomicLong lastLog = new AtomicLong();
@@ -72,14 +72,14 @@ public class CreateGeoJSON {
 
 		log.info("Computing GeoJSON for visited squares and tiles");
 
-		writeGeoJSON(VISITED_SQUARES_TXT, VISITED_SQUARES_JSON, "squares",
+		writeGeoJSON(VISITED_SQUARES_TXT, VISITED_SQUARES_JS, "squares",
 				UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "squares");
-		writeGeoJSON(VISITED_SQUARES_NEW_TXT, VISITED_SQUARES_NEW_JSON, "squaresnew",
+		writeGeoJSON(VISITED_SQUARES_NEW_TXT, VISITED_SQUARES_NEW_JS, "squaresnew",
 				UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "new squares");
 
-		writeGeoJSON(VISITED_TILES_TXT, VISITED_TILES_JSON, "tiles",
+		writeGeoJSON(VISITED_TILES_TXT, VISITED_TILES_JS, "tiles",
 				OSMTile::getRectangle, OSMTile::fromString, "tiles");
-		writeGeoJSON(VISITED_TILES_NEW_TXT, VISITED_TILES_NEW_JSON, "tilesnew",
+		writeGeoJSON(VISITED_TILES_NEW_TXT, VISITED_TILES_NEW_JS, "tilesnew",
 				OSMTile::getRectangle, OSMTile::fromString, "new tiles");
 	}
 

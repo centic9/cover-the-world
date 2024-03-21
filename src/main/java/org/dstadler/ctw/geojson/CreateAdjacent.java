@@ -41,11 +41,11 @@ public class CreateAdjacent {
 	private static final Logger log = LoggerFactory.make();
 
 	// squares
-	public static final String ADJACENT_SQUARES_JSON = "js/AdjacentSquares.js";
+	public static final String ADJACENT_SQUARES_JS = "js/AdjacentSquares.js";
 	public static final String ADJACENT_SQUARES_TXT = "txt/AdjacentSquares.txt";
 
 	// tiles
-	public static final String ADJACENT_TILES_JSON = "js/AdjacentTiles.js";
+	public static final String ADJACENT_TILES_JS = "js/AdjacentTiles.js";
 	public static final String ADJACENT_TILES_TXT = "txt/AdjacentTiles.txt";
 
 	public static void main(String[] args) throws IOException {
@@ -53,10 +53,10 @@ public class CreateAdjacent {
 
 		log.info("Computing GeoJSON for visited squares and tiles");
 
-		writeGeoJSON(VISITED_SQUARES_TXT, ADJACENT_SQUARES_JSON, "adjacentSquares",
+		writeGeoJSON(VISITED_SQUARES_TXT, ADJACENT_SQUARES_JS, "adjacentSquares",
 				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_TXT);
 
-		writeGeoJSON(VISITED_TILES_TXT, ADJACENT_TILES_JSON, "adjacentTiles",
+		writeGeoJSON(VISITED_TILES_TXT, ADJACENT_TILES_JS, "adjacentTiles",
 				OSMTile::fromString, "tiles", ADJACENT_TILES_TXT);
 	}
 
