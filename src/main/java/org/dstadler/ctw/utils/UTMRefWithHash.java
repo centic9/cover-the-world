@@ -150,4 +150,9 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash> {
 						map(UTMRefWithHash::fromString).
 						collect(Collectors.toSet());
 	}
+
+	@Override
+	public String string() {
+		return toString();
+	}
 }

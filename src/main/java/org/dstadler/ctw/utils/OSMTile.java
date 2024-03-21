@@ -293,4 +293,9 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 
 		return tiles;
 	}
+
+	@Override
+	public String string() {
+		return toCoords();
+	}
 }

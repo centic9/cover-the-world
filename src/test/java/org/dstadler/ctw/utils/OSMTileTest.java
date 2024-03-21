@@ -4,6 +4,7 @@ import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 import static org.dstadler.ctw.utils.OSMTile.OSM_MAX_ZOOM;
 import static org.dstadler.ctw.utils.OSMTile.OSM_MIN_ZOOM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -147,6 +148,11 @@ public class OSMTileTest {
 			OSMTile tile = OSMTile.fromLatLngZoom(lat, lon, zoom);
 			Pair<Integer, Integer> pixel = CreateTileOverlaysHelper.getAndCheckPixel(lat, lon, tile);
 			assertNotNull(pixel);
+
+			TestHelpers.ToStringTest(tile);
+
+			assertEquals(tile.toCoords(), tile.string());
+			assertNotEquals(tile.toString(), tile.string());
 		}
 	}
 
@@ -280,5 +286,15 @@ public class OSMTileTest {
 				+ "]", tile.getTilesAtZoom(15).toString());
 
 		assertEquals(4096, tile.getTilesAtZoom(20).size());
+	}
+
+	@Test
+	public void string() {
+		OSMTile tile = new OSMTile(14, 8837, 5660);
+
+		TestHelpers.ToStringTest(tile);
+
+		assertEquals(tile.toCoords(), tile.string());
+		assertNotEquals(tile.toString(), tile.string());
 	}
 }

@@ -245,6 +245,8 @@ public class UTMRefWithHashTest {
 			assertNotNull(ref1);
 			LatLonRectangle rec = ref1.getRectangle();
 			assertNotNull(rec);
+
+			TestHelpers.ToStringTest(ref1);
 		}
     }
 
@@ -289,5 +291,14 @@ public class UTMRefWithHashTest {
 		assertNotNull(squares);
 		//noinspection ConstantValue
 		assertTrue(squares.size() >= 0, "Had: " + squares.size());
+	}
+
+	@Test
+	public void string() {
+		UTMRefWithHash ref = new UTMRefWithHash(1, 'U', 23423.23, 5234.233);
+
+		TestHelpers.ToStringTest(ref);
+
+		assertEquals(ref.toString(), ref.string());
 	}
 }

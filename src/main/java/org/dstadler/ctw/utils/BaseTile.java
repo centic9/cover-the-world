@@ -9,11 +9,13 @@ package org.dstadler.ctw.utils;
 public interface BaseTile<T> {
 	LatLonRectangle getRectangle();
 
-	T up();
+	BaseTile<T> up();
 
-	T down();
+	BaseTile<T> down();
 
-	T right();
+	BaseTile<T> right();
 
-	T left();
+	BaseTile<T> left();
+
+	String string();
 }
