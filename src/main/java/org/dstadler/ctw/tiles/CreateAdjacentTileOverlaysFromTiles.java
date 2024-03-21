@@ -1,7 +1,6 @@
 package org.dstadler.ctw.tiles;
 
-import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_NEW_TXT;
-import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
+import static org.dstadler.ctw.geojson.CreateAdjacent.ADJACENT_TILES_TXT;
 import static org.dstadler.ctw.tiles.CreateStaticTiles.TILE_DIR_COMBINED_TILES;
 
 import java.io.File;
@@ -30,26 +29,26 @@ import org.geotools.feature.FeatureCollection;
 
 /**
  * This application takes the list of covered tiles from
- * file "VisitedTiles.txt" and generates OSM tiles with
- * red semi-transparent area for any covered square.
+ * file "VisitedTiles.txt" and generates a list of OSM
+ * tiles with which are "adjacent" to the covered tiles.
+ *
+ * This is used to aid in planning routes by showing
+ * small tile-border lines in areas that can be covered
+ * next.
  *
  * Resulting PNGs are stored in directories "tilesTiles"
  * and "tilesTilesNew"
  *
- * The created images consist of red transparent area for
- * covered squares.
+ * The created images consist of red transparent border.
  *
  * This is then used via Leaflet to produce combined map
  * of OSM plus the additional tiles for covered area as overlay.
  */
-public class CreateTileOverlaysFromTiles {
+public class CreateAdjacentTileOverlaysFromTiles {
 	private static final Logger log = LoggerFactory.make();
 
-	public static final File VISITED_TILES_JSON = new File("js/VisitedTiles.json");
-	public static final File VISITED_TILES_NEW_JSON = new File("js/VisitedTilesNew.json");
-
-	public static final File TILES_TILES_DIR = new File("tilesTiles");
-	public static final File TILES_TILES_DIR_NEW = new File("tilesTilesNew");
+	public static final File ADJACENT_TILES_DIR = new File("tilesTilesAdjacent");
+	public static final File ADJACENT_TILES_JSON = new File("js/AdjacentTiles.json");
 
 	// for printing stats when writing tiles
 	private static final AtomicLong lastLogTile = new AtomicLong();
@@ -60,52 +59,29 @@ public class CreateTileOverlaysFromTiles {
 		// as we write many small files, we do not want to use disk-based caching
 		ImageIO.setUseCache(false);
 
-		boolean onlyNewTiles = !(args.length > 0 && "all".equals(args[0]));
+		File tileDir = ADJACENT_TILES_DIR;
+		String tilesFile = ADJACENT_TILES_TXT;
+		File jsonFile = ADJACENT_TILES_JSON;
 
-		File tileDir = onlyNewTiles ? TILES_TILES_DIR_NEW : TILES_TILES_DIR;
-		String tilesFile = onlyNewTiles ? VISITED_TILES_NEW_TXT : VISITED_TILES_TXT;
-		File jsonFile = onlyNewTiles ? VISITED_TILES_NEW_JSON : VISITED_TILES_JSON;
+		log.info("Writing adjacent tiles to directory " + tileDir);
 
-		if (onlyNewTiles) {
-			log.info("Writing only new tiles to directory " + tileDir);
-		} else {
-			log.info("Writing all tiles to directory " + tileDir);
-		}
-
-		if (onlyNewTiles) {
-			CreateTileOverlaysHelper.cleanTiles(tileDir);
-		}
 		if (!tileDir.exists() && !tileDir.mkdirs()) {
 			throw new IOException("Could not create directory at " + tileDir);
 		}
 
 		long start = System.currentTimeMillis();
 
-		Set<String> tiles = CreateTileOverlaysHelper.read(tilesFile, "tiles");
+		Set<String> tiles = CreateTileOverlaysHelper.read(tilesFile, "adjacentTiles");
 
 		AtomicInteger tilesOverall = new AtomicInteger();
 		// t.toCoords().equals("17/70647/45300")
-		Set<OSMTile> newTiles = generateTiles(tiles, tilesOverall, tileDir, jsonFile, t -> true);
+		generateTiles(tiles, tilesOverall, tileDir, jsonFile, t -> true);
 
 		log.info(String.format(Locale.US, "Wrote %,d files overall in %,dms",
 				tilesOverall.get(), System.currentTimeMillis() - start));
-
-		if (onlyNewTiles) {
-			// rerun for normal tiles, but only ones that were touched by the new tiles
-			log.info("--------------------------------------------------------------------------");
-			log.info(String.format("Write touched full tiles for %d new tiles, found %d affected tiles",
-					tiles.size(), newTiles.size()));
-
-			tilesOverall = new AtomicInteger();
-			generateTiles(CreateTileOverlaysHelper.read(VISITED_TILES_TXT, "tiles"), tilesOverall, TILES_TILES_DIR,
-					jsonFile, newTiles::contains);
-
-			log.info(String.format(Locale.US, "Wrote %,d files for changed tiles in %,dms",
-					tilesOverall.get(), System.currentTimeMillis() - start));
-		}
 	}
 
-	private static Set<OSMTile> generateTiles(Set<String> tilesIn, AtomicInteger tilesOverall, File tileDir,
+	private static void generateTiles(Set<String> tilesIn, AtomicInteger tilesOverall, File tileDir,
 			File jsonFile, Predicate<OSMTile> filter) throws InterruptedException, IOException {
 		// read GeoJSON from file to use it for rendering overlay images
 		final FeatureCollection<?, ?> features = GeoTools.parseFeatureCollection(jsonFile);
@@ -115,10 +91,10 @@ public class CreateTileOverlaysFromTiles {
 		// prepare counters
 		IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).
 				forEach(zoom -> {
-							// indicate that this zoom is started
-							CreateTileOverlaysHelper.EXPECTED.add(zoom, 0);
-							CreateTileOverlaysHelper.ACTUAL.add(zoom, -1);
-						});
+					// indicate that this zoom is started
+					CreateTileOverlaysHelper.EXPECTED.add(zoom, 0);
+					CreateTileOverlaysHelper.ACTUAL.add(zoom, -1);
+				});
 
 		List<Integer> aList = IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).boxed()
 				.collect(Collectors.toList());
@@ -132,8 +108,6 @@ public class CreateTileOverlaysFromTiles {
 		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
 			throw new IllegalStateException("Timed out while waiting for all tasks to finish");
 		}
-
-		return allTiles;
 	}
 
 	private static void generateTilesForOneZoom(int zoom, Set<String> tilesIn,
@@ -173,7 +147,7 @@ public class CreateTileOverlaysFromTiles {
 		tilesOverall.addAndGet(tilesOutSize);
 
 		try {
-			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, features, false);
+			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, features, true);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -288,10 +288,10 @@ public class CreateTileOverlaysHelper {
 	}
 
 	public static void writeTilesToFiles(File combinedDir, Set<OSMTile> tilesOut, File tileDir,
-			FeatureCollection<?, ?> features) throws IOException {
+			FeatureCollection<?, ?> features, boolean borderOnly) throws IOException {
 		int tilesNr = 1;
 		for (OSMTile tile : tilesOut) {
-			writeTileToFile(combinedDir, tilesOut, tileDir, features, tile, tilesNr);
+			writeTileToFile(combinedDir, tilesOut, tileDir, features, tile, tilesNr, borderOnly);
 
 			tilesNr++;
 			CreateTileOverlaysHelper.ACTUAL.inc(tile.getZoom());
@@ -303,7 +303,8 @@ public class CreateTileOverlaysHelper {
 			File tileDir,
 			FeatureCollection<?, ?> features,
 			OSMTile tile,
-			int tilesNr) throws IOException {
+			int tilesNr,
+			boolean borderOnly) throws IOException {
 		File file = tile.toFile(tileDir);
 
 		// Save the image in PNG format using the javax.imageio API
@@ -311,7 +312,11 @@ public class CreateTileOverlaysHelper {
 			throw new IOException("Could not create directory at " + file.getParentFile());
 		}
 
-		GeoTools.writeImage(features, tile.getRectangle(), file);
+		if (borderOnly) {
+			GeoTools.writeBorder(features, tile.getRectangle(), file);
+		} else {
+			GeoTools.writeImage(features, tile.getRectangle(), file);
+		}
 
 		// whenever writing a tile, remove the combined overlay to re-create it in a follow-up step
 		/*if (written)*/

@@ -175,7 +175,7 @@ public class CreateTileOverlaysFromUTMRef {
 		tilesOverall.addAndGet(tilesOutSize);
 
 		try {
-			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, features);
+			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, features, false);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -177,6 +177,7 @@ idea {
         file("tilesSquaresCombined"),
         file("tilesSquaresNew"),
         file("tilesTiles"),
+        file("tilesTilesAdjacent"),
         file("tilesTilesCombined"),
         file("tilesTilesNew"),
     ]
