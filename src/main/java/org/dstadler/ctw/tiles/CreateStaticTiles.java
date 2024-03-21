@@ -1,5 +1,6 @@
 package org.dstadler.ctw.tiles;
 
+import static org.dstadler.ctw.tiles.CreateAdjacentTileOverlaysFromTiles.ADJACENT_TILES_DIR;
 import static org.dstadler.ctw.tiles.CreateTileOverlaysFromTiles.TILES_TILES_DIR;
 import static org.dstadler.ctw.tiles.CreateTileOverlaysFromUTMRef.TILES_SQUARES_DIR;
 
@@ -15,6 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -60,6 +63,7 @@ public class CreateStaticTiles {
 	private static final long start = System.currentTimeMillis();
 
 	private static long fileCount = 0;
+	private static long adjacentCount = 0;
 	private static long existsCount = 0;
 	private static final AtomicLong exceptionCount = new AtomicLong();
 	private static final AtomicLong filesDone = new AtomicLong();
@@ -84,79 +88,114 @@ public class CreateStaticTiles {
 			Thread.sleep(10_000);
 		}
 
-		process(TILES_SQUARES_DIR, TILE_DIR_COMBINED_SQUARES);
-		process(TILES_TILES_DIR, TILE_DIR_COMBINED_TILES);
+		process(TILES_SQUARES_DIR, TILE_DIR_COMBINED_SQUARES, null);
+		process(TILES_TILES_DIR, TILE_DIR_COMBINED_TILES, ADJACENT_TILES_DIR);
 	}
 
-	private static void process(final File tileDir, final File tileDirCombined) throws Throwable {
+	private static void process(final File tileDir, final File tileDirCombined, File adjacentTilesDir) throws Throwable {
 		if (!tileDirCombined.exists() && !tileDirCombined.mkdirs()) {
 			throw new IOException("Could not create directory at " + tileDirCombined);
 		}
 
 		fileCount = 0;
+		adjacentCount = 0;
 		existsCount = 0;
 		filesDone.set(0);
 
+		Set<String> files = new HashSet<>();
+
+		// look for tiles with covered area
 		Files.walkFileTree(tileDir.toPath(), new SimpleFileVisitor<>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 				fileCount++;
 
-				// stop whenever an exception happened anywhere
-				if(exception.get() != null) {
-					return FileVisitResult.TERMINATE;
-				}
-
-				// compute the OSM tile-coords of this file
-				String coords = StringUtils.removeEnd(
-						StringUtils.removeStart(
-								StringUtils.removeStart(file.toFile().getAbsolutePath(), tileDir.getAbsolutePath())
-										.replace("\\", "/"),
-								"/"),
-						".png");
-				Preconditions.checkState(coords.matches("\\d+/\\d+/\\d+"),
-						"Had invalid coordinates for file %s: %s",
-						file, coords);
-
-				File combinedTile = new File(tileDirCombined,  coords + ".png");
-				if (combinedTile.exists()) {
-					existsCount++;
-					return FileVisitResult.CONTINUE;
-				}
-				/*if (!combinedTile.getAbsolutePath().endsWith("16/35284/22668.png")) {
-					return FileVisitResult.CONTINUE;
-				}*/
-
-				commonPool.execute(() -> {
-					try {
-						writeOSMCombined(coords, ImageIO.read(file.toFile()), tileDirCombined);
-
-						filesDone.incrementAndGet();
-						lastFile.set(coords);
-					} catch (IOException e) {
-						exception.set(new IOException("Failed for " + file + ": " + e, e));
-						exceptionCount.incrementAndGet();
-					}
-
-					if (lastLog + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
-						lastLog = System.currentTimeMillis();
-
-						log("Having", tileDirCombined);
-					}
-				});
-
-				if (lastLog + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
-					lastLog = System.currentTimeMillis();
-
-					log("Scheduling tiles to render, currently having", tileDirCombined);
-				}
+				files.add(StringUtils.removeStart(file.toString(), tileDir.getName()));
 
 				return FileVisitResult.CONTINUE;
 			}
 		});
 
-		log.info("Finished collecting files, now waiting for " +
-				commonPool.getQueuedSubmissionCount() + " tasks to finish");
+		log.info("Found " + fileCount + " tiles, " + files.size() + " unique");
+
+		// if available, look for additional tiles with rendered border (aka adjacent tiles)
+		// some might overlap with normal covered tiles, so use a set to process each only
+		// once and combine them
+		if (adjacentTilesDir != null) {
+			Files.walkFileTree(adjacentTilesDir.toPath(), new SimpleFileVisitor<>() {
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+					adjacentCount++;
+
+					files.add(StringUtils.removeStart(file.toString(), adjacentTilesDir.getName()));
+
+					return FileVisitResult.CONTINUE;
+				}
+			});
+
+			fileCount += adjacentCount;
+			log.info("Found " + adjacentCount + " adjacent tiles, " + fileCount + " overall, " + files.size() + " unique");
+		}
+
+		// Note: we could keep two separate lists and combine them afterwards
+		// to avoid all the "exists" calls. But this seems to not be a big performance
+		// issue
+
+		for (String file : files) {
+			// stop whenever an exception happened anywhere
+			if(exception.get() != null) {
+				break;
+			}
+
+			// compute the OSM tile-coords of this file
+			String coords = StringUtils.removeEnd(
+					StringUtils.removeStart(
+							file.replace("\\", "/"),
+							"/"),
+					".png");
+			Preconditions.checkState(coords.matches("\\d+/\\d+/\\d+"),
+					"Had invalid coordinates for file %s: %s",
+					file, coords);
+
+			File combinedTile = new File(tileDirCombined,  coords + ".png");
+			if (combinedTile.exists()) {
+				existsCount++;
+				continue;
+			}
+			/*if (!combinedTile.getAbsolutePath().endsWith("16/35284/22668.png")) {
+				return FileVisitResult.CONTINUE;
+			}*/
+
+			commonPool.execute(() -> {
+				try {
+					// fetch the covered and adjacent image
+					// both can be missing and might be null
+					File coveredFile = new File(tileDir, file);
+					BufferedImage coveredImage = coveredFile.exists() ? ImageIO.read(coveredFile) : null;
+
+					File adjacentFile = adjacentTilesDir == null ? null : new File(adjacentTilesDir, file);
+					BufferedImage adjacentImage = adjacentTilesDir == null ? null :
+							adjacentFile.exists() ? ImageIO.read(adjacentFile) : null;
+
+					writeOSMCombined(coords, coveredImage, adjacentImage, tileDirCombined);
+
+					filesDone.incrementAndGet();
+					lastFile.set(coords);
+				} catch (IOException e) {
+					exception.set(new IOException("Failed for " + file + ": " + e, e));
+					exceptionCount.incrementAndGet();
+				}
+			});
+
+			if (lastLog + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
+				lastLog = System.currentTimeMillis();
+
+				log("Scheduling tiles to render, currently having", tileDirCombined);
+			}
+		}
+
+		log.info(String.format("Finished adding tasks, now waiting for %,d tasks to finish",
+				commonPool.getQueuedSubmissionCount()));
 
 		while (commonPool.getQueuedSubmissionCount() > 0 && exception.get() == null) {
 			log("Having", tileDirCombined);
@@ -201,10 +240,20 @@ public class CreateStaticTiles {
 				percent));
 	}
 
-	private static void writeOSMCombined(String coords, BufferedImage image, File tileDirCombined) throws IOException {
+	private static void writeOSMCombined(String coords, BufferedImage imageCovered,
+			BufferedImage imageAdjacent, File tileDirCombined) throws IOException {
 		BufferedImage osmImage = fetchOSMTile(coords);
 
-		BufferedImage combined = combineImages(osmImage, image);
+		// we have either both images or one of them,
+		// we want to overlay both onto the osm tile
+		final BufferedImage combined;
+		if (imageCovered != null && imageAdjacent != null) {
+			combined = combineImages(combineImages(osmImage, imageCovered), imageAdjacent);
+		} else if (imageCovered != null) {
+			combined = combineImages(osmImage, imageCovered);
+		} else {
+			combined = combineImages(osmImage, imageAdjacent);
+		}
 
 		final File file = getFile(coords, tileDirCombined);
 
