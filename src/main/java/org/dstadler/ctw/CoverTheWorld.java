@@ -2,6 +2,7 @@ package org.dstadler.ctw;
 
 import java.io.IOException;
 
+import org.dstadler.ctw.geojson.CreateAdjacent;
 import org.dstadler.ctw.geojson.CreateClusterGeoJSON;
 import org.dstadler.ctw.geojson.CreateGeoJSON;
 import org.dstadler.ctw.geojson.CreateLargestClusterGeoJSONSquares;
@@ -23,10 +24,13 @@ public class CoverTheWorld {
 		// this needs to run first to compute "Visited*.txt"
 		CreateListOfVisitedSquares.main(args);
 
-		// produce Visited*.js
+		// produce "Adjacent*"
+		CreateAdjacent.main(args);
+
+		// produce "Visited*.js"
 		CreateGeoJSON.main(args);
 
-		// produce ClusterSquares.*
+		// produce "ClusterSquares.*"
 		CreateClusterGeoJSON.main(args);
 
 		// produce "LargestCluster*"

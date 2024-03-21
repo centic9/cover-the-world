@@ -33,8 +33,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/leaflet-loading@0.1.24/src/Control.Loading.min.js "></script>
 
 	<script src="js/VisitedSquares.js"></script>
+	<script src="js/AdjacentSquares.js"></script>
 	<script src="js/VisitedSquaresNew.js"></script>
 	<script src="js/VisitedTiles.js"></script>
+	<script src="js/AdjacentTiles.js"></script>
 	<script src="js/VisitedTilesNew.js"></script>
 	<script src="js/ClusterSquares.js"></script>
 	<script src="js/LargestClusterSquares.js"></script>
@@ -71,46 +73,45 @@ Feature:
 
 function mapstyle() {
 	return{
-		fillColor:"#880000",
-		color:"#880000",
+		fillColor: "#880000",
+		color: "#880000",
 		weight: 0.05,
-		fillOpacity:0.3
+		fillOpacity: 0.3
+	};
+}
+
+function adjacentstyle() {
+	return{
+		color: "#880000",
+		weight: 0.5,
+		fillOpacity: 0
 	};
 }
 
 function clusterstyle() {
 	return{
-		fillColor:"#00aaaa",
-		color:"#00bbbbb",
+		fillColor: "#00aaaa",
+		color: "#00bbbbb",
 		weight: 0.05,
-		fillOpacity:0.2
+		fillOpacity: 0.2
 	};
 }
 
 function rectanglestyle() {
 	return{
-		fillColor:"#0077ff",
-		color:"#00bbbbb",
+		fillColor: "#0077ff",
+		color: "#00bbbbb",
 		weight: 0.05,
-		fillOpacity:0.2
+		fillOpacity: 0.2
 	};
 }
 
 function squarestyle() {
 	return{
-		fillColor:"#1166aa",
-		color:"#00bbbbb",
+		fillColor: "#1166aa",
+		color: "#00bbbbb",
 		weight: 0.05,
-		fillOpacity:0.2
-	};
-}
-
-function linestyle() {
-	return{
-		fillColor:"#0077ff",
-		color:"#0077ff",
-		weight: 1.0,
-		fillOpacity:1
+		fillOpacity: 0.2
 	};
 }
 
@@ -256,9 +257,13 @@ var paddedRenderer = L.svg({ padding: 0.8 });
 
 var geoSquares = L.geoJSON(squaresstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
+var geoAdjacentSquares = L.geoJSON(adjacentSquaresstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
 var geoSquaresNew = L.geoJSON(squaresnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 var geoTiles = L.geoJSON(tilesstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var geoAdjacentTiles = L.geoJSON(adjacentTilesstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 var geoTilesNew = L.geoJSON(tilesnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
@@ -353,12 +358,14 @@ const overlays = {
 	'Largest Cluster': largest,
 	'Rectangle': rectangle,
 	'Square': square,
+	'Adjacent': geoAdjacentSquares,
 	'-- StatsHunter --': empty,
 	'StatsHunter Tiles': geoTiles,
 	'StatsHunter New Tiles': geoTilesNew,
 	'StatsHunter Square': squareTiles,
 	'StatsHunter Rectangle': rectangleTiles,
 	'StatsHunter Cluster': clusterTiles,
+	'StatsHunter Adjacent': geoAdjacentTiles,
 	'-- Rendered overlay --': empty,
 	'Rendered Squares': ctwSquares,
 	'Rendered New': ctwSquaresNew,
@@ -467,6 +474,7 @@ L.easyButton('<strong>N</strong>', function(){
 L.easyButton('<strong>S</strong>', function(){
 	map.removeLayer(ctwSquares);
 	map.removeLayer(geoTiles);
+	map.removeLayer(geoAdjacentTiles);
 	map.removeLayer(geoTilesNew);
 	if (map.hasLayer(geoSquares)) {
 		map.removeLayer(geoSquares);
@@ -481,6 +489,7 @@ L.easyButton('<strong>T</strong>', function(){
 	map.removeLayer(ctwTiles);
 	map.removeLayer(ctwTilesNew);
 	map.removeLayer(geoSquares);
+	map.removeLayer(geoAdjacentSquares);
 	map.removeLayer(geoSquaresNew);
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(geoTiles);
