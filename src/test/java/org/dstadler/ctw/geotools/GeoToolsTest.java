@@ -1,5 +1,6 @@
 package org.dstadler.ctw.geotools;
 
+import static org.dstadler.ctw.tiles.CreateAdjacentTileOverlaysFromTiles.ADJACENT_TILES_JSON;
 import static org.dstadler.ctw.tiles.CreateTileOverlaysFromTiles.VISITED_TILES_JSON;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,6 +42,27 @@ class GeoToolsTest {
 			assertTrue(temp.delete());
 
 			GeoTools.writeImage(features, new LatLonRectangle(1, 0, 0, 1), temp);
+
+			assertTrue(temp.exists());
+
+			// read the image back in
+			final BufferedImage image = ImageIO.read(temp);
+			assertNotNull(image);
+		} finally {
+			assertTrue(!temp.exists() || temp.delete());
+		}
+	}
+
+	@Test
+	void testWriteBorder() throws IOException {
+		final FeatureCollection<?, ?> features = GeoTools.parseFeatureCollection(ADJACENT_TILES_JSON);
+		assertNotNull(features);
+
+		File temp = File.createTempFile("GeoToolsTest", ".png");
+		try {
+			assertTrue(temp.delete());
+
+			GeoTools.writeBorder(features, new LatLonRectangle(48.30055, 14.25588, 48.28085, 14.28609), temp);
 
 			assertTrue(temp.exists());
 

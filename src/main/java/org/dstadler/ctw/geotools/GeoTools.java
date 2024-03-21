@@ -57,16 +57,23 @@ public class GeoTools {
 	private static final StyleFactory sf = CommonFactoryFinder.getStyleFactory(null);
 	private static final FilterFactory ff = CommonFactoryFinder.getFilterFactory(null);
 
-	private static final Style style = createPolygonStyle();
+	private static final Style styleFill = createPolygonStyle(false);
+	private static final Style styleBorder = createPolygonStyle(true);
 
 	private static final int TILE_PIXEL = 256;
 
-	private static Style createPolygonStyle() {
+	private static Style createPolygonStyle(boolean borderOnly) {
 		// create an invisible stroke
-		Stroke stroke = sf.createStroke(ff.literal(RED), ff.literal(0.0f), ff.literal(0.0f));
+		Stroke stroke = sf.createStroke(ff.literal(RED),
+				// width
+				ff.literal(borderOnly ? 2.0f : 0.0f),
+				// opacity
+				ff.literal(borderOnly ? 1.0f : 0.0f));
 
 		// create a red semi-transparent fill
-		Fill fill = sf.createFill(ff.literal(GeoTools.RED), ff.literal(OPACITY));
+		Fill fill = sf.createFill(ff.literal(GeoTools.RED),
+				// opacity
+				ff.literal(borderOnly ? 0 : OPACITY));
 
 		return SLD.wrapSymbolizers(sf.createPolygonSymbolizer(stroke, fill, null));
 	}
@@ -105,6 +112,14 @@ public class GeoTools {
 	 * @throws IOException If writing the image-file fails
 	 */
 	public static void writeImage(FeatureCollection<?, ?> features, LatLonRectangle rect, File outputFile) throws IOException {
+		writeImageInternal(features, rect, outputFile, styleFill);
+	}
+
+	public static void writeBorder(FeatureCollection<?, ?> features, LatLonRectangle rect, File outputFile) throws IOException {
+		writeImageInternal(features, rect, outputFile, styleBorder);
+	}
+
+	private static void writeImageInternal(FeatureCollection<?, ?> features, LatLonRectangle rect, File outputFile, Style style) throws IOException {
 		// Then add them to a map with a style:
 		MapContent mapContent = new MapContent();
 		try {
