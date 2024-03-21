@@ -126,6 +126,10 @@ public class CreateListOfVisitedSquares {
 	private static void readVisitedSquares(Consumer<TrackPoint> toStringFun) throws IOException {
 		AtomicInteger i = new AtomicInteger(0);
 
+		Preconditions.checkState(GPX_DIR.exists() && GPX_DIR.isDirectory(),
+				"Directory '%s' does not exist or is not a directory (%s/%s)",
+				GPX_DIR, GPX_DIR.exists(), GPX_DIR.isDirectory());
+
 		log.info("Searching directory '" + GPX_DIR + "' for GPX tracks");
 		try (Stream<Path> walk = Files.walk(GPX_DIR.toPath(), FileVisitOption.FOLLOW_LINKS)) {
 			walk.
