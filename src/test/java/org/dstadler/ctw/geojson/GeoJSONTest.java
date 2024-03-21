@@ -56,6 +56,39 @@ public class GeoJSONTest {
 	}
 
 	@Test
+	void testCreateLines() {
+		Feature lines = GeoJSON.createLines(UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle(), null);
+		assertNotNull(lines);
+		assertTrue(lines.properties().isEmpty());
+
+		lines = GeoJSON.createLines(OSMTile.fromString("12/23/43").getRectangle(), null);
+		assertNotNull(lines);
+		assertTrue(lines.properties().isEmpty());
+	}
+
+	@Test
+	void testCreateLinesWithProperty() {
+		Feature lines = GeoJSON.createLines(UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle(),
+				"property 1");
+		assertNotNull(lines);
+		assertFalse(lines.properties().isEmpty(), "Had: " + lines.properties());
+
+		assertNotNull(lines.properties().get("popupContent"));
+		assertEquals("property 1", lines.properties().get("popupContent").getAsString());
+	}
+
+	@Test
+	void testCreateLinesOSMTile() {
+		Feature lines = GeoJSON.createLines(OSMTile.fromString("1/1/1").getRectangle(), null);
+		assertNotNull(lines);
+		assertTrue(lines.properties().isEmpty());
+
+		lines = GeoJSON.createLines(OSMTile.fromString("13/1432/2341").getRectangle(), null);
+		assertNotNull(lines);
+		assertTrue(lines.properties().isEmpty());
+	}
+
+	@Test
 	void testFormatDecimal() {
 		assertEquals(1.0, GeoJSON.formatDecimal(1.0d), 0.000001);
 		assertEquals(1.12345, GeoJSON.formatDecimal(1.1234547890d), 0.000001);
@@ -66,7 +99,7 @@ public class GeoJSONTest {
 	}
 
 	@Test
-	void testWrite() throws IOException {
+	void testWriteSquare() throws IOException {
 		File temp = File.createTempFile("GeoJSONTest", ".js");
 		try {
 			assertTrue(temp.delete());
@@ -89,8 +122,33 @@ public class GeoJSONTest {
 		}
 	}
 
+
 	@Test
-	void testGetGeoJSON() throws IOException {
+	void testWriteLines() throws IOException {
+		File temp = File.createTempFile("GeoJSONTest", ".js");
+		try {
+			assertTrue(temp.delete());
+
+			LatLonRectangle rect = UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle();
+
+			List<Feature> features = new ArrayList<>();
+			features.add(GeoJSON.createLines(rect, null));
+			GeoJSON.writeGeoJSON(temp.getAbsolutePath(), "test", features);
+
+			assertTrue(temp.exists());
+			String js = FileUtils.readFileToString(temp, StandardCharsets.UTF_8);
+			assertTrue(js.contains("\"features\""), "Had: " + js);
+
+			assertTrue(
+					js.contains("[" + GeoJSON.formatDecimal(rect.lon1) + "," + GeoJSON.formatDecimal(rect.lat1) + "]"),
+					"Should have only 5 decimal digits for \nrect " + rect + ", but had: \n" + js);
+		} finally {
+			assertTrue(!temp.exists() || temp.delete(), "Had: " + temp.getAbsolutePath());
+		}
+	}
+
+	@Test
+	void testGetGeoJSONSquare() throws IOException {
 		LatLonRectangle rect = UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle();
 
 		List<Feature> features = new ArrayList<>();
@@ -100,6 +158,21 @@ public class GeoJSONTest {
 			String json = IOUtils.toString(input, StandardCharsets.UTF_8);
 			assertEquals(
 					"{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]]}}]}",
+					json);
+		}
+	}
+
+	@Test
+	void testGetGeoJSONLines() throws IOException {
+		LatLonRectangle rect = UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle();
+
+		List<Feature> features = new ArrayList<>();
+		features.add(GeoJSON.createLines(rect, null));
+
+		try (InputStream input = GeoJSON.getGeoJSON(features)) {
+			String json = IOUtils.toString(input, StandardCharsets.UTF_8);
+			assertEquals(
+					"{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]}}]}",
 					json);
 		}
 	}

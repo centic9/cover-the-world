@@ -84,6 +84,22 @@ public class GeoJSON {
 		return builder.build();
 	}
 
+	public static Feature createLines(LatLonRectangle rec, String property) {
+		Feature.Builder builder = Feature.builder().withGeometry(LinearRing.of(
+				Point.from(rec.lon1, rec.lat1),
+				Point.from(rec.lon2, rec.lat1),
+				Point.from(rec.lon2, rec.lat2),
+				Point.from(rec.lon1, rec.lat2),
+				Point.from(rec.lon1, rec.lat1)
+		));
+
+		if (property != null) {
+			builder.withProperty("popupContent", new JsonPrimitive(property));
+		}
+
+		return builder.build();
+	}
+
 	public static void writeGeoJSON(String jsonOutputFile, String varPrefix, List<Feature> features) throws
 			IOException {
 		FeatureCollection collection = new FeatureCollection(features);

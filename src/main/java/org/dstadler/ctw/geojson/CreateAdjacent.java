@@ -88,7 +88,7 @@ public class CreateAdjacent {
 		// add GeoJSON for all squares/tiles
 		List<Feature> features = new ArrayList<>();
 		for (BaseTile<T> adjacentTile : adjacentTiles) {
-			features.add(GeoJSON.createSquare(adjacentTile.getRectangle(),
+			features.add(GeoJSON.createLines(adjacentTile.getRectangle(),
 					null
 					/*square + "\n" + toRectangle.apply(square)*/));
 		}
