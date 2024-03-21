@@ -266,13 +266,13 @@ var paddedRenderer = L.svg({ padding: 0.8 });
 
 var geoSquares = L.geoJSON(squaresstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var geoAdjacentSquares = L.geoJSON(adjacentSquaresstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+var geoSquaresAdjacent = L.geoJSON(adjacentSquaresstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 var geoSquaresNew = L.geoJSON(squaresnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 var geoTiles = L.geoJSON(tilesstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var geoAdjacentTiles = L.geoJSON(adjacentTilesstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+var geoTilesAdjacent = L.geoJSON(adjacentTilesstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 var geoTilesNew = L.geoJSON(tilesnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
@@ -343,6 +343,7 @@ if (params.get("squares") === "1") {
 } else {
 	map.addLayer(geoTiles);
 	map.addLayer(geoTilesNew);
+//	map.addLayer(geoTilesAdjacent);
 }
 
 if (params.get("mtb") === "1") {
@@ -364,18 +365,18 @@ const baseLayers = {
 const overlays = {
 	'Squares': geoSquares,
 	'New': geoSquaresNew,
+	'Adjacent': geoSquaresAdjacent,
 	'Cluster': cluster,
 	'Largest Cluster': largest,
 	'Rectangle': rectangle,
 	'Square': square,
-	'Adjacent': geoAdjacentSquares,
 	'-- StatsHunter --': empty,
 	'StatsHunter Tiles': geoTiles,
 	'StatsHunter New Tiles': geoTilesNew,
+	'StatsHunter Adjacent': geoTilesAdjacent,
 	'StatsHunter Square': squareTiles,
 	'StatsHunter Rectangle': rectangleTiles,
 	'StatsHunter Cluster': clusterTiles,
-	'StatsHunter Adjacent': geoAdjacentTiles,
 	'-- Rendered overlay --': empty,
 	'Rendered Squares': ctwSquares,
 	'Rendered New': ctwSquaresNew,
@@ -487,7 +488,7 @@ L.easyButton('<strong>N</strong>', function(){
 L.easyButton('<strong>S</strong>', function(){
 	map.removeLayer(ctwSquares);
 	map.removeLayer(geoTiles);
-	map.removeLayer(geoAdjacentTiles);
+	map.removeLayer(geoTilesAdjacent);
 	map.removeLayer(geoTilesNew);
 	if (map.hasLayer(geoSquares)) {
 		map.removeLayer(geoSquares);
@@ -503,7 +504,7 @@ L.easyButton('<strong>T</strong>', function(){
 	map.removeLayer(ctwTilesNew);
 	map.removeLayer(ctwTilesAdjacent);
 	map.removeLayer(geoSquares);
-	map.removeLayer(geoAdjacentSquares);
+	map.removeLayer(geoSquaresAdjacent);
 	map.removeLayer(geoSquaresNew);
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(geoTiles);
