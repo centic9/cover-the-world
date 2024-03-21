@@ -227,14 +227,13 @@ public class CreateStaticTiles {
 
 	private static void log(String x, File dir) {
 		double percent = ((double)filesDone.get()) / (fileCount - existsCount) * 100;
-
-		log.info(x + String.format(" %,d files in %s at %s, "
+		log.info(x + String.format(" %,d files in %s at %-15s, "
 						+ "%,d existing, %,d done, %,d waiting, %,.2f per second, "
 						+ "%,.2f%% done, "
 						+ (exceptionCount.get() != 0 ?
 							exceptionCount.get() + " exceptions: " + exception.get() :
 							""),
-				fileCount, dir, lastFile.get(),
+				fileCount, dir, lastFile.get() == null ? "N/A" : lastFile.get(),
 				existsCount, filesDone.get(), commonPool.getQueuedSubmissionCount(),
 				((double) filesDone.get()) / ((System.currentTimeMillis() - start) / 1000),
 				percent));
