@@ -30,6 +30,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.utils.BaseTile;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.MatrixUtils;
 import org.dstadler.ctw.utils.OSMTile;
@@ -82,7 +83,7 @@ public class CreateGeoJSON {
 				OSMTile::getRectangle, OSMTile::fromString, "new tiles");
 	}
 
-	private static <T> void writeGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
+	private static <T extends BaseTile<T>> void writeGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
 			Function<T, LatLonRectangle> toRectangle,
 			Function<String, T> toObject,
 			String title) throws IOException {
@@ -102,7 +103,7 @@ public class CreateGeoJSON {
 		List<Feature> features = new ArrayList<>();
 		while (squares.size() > 0) {
 			final Feature rectangle;
-			final T next = squares.iterator().next();
+			final BaseTile<T> next = squares.iterator().next();
 			if (next instanceof UTMRefWithHash) {
 				//noinspection unchecked
 				rectangle = getSquareRectangle((Set<UTMRefWithHash>) squares, null, "squares");

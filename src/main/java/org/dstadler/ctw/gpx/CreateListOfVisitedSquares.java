@@ -75,7 +75,7 @@ public class CreateListOfVisitedSquares {
 					toCoords());
 		};
 
-		readVisitedSquares(consumer);
+		readVisited(consumer);
 
 		Preconditions.checkState(visitedSquares.size() > 0,
 				"Did not read any square from GPX tracks in directory '" + GPX_DIR + "'");
@@ -90,30 +90,30 @@ public class CreateListOfVisitedSquares {
 	}
 
 	private static void processVisitedArea(String visitedFile, String visitedNewFile,
-			String title, Set<String> visitedSquares) throws IOException {
+			String title, Set<String> visited) throws IOException {
 		long start = System.currentTimeMillis();
 
-		Set<String> previousSquares = readPreviousSquares(visitedFile);
+		Set<String> previous = readPrevious(visitedFile);
 
-		writeListOfVisitedSquares(visitedSquares, visitedFile);
+		writeListOfVisited(visited, visitedFile);
 
 		log.info(String.format("Found %,d covered " + title + " after %,dms",
-				visitedSquares.size(), System.currentTimeMillis() - start));
+				visited.size(), System.currentTimeMillis() - start));
 
 		// compute newly covered squares by removing all previously known ones
-		visitedSquares.removeAll(previousSquares);
+		visited.removeAll(previous);
 
 		// re-write the new-file if we found some this time
 		// otherwise the previous "new" entries should stay in place
-		if (visitedSquares.size() > 0) {
-			writeListOfVisitedSquares(visitedSquares, visitedNewFile);
+		if (visited.size() > 0) {
+			writeListOfVisited(visited, visitedNewFile);
 		}
 
 		log.info(String.format("Having  %,d newly covered " + title + " after %,dms",
-				visitedSquares.size(), System.currentTimeMillis() - start));
+				visited.size(), System.currentTimeMillis() - start));
 	}
 
-	private static Set<String> readPreviousSquares(String visitedFile) throws IOException {
+	private static Set<String> readPrevious(String visitedFile) throws IOException {
 		if (new File(visitedFile).exists()) {
 			try (BufferedReader reader = new BufferedReader(new FileReader(visitedFile))) {
 				return reader.lines().collect(Collectors.toCollection(TreeSet::new));
@@ -123,7 +123,7 @@ public class CreateListOfVisitedSquares {
 		return Collections.emptySet();
 	}
 
-	private static void readVisitedSquares(Consumer<TrackPoint> toStringFun) throws IOException {
+	private static void readVisited(Consumer<TrackPoint> toStringFun) throws IOException {
 		AtomicInteger i = new AtomicInteger(0);
 
 		Preconditions.checkState(GPX_DIR.exists() && GPX_DIR.isDirectory(),
@@ -160,10 +160,10 @@ public class CreateListOfVisitedSquares {
 		}
 	}
 
-	private static void writeListOfVisitedSquares(Set<String> visitedSquares, String visitedSquaresTxt) throws IOException {
+	private static void writeListOfVisited(Set<String> visited, String visitedTxtFile) throws IOException {
 		// create list of latLngBounds for SVG elements to overlay
-		try (Writer writer = new BufferedWriter(new FileWriter(visitedSquaresTxt))) {
-			for (String square : new TreeSet<>(visitedSquares)) {
+		try (Writer writer = new BufferedWriter(new FileWriter(visitedTxtFile))) {
+			for (String square : new TreeSet<>(visited)) {
 				writer.write(square);
 				writer.write('\n');
 			}
