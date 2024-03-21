@@ -223,8 +223,8 @@ public class CreateTileOverlaysHelper {
 				}
 
 				if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-					log.info(String.format(Locale.US, "bool[] -> png: zoom %d: %,d of %,d: %s%s",
-							zoom, tileNr, tileCount, file, concatProgress()));
+					log.info(String.format(Locale.US, "bool[] -> png: zoom %d: %s - %,d of %,d: %s%s",
+							zoom, tileDir, tileNr, tileCount, file, concatProgress()));
 
 					lastLog.set(System.currentTimeMillis());
 				}
@@ -330,8 +330,8 @@ public class CreateTileOverlaysHelper {
 		}
 
 		if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-			log.info(String.format(Locale.US, "features -> png: zoom %d: %,d of %,d: %s%s",
-					tile.getZoom(), tilesNr, tilesOut.size(), tile.toCoords(), CreateTileOverlaysHelper.concatProgress()));
+			log.info(String.format(Locale.US, "features -> png: zoom %d: %s - %,d of %,d: %s%s",
+					tile.getZoom(), tileDir, tilesNr, tilesOut.size(), tile.toCoords(), CreateTileOverlaysHelper.concatProgress()));
 
 			lastLog.set(System.currentTimeMillis());
 		}
