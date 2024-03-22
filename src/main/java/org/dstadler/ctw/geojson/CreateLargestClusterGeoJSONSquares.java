@@ -53,12 +53,13 @@ public class CreateLargestClusterGeoJSONSquares {
 
 		clusters.sort(Comparator.
 				comparingInt((List<UTMRefWithHash> o) -> o.size()).
-				thenComparingInt(List::hashCode));
+				thenComparingInt(List::hashCode).
+				reversed());
 
 		log.info("Found " + clusters.size() + " cluster, top 5: \n" +
 				clusters.
 						// print the top 5
-						subList(clusters.size() < 6 ? 0 : clusters.size() - 6, clusters.size() < 1 ? 0 : clusters.size() - 1).
+						subList(0, Math.min(clusters.size(), 5)).
 						stream().
 						// convert to string
 						map(r -> r.size() + ": " + r).
@@ -75,7 +76,7 @@ public class CreateLargestClusterGeoJSONSquares {
 
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
-		List<UTMRefWithHash> largestCluster = clusters.get(clusters.size() - 1);
+		List<UTMRefWithHash> largestCluster = clusters.get(0);
 		Set<String> largestClusterStr = new TreeSet<>();
 		for (UTMRefWithHash square : largestCluster) {
 			features.add(GeoJSON.createSquare(square.getRectangle(),
@@ -173,7 +174,7 @@ public class CreateLargestClusterGeoJSONSquares {
 				break;
 			}
 
-			log.info("Added " + count + " additional squares to the cluster");
+			log.info("Added " + count + " additional squares to the cluster, now having " + foundCluster.size() + " cluster squares");
 		}
 	}
 
