@@ -131,7 +131,7 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	// requests for tiles on zoom-level 20 were timing out at times
 	maxZoom: 19,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 });
 
@@ -139,7 +139,7 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const osmDE = L.tileLayer('https://ptolemy.openstreetmap.de/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '<a target=_blank href="https://www.openstreetmap.org/">Karte hergestellt aus OpenStreetMap-Daten</a> | Lizenz: <a rel="license" target="_blank" href="https://opendatacommons.org/licenses/odbl/">Open Database License (ODbL)</a>'
 });
 
@@ -147,7 +147,7 @@ const osmDE = L.tileLayer('https://ptolemy.openstreetmap.de/{z}/{x}/{y}.png', {
 const osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
 });
 
@@ -155,7 +155,7 @@ const osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.pn
 const openTopo = L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
@@ -164,7 +164,7 @@ const openTopo = L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png', {
 const bergfex = L.tileLayer('https://tiles.bergfex.at/styles/bergfex-osm/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	//edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 });
 
 // https://tiles.bergfex.at/
@@ -172,21 +172,21 @@ const bergfex = L.tileLayer('https://tiles.bergfex.at/styles/bergfex-osm/{z}/{x}
 const bergfexJpg = L.tileLayer('https://tiles.bergfex.at/styles/bergfex-osm/{z}/{x}/{y}@2x.jpg', {
 	maxZoom: 20,
 	//edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 });
 
 // https://tiles.bergfex.at/data/oek50-512/12/2207/1415.jpg70
 const bergfexOEK50 = L.tileLayer('https://tiles.bergfex.at/data/oek50-512/{z}/{x}/{y}.jpg70', {
 	maxZoom: 15,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 });
 
 // https://tiles.bergfex.at/styles/basemap-ortho/12/2207/1415.png
 const bergfexOrtho = L.tileLayer('https://tiles.bergfex.at/styles/basemap-ortho/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 });
 
 // Overlay layers
@@ -195,7 +195,7 @@ const bergfexOrtho = L.tileLayer('https://tiles.bergfex.at/styles/basemap-ortho/
 const mtb = L.tileLayer('https://tile.waymarkedtrails.org/mtb/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
 });
 
@@ -203,52 +203,52 @@ const mtb = L.tileLayer('https://tile.waymarkedtrails.org/mtb/{z}/{x}/{y}.png', 
 const cycle = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
 	maxZoom: 19,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
 });
 
-// https://cs37700.dogadoserver.de/ctw/tilesSquares/12/2207/1415.png
+// https://example.com/ctw/tilesSquares/12/2207/1415.png
 const ctwSquares = L.tileLayer('tilesSquares/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
-// https://cs37700.dogadoserver.de/ctw/tilesSquaresNew/12/2207/1415.png
+// https://example.com/ctw/tilesSquaresNew/12/2207/1415.png
 const ctwSquaresNew = L.tileLayer('tilesSquaresNew/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
-// https://cs37700.dogadoserver.de/ctw/tilesTiles/12/2207/1415.png
+// https://example.com/ctw/tilesTiles/12/2207/1415.png
 const ctwTiles = L.tileLayer('tilesTiles/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
-// https://cs37700.dogadoserver.de/ctw/tilesTilesNew/12/2207/1415.png
+// https://example.com/ctw/tilesTilesNew/12/2207/1415.png
 const ctwTilesNew = L.tileLayer('tilesTilesNew/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
-// https://cs37700.dogadoserver.de/ctw/tilesTilesAdjacent/12/2207/1415.png
+// https://example.com/ctw/tilesTilesAdjacent/12/2207/1415.png
 const ctwTilesAdjacent = L.tileLayer('tilesTilesAdjacent/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
 	edgeBufferTiles: 1,
-	errorTileUrl: 'https://cs37700.dogadoserver.de/ctw/ctw-404.png',
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
