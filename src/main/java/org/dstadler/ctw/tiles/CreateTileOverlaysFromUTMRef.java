@@ -128,7 +128,7 @@ public class CreateTileOverlaysFromUTMRef {
 		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
 		aList.forEach(zoom ->
 				customThreadPool.submit(() ->
-						generateTilesForOneZoom(zoom, squares, tilesOverall, tileDir, filter, features, allTiles)));
+						generateTilesForOneZoom(zoom, squares, tilesOverall, tileDir, filter, features, allTiles, false)));
 
 		customThreadPool.shutdown();
 		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
@@ -142,7 +142,7 @@ public class CreateTileOverlaysFromUTMRef {
 			AtomicInteger tilesOverall,
 			File tileDir,
 			Predicate<OSMTile> filter,
-			FeatureCollection<?, ?> features, Set<OSMTile> allTiles) {
+			FeatureCollection<?, ?> features, Set<OSMTile> allTiles, boolean borderOnly) {
 		Thread thread = Thread.currentThread();
 		thread.setName(thread.getName() + " zoom " + zoom);
 
@@ -175,7 +175,7 @@ public class CreateTileOverlaysFromUTMRef {
 		tilesOverall.addAndGet(tilesOutSize);
 
 		try {
-			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, features, false);
+			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, features, borderOnly);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

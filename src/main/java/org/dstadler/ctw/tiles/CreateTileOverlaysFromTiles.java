@@ -85,7 +85,7 @@ public class CreateTileOverlaysFromTiles {
 
 		AtomicInteger tilesOverall = new AtomicInteger();
 		// t.toCoords().equals("17/70647/45300")
-		Set<OSMTile> newTiles = generateTiles(tiles, tilesOverall, tileDir, jsonFile, t -> true);
+		Set<OSMTile> newTiles = generateTiles(tiles, tilesOverall, tileDir, jsonFile, t -> true, false);
 
 		log.info(String.format(Locale.US, "Wrote %,d files overall in %,dms",
 				tilesOverall.get(), System.currentTimeMillis() - start));
@@ -98,15 +98,15 @@ public class CreateTileOverlaysFromTiles {
 
 			tilesOverall = new AtomicInteger();
 			generateTiles(CreateTileOverlaysHelper.read(VISITED_TILES_TXT, "tiles"), tilesOverall, TILES_TILES_DIR,
-					jsonFile, newTiles::contains);
+					jsonFile, newTiles::contains, false);
 
 			log.info(String.format(Locale.US, "Wrote %,d files for changed tiles in %,dms",
 					tilesOverall.get(), System.currentTimeMillis() - start));
 		}
 	}
 
-	private static Set<OSMTile> generateTiles(Set<String> tilesIn, AtomicInteger tilesOverall, File tileDir,
-			File jsonFile, Predicate<OSMTile> filter) throws InterruptedException, IOException {
+	protected static Set<OSMTile> generateTiles(Set<String> tilesIn, AtomicInteger tilesOverall, File tileDir,
+			File jsonFile, Predicate<OSMTile> filter, boolean borderOnly) throws InterruptedException, IOException {
 		// read GeoJSON from file to use it for rendering overlay images
 		final FeatureCollection<?, ?> features = GeoTools.parseFeatureCollection(jsonFile);
 
@@ -126,7 +126,7 @@ public class CreateTileOverlaysFromTiles {
 		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
 		aList.forEach(zoom ->
 				customThreadPool.submit(() ->
-						generateTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, features, allTiles)));
+						generateTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, features, allTiles, borderOnly)));
 
 		customThreadPool.shutdown();
 		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
@@ -140,7 +140,7 @@ public class CreateTileOverlaysFromTiles {
 			AtomicInteger tilesOverall,
 			File tileDir,
 			Predicate<OSMTile> filter,
-			FeatureCollection<?, ?> features, Set<OSMTile> allTiles) {
+			FeatureCollection<?, ?> features, Set<OSMTile> allTiles, boolean borderOnly) {
 		Thread thread = Thread.currentThread();
 		thread.setName(thread.getName() + " zoom " + zoom);
 
@@ -173,7 +173,7 @@ public class CreateTileOverlaysFromTiles {
 		tilesOverall.addAndGet(tilesOutSize);
 
 		try {
-			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, features, false);
+			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, features, borderOnly);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
