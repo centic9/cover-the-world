@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
@@ -62,7 +63,7 @@ public class CreateLargestClusterGeoJSONSquares {
 						subList(0, Math.min(clusters.size(), 5)).
 						stream().
 						// convert to string
-						map(r -> r.size() + ": " + r).
+						map(r -> r.size() + ": " + StringUtils.abbreviate(r.toString(), 256)).
 						// print on separate lines
 						collect(Collectors.joining("\n")));
 
