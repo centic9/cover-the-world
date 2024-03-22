@@ -190,7 +190,7 @@ public class CreateStaticTiles {
 			if (lastLog + TimeUnit.SECONDS.toMillis(10) < System.currentTimeMillis()) {
 				lastLog = System.currentTimeMillis();
 
-				log("Scheduling tiles to render, currently having", tileDirCombined);
+				log("Scheduling tiles to render", tileDirCombined);
 			}
 		}
 
@@ -198,13 +198,13 @@ public class CreateStaticTiles {
 				commonPool.getQueuedSubmissionCount()));
 
 		while (commonPool.getQueuedSubmissionCount() > 0 && exception.get() == null) {
-			log("Having", tileDirCombined);
+			log("Processing", tileDirCombined);
 
 			//noinspection BusyWait
 			Thread.sleep(10_000);
 		}
 
-		log("After the loop having", tileDirCombined);
+		log("After the loop", tileDirCombined);
 
 		if (exception.get() != null) {
 			commonPool.shutdownNow();
@@ -222,21 +222,20 @@ public class CreateStaticTiles {
 			throw exception.get();
 		}
 
-		log("After processing having", tileDirCombined);
+		log("After processing", tileDirCombined);
 	}
 
 	private static void log(String x, File dir) {
 		double percent = ((double)filesDone.get()) / (fileCount - existsCount) * 100;
-		log.info(x + String.format(" %,d files in %s at %-15s, "
-						+ "%,d existing, %,d done, %,d waiting, %,.2f per second, "
+		double perSecond = ((double) filesDone.get()) / (System.currentTimeMillis() - start) * 1000;
+		log.info(x + String.format(" in %s at %-15s, %,d overall, %,d existing, %,d done, %,d waiting, %,.2f per second, "
 						+ "%,.2f%% done, "
 						+ (exceptionCount.get() != 0 ?
 							exceptionCount.get() + " exceptions: " + exception.get() :
 							""),
-				fileCount, dir, lastFile.get() == null ? "N/A" : lastFile.get(),
+				dir, lastFile.get() == null ? "N/A" : lastFile.get(), fileCount,
 				existsCount, filesDone.get(), commonPool.getQueuedSubmissionCount(),
-				((double) filesDone.get()) / ((System.currentTimeMillis() - start) / 1000),
-				percent));
+				perSecond, percent));
 	}
 
 	private static void writeOSMCombined(String coords, BufferedImage imageCovered,
