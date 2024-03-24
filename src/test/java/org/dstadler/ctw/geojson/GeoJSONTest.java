@@ -157,7 +157,22 @@ public class GeoJSONTest {
 		try (InputStream input = GeoJSON.getGeoJSON(features)) {
 			String json = IOUtils.toString(input, StandardCharsets.UTF_8);
 			assertEquals(
-					"{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]]}}]}",
+					"{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]]}}]}",
+					json);
+		}
+	}
+
+	@Test
+	void testGetGeoJSONProperties() throws IOException {
+		LatLonRectangle rect = UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle();
+
+		List<Feature> features = new ArrayList<>();
+		features.add(GeoJSON.createSquare(rect, "some test property"));
+
+		try (InputStream input = GeoJSON.getGeoJSON(features)) {
+			String json = IOUtils.toString(input, StandardCharsets.UTF_8);
+			assertEquals(
+					"{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"popupContent\":\"some test property\"},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]]}}]}",
 					json);
 		}
 	}
@@ -172,7 +187,7 @@ public class GeoJSONTest {
 		try (InputStream input = GeoJSON.getGeoJSON(features)) {
 			String json = IOUtils.toString(input, StandardCharsets.UTF_8);
 			assertEquals(
-					"{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]}}]}",
+					"{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]}}]}",
 					json);
 		}
 	}
