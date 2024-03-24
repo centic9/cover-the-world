@@ -1,1 +1,1 @@
-var tilesnewstates=[{"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[14.28223,48.32704],[14.3042,48.32704],[14.3042,48.29781],[14.28223,48.29781],[14.28223,48.32704]]]}}]}];
+var tilesnewstates=[{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[14.28223,48.32704],[14.3042,48.32704],[14.3042,48.29781],[14.28223,48.29781],[14.28223,48.32704]]]}}]}];

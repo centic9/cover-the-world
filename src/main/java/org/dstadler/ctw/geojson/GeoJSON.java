@@ -14,10 +14,12 @@ import java.util.List;
 
 import org.dstadler.ctw.utils.LatLonRectangle;
 
+import com.github.filosganga.geogson.gson.FeatureAdapter;
 import com.github.filosganga.geogson.gson.GeometryAdapterFactory;
 import com.github.filosganga.geogson.gson.PositionsAdapter;
 import com.github.filosganga.geogson.model.Feature;
 import com.github.filosganga.geogson.model.FeatureCollection;
+import com.github.filosganga.geogson.model.Geometry;
 import com.github.filosganga.geogson.model.LinearRing;
 import com.github.filosganga.geogson.model.Point;
 import com.github.filosganga.geogson.model.Polygon;
@@ -25,7 +27,10 @@ import com.github.filosganga.geogson.model.positions.Positions;
 import com.github.filosganga.geogson.model.positions.SinglePosition;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 /**
@@ -61,7 +66,56 @@ public class GeoJSON {
 					}
 				}
 			})
+			// optimize size of GeoJSON: apply an adjusted TypeAdapter for "Feature" which does not emit
+			// the tag "properties" if none are set
+			.registerTypeAdapter(Feature.class, new TypeAdapter<Feature>() {
+				@Override
+				public void write(JsonWriter out, Feature value) throws IOException {
+					if (value == null) {
+						out.nullValue();
+					} else {
+						out.beginObject();
+						if(value.id().isPresent()) {
+							out.name(FeatureAdapter.ID_NAME).value(value.id().get());
+						}
+						out.name(FeatureAdapter.TYPE_NAME).value(FeatureAdapter.FEATURE_TYPE);
+						writeProperties(out, value);
+						writeGeometry(out, value);
+						out.endObject();
+					}
+				}
+
+				private void writeGeometry(JsonWriter out, Feature value) throws IOException {
+					out.name(FeatureAdapter.GEOMETRY_NAME);
+					geometryAdapter.write(out, value.geometry());
+				}
+
+				private void writeProperties(JsonWriter out, Feature value) throws IOException {
+					if (value.properties().isEmpty()) {
+						return;
+					}
+
+					out.name(FeatureAdapter.PROPERTIES_NAME);
+					out.beginObject();
+					for(String key : value.properties().keySet()) {
+						out.name(key);
+						JsonElement propertyValue = gson.toJsonTree(value.properties().get(key));
+						gson.toJson(propertyValue, out);
+					}
+					out.endObject();
+				}
+
+				@Override
+				public Feature read(JsonReader in) throws IOException {
+					return adapter.read(in);
+				}
+
+			})
 			.create();
+
+	private static final FeatureAdapter adapter = new FeatureAdapter(gson);
+	private static final TypeAdapter<Geometry> geometryAdapter = gson.getAdapter(Geometry.class);
+
 
 	protected static double formatDecimal(double d) {
 		// use only 5 decimal digits to reduce the size of the geo-json
