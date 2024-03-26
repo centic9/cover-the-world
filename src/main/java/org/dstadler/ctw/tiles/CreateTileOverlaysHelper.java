@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.dstadler.commons.collections.ConcurrentMappedCounter;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.geotools.GeoTools;
@@ -95,14 +96,24 @@ public class CreateTileOverlaysHelper {
 	}
 
 	public static void writeTilesToFiles(File combinedDir, Set<OSMTile> tilesOut, File tileDir,
-			FeatureCollection<?, ?> features, boolean borderOnly) throws IOException {
-		int tilesNr = 1;
-		for (OSMTile tile : tilesOut) {
-			writeTileToFile(combinedDir, tilesOut, tileDir, features, tile, tilesNr, borderOnly);
+			FeatureCollection<?, ?> features, boolean borderOnly) {
+		MutableInt tilesNr = new MutableInt(1);
 
-			tilesNr++;
-			CreateTileOverlaysHelper.ACTUAL.inc(tile.getZoom());
-		}
+		// process in parallel to make good use of CPU
+		// if this is called from a thread inside a custom thread pool, it should be used
+		// for scheduling the new tasks as well!
+		tilesOut.stream().parallel().forEach(
+				tile -> {
+					try {
+						writeTileToFile(combinedDir, tilesOut, tileDir, features, tile, tilesNr.getValue(), borderOnly);
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+
+					tilesNr.increment();
+					CreateTileOverlaysHelper.ACTUAL.inc(tile.getZoom());
+				}
+		);
 	}
 
 	private static void writeTileToFile(File combinedDir,

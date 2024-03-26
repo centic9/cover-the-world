@@ -118,9 +118,6 @@ public class CreateTileOverlaysFromTiles {
 			File tileDir,
 			Predicate<OSMTile> filter,
 			FeatureCollection<?, ?> features, Set<OSMTile> allTiles, boolean borderOnly) {
-		Thread thread = Thread.currentThread();
-		thread.setName(thread.getName() + " zoom " + zoom);
-
 		CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
 
 		log.info("Start processing of " + tilesIn.size() + " tiles at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
@@ -149,11 +146,7 @@ public class CreateTileOverlaysFromTiles {
 		int tilesOutSize = tilesOut.size();
 		tilesOverall.addAndGet(tilesOutSize);
 
-		try {
-			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, features, borderOnly);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, features, borderOnly);
 
 		log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 	}

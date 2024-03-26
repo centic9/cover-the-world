@@ -82,7 +82,7 @@ public class CreateTileOverlaysFromUTMRef {
 
 		AtomicInteger tilesOverall = new AtomicInteger();
 		// t.toCoords().equals("17/70647/45300")
-		Set<OSMTile> newTiles = generateSquares(squares, tilesOverall, tileDir, jsonFile, t -> true);
+		Set<OSMTile> newTiles = generateTiles(squares, tilesOverall, tileDir, jsonFile, t -> true);
 
 		log.info(String.format(Locale.US, "Wrote %,d files overall in %,dms",
 				tilesOverall.get(), System.currentTimeMillis() - start));
@@ -94,7 +94,7 @@ public class CreateTileOverlaysFromUTMRef {
 					squares.size(), newTiles.size()));
 
 			tilesOverall = new AtomicInteger();
-			generateSquares(CreateTileOverlaysHelper.read(VISITED_SQUARES_TXT, "squares"), tilesOverall, TILES_SQUARES_DIR,
+			generateTiles(CreateTileOverlaysHelper.read(VISITED_SQUARES_TXT, "squares"), tilesOverall, TILES_SQUARES_DIR,
 					jsonFile, newTiles::contains);
 
 			log.info(String.format(Locale.US, "Wrote %,d files for changed tiles in %,dms",
@@ -102,7 +102,7 @@ public class CreateTileOverlaysFromUTMRef {
 		}
 	}
 
-	private static Set<OSMTile> generateSquares(Set<String> squares, AtomicInteger tilesOverall, File tileDir,
+	private static Set<OSMTile> generateTiles(Set<String> squares, AtomicInteger tilesOverall, File tileDir,
 			File jsonFile, Predicate<OSMTile> filter) throws InterruptedException, IOException {
 		// read GeoJSON from file to use it for rendering overlay images
 		final FeatureCollection<?, ?> features = GeoTools.parseFeatureCollection(jsonFile);
@@ -120,9 +120,6 @@ public class CreateTileOverlaysFromUTMRef {
 			File tileDir,
 			Predicate<OSMTile> filter,
 			FeatureCollection<?, ?> features, Set<OSMTile> allTiles) {
-		Thread thread = Thread.currentThread();
-		thread.setName(thread.getName() + " zoom " + zoom);
-
 		CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
 
 		log.info("Start processing of " + squares.size() + " squares at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
@@ -151,11 +148,7 @@ public class CreateTileOverlaysFromUTMRef {
 		int tilesOutSize = tilesOut.size();
 		tilesOverall.addAndGet(tilesOutSize);
 
-		try {
-			CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, features, false);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, features, false);
 
 		log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
 	}
