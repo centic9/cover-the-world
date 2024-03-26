@@ -1,16 +1,11 @@
 package org.dstadler.ctw.tiles;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -18,20 +13,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.collections.ConcurrentMappedCounter;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.geotools.GeoTools;
 import org.dstadler.ctw.utils.Constants;
-import org.dstadler.ctw.utils.LatLonRectangle;
 import org.dstadler.ctw.utils.OSMTile;
 import org.geotools.feature.FeatureCollection;
-
-import com.google.common.base.Preconditions;
-import com.pngencoder.PngEncoder;
 
 /**
  * Functionality which is shared by the applications which
@@ -39,19 +27,6 @@ import com.pngencoder.PngEncoder;
  */
 public class CreateTileOverlaysHelper {
 	private static final Logger log = LoggerFactory.make();
-
-	// Create a GradientPaint for this direction and size
-	private static final int RGB = new Color(255, 0, 0, 80).getRGB();
-
-	// most arrays will be full, so let's re-use them to save main memory
-	protected static final boolean[][] FULL = new boolean[256][256];
-	static {
-		for (int x = 0; x < 256; x++) {
-			for (int y = 0; y < 256; y++) {
-				FULL[x][y] = true;
-			}
-		}
-	}
 
 	// for printing stats when writing tiles
 	private static final AtomicLong lastLog = new AtomicLong();
@@ -89,202 +64,6 @@ public class CreateTileOverlaysHelper {
 				}
 			});
 		}
-	}
-
-	public static boolean isFull(boolean[][] pixel) {
-		boolean full = true;
-		for (int x = 0; x < 256; x++) {
-			for (int y = 0; y < 256; y++) {
-				if (!pixel[x][y]) {
-					full = false;
-					break;
-				}
-			}
-			if (!full) {
-				break;
-			}
-		}
-		return full;
-	}
-
-	public static void writePixel(Map<OSMTile, boolean[][]> tiles, OSMTile tile, LatLonRectangle recTileIn) {
-		// ensure the tile and it's pixel-array are in the map
-		boolean[][] pixel = tiles.computeIfAbsent(tile, osmTile -> new boolean[256][256]);
-
-		if (pixel == FULL) {
-			// already full, nothing to do anymore
-			return;
-		}
-
-		LatLonRectangle recTile = tile.getRectangle();
-
-		// compute how much of the tileIn is located in this tile
-		// so that we can fill the boolean-buffer accordingly
-		LatLonRectangle recResult = recTileIn.intersect(recTile);
-		Preconditions.checkNotNull(recResult,
-				"Expected to have an intersection of rectangles %s and %s",
-				recTileIn, recTile);
-
-		//log.info("For '" + tile + "', zoom " + zoom + " and xy " + x + "/" + y + ": Had rect " + recResult + " for " + recTile + " and " + recTile);
-		fillPixel(recResult, pixel, tile, true);
-
-		// replace a "full" array with a global instance to save main memory
-		if (isFull(pixel)) {
-			tiles.put(tile, FULL);
-		}
-	}
-
-	private static void fillPixel(LatLonRectangle recResult, boolean[][] pixel, OSMTile tile, boolean expand) {
-		Pair<Integer, Integer> pixelStart = getAndCheckPixel(recResult.lat1, recResult.lon1, tile);
-		Pair<Integer, Integer> pixelEnd = getAndCheckPixel(recResult.lat2, recResult.lon2, tile);
-
-		// add some pixel to avoid strange artefacts caused by changing sizes depending on latitude
-		int endX = Math.min(255, pixelEnd.getKey() + (expand ? expandPixel(tile.getZoom()) : 0));
-		int endY = pixelEnd.getValue();
-		int startX = pixelStart.getKey();
-		int startY = pixelStart.getValue();
-		Preconditions.checkState(startX <= endX,
-				"Having: pixelStart: %s and pixelEnd %s for recResult: %s",
-				pixelStart, pixelEnd, recResult);
-		Preconditions.checkState(startY <= endY,
-				"Having: pixelStart: %s and pixelEnd %s for recResult: %s",
-				pixelStart, pixelEnd, recResult);
-
-		for (int xPixel = startX; xPixel <= endX; xPixel++) {
-			for (int yPixel = startY; yPixel <= endY; yPixel++) {
-				pixel[xPixel][yPixel] = true;
-			}
-		}
-	}
-
-	private static int expandPixel(int zoom) {
-		switch (zoom) {
-			case 13:
-				return 1;
-			case 14:
-				return 2;
-			case 15:
-				return 4;
-			case 16:
-				return 9;
-			case 17:
-				return 18;
-			case 18:
-				return 36;
-			default:
-				return 0;
-		}
-	}
-
-	public static void writeBorderPixel(Map<OSMTile, boolean[][]> tiles, OSMTile tile, LatLonRectangle recArea) {
-		// ensure the tile and it's pixel-array are in the map
-		boolean[][] pixel = tiles.computeIfAbsent(tile, osmTile -> new boolean[256][256]);
-
-		if (pixel == FULL) {
-			// already full, nothing to do anymore
-			return;
-		}
-
-		LatLonRectangle recTile = tile.getRectangle();
-
-		// compute coordinates of borders of the tile in the drawing-area
-		List<LatLonRectangle> borders = recTile.borderInside(recArea);
-
-		for (LatLonRectangle border : borders) {
-			fillPixel(border, pixel, tile, false);
-		}
-	}
-
-	protected static void writeTilesToFiles(File combinedDir, Map<OSMTile, boolean[][]> tiles, File tileDir, int zoom) throws IOException {
-		int tileCount = tiles.size();
-		int tileNr = 1;
-
-		Iterator<Map.Entry<OSMTile, boolean[][]>> it = tiles.entrySet().iterator();
-
-		while (it.hasNext()) {
-			Map.Entry<OSMTile, boolean[][]> entry = it.next();
-
-			// reduce memory usage by removing items quickly from map again
-			// so the map cannot be used any more afterwards
-			it.remove();
-
-			File file = entry.getKey().toFile(tileDir);
-			try {
-				boolean written = writePNG(file, entry.getValue());
-
-				// whenever writing a tile, remove the combined overlay to re-create it in a follow-up step
-				if (written) {
-					File combinedTile = new File(combinedDir, entry.getKey().toCoords() + ".png");
-					if (combinedTile.exists()) {
-						if (!combinedTile.delete()) {
-							throw new IOException("Could not delete file " + combinedTile);
-						}
-					}
-				}
-
-				if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-					log.info(String.format(Locale.US, "bool[] -> png: zoom %d: %s - %,d of %,d: %s%s",
-							zoom, tileDir, tileNr, tileCount, file, concatProgress()));
-
-					lastLog.set(System.currentTimeMillis());
-				}
-			} catch (IOException e) {
-				throw new IOException("While handling file: " + file, e);
-			}
-
-			tileNr++;
-			ACTUAL.inc(zoom);
-		}
-	}
-
-	public static boolean writePNG(File file, boolean[][] pixel) throws IOException {
-		BufferedImage image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-
-		for (int x = 0; x < 256; x++) {
-			for (int y = 0; y < 256; y++) {
-				if (pixel[x][y]) {
-					image.setRGB(x, y, RGB);
-					//g.fillRect(x, y, x, y);
-				}
-			}
-		}
-
-		// Save the image in PNG format using the javax.imageio API
-		if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-			throw new IOException("Could not create directory at " + file.getParentFile());
-		}
-
-		// skip if existing Image is equal to not change the "last modified" date
-		if (file.exists()) {
-			if (imagesEqual(file, image)) {
-				return false;
-			}
-		}
-
-		new PngEncoder()
-				.withBufferedImage(image)
-				.withCompressionLevel(1)
-				.toFile(file);
-
-		return true;
-	}
-
-	protected static boolean imagesEqual(File file, BufferedImage image) throws IOException {
-		BufferedImage existing = ImageIO.read(file);
-
-		int[] a1 = existing.getData().getPixels(0, 0, 256, 256, (int[])null);
-		int[] a2 = image.getData().getPixels(0, 0, 256, 256, (int[])null);
-
-		return Arrays.compare(a1, a2) == 0;
-	}
-
-	public static Pair<Integer, Integer> getAndCheckPixel(double lat, double lon, OSMTile tile) {
-		Pair<Integer, Integer> pixel = tile.getPixelInTile(lat, lon);
-		Preconditions.checkState(pixel.getKey() >= 0 && pixel.getKey() < 256,
-				"Had: %s", pixel);
-		Preconditions.checkState(pixel.getValue() >= 0 && pixel.getValue() < 256,
-				"Had: %s", pixel);
-		return pixel;
 	}
 
 	public static void writeTilesToFiles(File combinedDir, Set<OSMTile> tilesOut, File tileDir,

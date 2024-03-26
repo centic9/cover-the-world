@@ -16,7 +16,6 @@ import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.TestHelpers;
-import org.dstadler.ctw.tiles.CreateTileOverlaysHelper;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -146,9 +145,6 @@ public class OSMTileTest {
 			int zoom = RandomUtils.nextInt(OSM_MIN_ZOOM, OSM_MAX_ZOOM + 1);
 
 			OSMTile tile = OSMTile.fromLatLngZoom(lat, lon, zoom);
-			Pair<Integer, Integer> pixel = CreateTileOverlaysHelper.getAndCheckPixel(lat, lon, tile);
-			assertNotNull(pixel);
-
 			TestHelpers.ToStringTest(tile);
 
 			assertEquals(tile.toCoords(), tile.string());

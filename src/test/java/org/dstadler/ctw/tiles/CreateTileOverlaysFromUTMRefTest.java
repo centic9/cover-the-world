@@ -49,12 +49,6 @@ public class CreateTileOverlaysFromUTMRefTest {
 		LatLonRectangle recSquare2 = createSquare("33U 426000.0 5366000.0");
 
 		assertEquals(recSquare1.lon2, recSquare2.lon1, ASSERT_DELTA);
-
-		OSMTile tile = OSMTile.fromLatLngZoom(recSquare2.lat1, recSquare2.lon1, 14);
-		Pair<Integer, Integer> pixelStart = CreateTileOverlaysHelper.getAndCheckPixel(recSquare2.lat1, recSquare2.lon1, tile);
-		Pair<Integer, Integer> pixelEnd = CreateTileOverlaysHelper.getAndCheckPixel(recSquare1.lat2, recSquare1.lon2, tile);
-
-		assertEquals(pixelEnd.getKey(), pixelStart.getKey());
 	}
 
 	private static LatLonRectangle createSquare(String square) {
