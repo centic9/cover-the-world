@@ -7,24 +7,19 @@ import static org.dstadler.ctw.tiles.CreateStaticTiles.TILE_DIR_COMBINED_TILES;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.geotools.GeoTools;
-import org.dstadler.ctw.utils.Constants;
 import org.dstadler.ctw.utils.OSMTile;
 import org.geotools.feature.FeatureCollection;
 
@@ -112,26 +107,8 @@ public class CreateTileOverlaysFromTiles {
 
 		Set<OSMTile> allTiles = ConcurrentHashMap.newKeySet();
 
-		// prepare counters
-		IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).
-				forEach(zoom -> {
-							// indicate that this zoom is started
-							CreateTileOverlaysHelper.EXPECTED.add(zoom, 0);
-							CreateTileOverlaysHelper.ACTUAL.add(zoom, -1);
-						});
-
-		List<Integer> aList = IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).boxed()
-				.collect(Collectors.toList());
-
-		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
-		aList.forEach(zoom ->
-				customThreadPool.submit(() ->
-						generateTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, features, allTiles, borderOnly)));
-
-		customThreadPool.shutdown();
-		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
-			throw new IllegalStateException("Timed out while waiting for all tasks to finish");
-		}
+		CreateTileOverlaysHelper.forEachZoom(
+				zoom -> generateTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, features, allTiles, borderOnly));
 
 		return allTiles;
 	}

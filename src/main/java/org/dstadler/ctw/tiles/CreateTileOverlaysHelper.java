@@ -5,13 +5,18 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.io.FileUtils;
 import org.dstadler.commons.collections.ConcurrentMappedCounter;
@@ -63,6 +68,29 @@ public class CreateTileOverlaysHelper {
 					throw new RuntimeException(e);
 				}
 			});
+		}
+	}
+
+	public static void forEachZoom(Consumer<Integer> task) throws InterruptedException {
+		// prepare counters
+		IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).
+				forEach(zoom -> {
+					// indicate that this zoom is started
+					CreateTileOverlaysHelper.EXPECTED.add(zoom, 0);
+					CreateTileOverlaysHelper.ACTUAL.add(zoom, -1);
+				});
+
+		List<Integer> aList = IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).boxed()
+				.collect(Collectors.toList());
+
+		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
+		aList.forEach(
+				zoom -> customThreadPool.submit(
+					() -> task.accept(zoom)));
+
+		customThreadPool.shutdown();
+		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
+			throw new IllegalStateException("Timed out while waiting for all tasks to finish");
 		}
 	}
 
