@@ -48,7 +48,6 @@ dependencies {
     implementation 'com.google.guava:guava:33.0.0-jre'
     // jcoords from https://github.com/xni06/JCoord
     implementation fileTree(dir: 'lib', include: ['*.jar'])
-    implementation 'com.pngencoder:pngencoder:0.14.0'
 	// https://github.com/filosganga/geogson
 	implementation 'com.github.filosganga:geogson-core:1.4.31'
     implementation 'org.geotools:gt-main:30.0'
@@ -206,6 +205,7 @@ tasks.register('createAllSquares', JavaExec) {
 
 	mainClass = 'org.dstadler.ctw.tiles.CreateTileOverlaysFromUTMRef'
 	classpath = sourceSets.main.runtimeClasspath
+	jvmArgs = ['-Xmx512m']
 	args "all"
 }
 
@@ -214,6 +214,7 @@ tasks.register('createNewSquares', JavaExec) {
 
 	mainClass = 'org.dstadler.ctw.tiles.CreateTileOverlaysFromUTMRef'
 	classpath = sourceSets.main.runtimeClasspath
+	jvmArgs = ['-Xmx512m']
 }
 
 tasks.register('createAllTiles', JavaExec) {
@@ -221,6 +222,7 @@ tasks.register('createAllTiles', JavaExec) {
 
 	mainClass = 'org.dstadler.ctw.tiles.CreateTileOverlaysFromTiles'
 	classpath = sourceSets.main.runtimeClasspath
+	jvmArgs = ['-Xmx512m']
 	args "all"
 }
 
@@ -229,6 +231,7 @@ tasks.register('createNewTiles', JavaExec) {
 
 	mainClass = 'org.dstadler.ctw.tiles.CreateTileOverlaysFromTiles'
 	classpath = sourceSets.main.runtimeClasspath
+	jvmArgs = ['-Xmx512m']
 }
 
 tasks.register('createAdjacentTiles', JavaExec) {
@@ -236,6 +239,7 @@ tasks.register('createAdjacentTiles', JavaExec) {
 
 	mainClass = 'org.dstadler.ctw.tiles.CreateAdjacentTileOverlaysFromTiles'
 	classpath = sourceSets.main.runtimeClasspath
+	jvmArgs = ['-Xmx512m']
 }
 
 tasks.register('removeTiles', Exec) {
