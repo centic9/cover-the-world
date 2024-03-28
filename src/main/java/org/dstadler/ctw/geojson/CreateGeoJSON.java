@@ -87,7 +87,7 @@ public class CreateGeoJSON {
 			Function<T, LatLonRectangle> toRectangle,
 			Function<String, T> toObject,
 			String title) throws IOException {
-		log.info("Writing from " + squaresFile + " to " + jsonOutputFile +
+		log.info(title + ": Writing from " + squaresFile + " to " + jsonOutputFile +
 				" with prefix '" + varPrefix + "' and title " + title);
 
 		// read list of UTMRefs for covered or new squares
@@ -96,7 +96,7 @@ public class CreateGeoJSON {
 				map(toObject).
 				collect(Collectors.toSet());
 
-		log.info("Read " + squares.size() + " " + title);
+		log.info(title + ": Read " + squares.size() + " " + title);
 
 		// build an optimized GeoJSON as including all squares/tiles lead to a fairly large GeoJSON
 		// which causes performance issues e.g. on Smartphone-Browsers
@@ -149,7 +149,7 @@ public class CreateGeoJSON {
 				//noinspection unchecked
 				rectangle = getTileRectangleInternal((Set<OSMTile>) squares, null, "tiles", minX, minY, maxX, maxY, isY);
 
-				//log.info("Remaining " + squares.size() + ", found: " + rectangle);
+				//log.info(title + ": Remaining " + squares.size() + ", found: " + rectangle);
 			}
 
 			if (rectangle == null) {
@@ -159,7 +159,7 @@ public class CreateGeoJSON {
 			features.add(rectangle);
 
 			if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-				log.info("Found " + features.size() + " features, having " + squares.size() + " " +
+				log.info(title + ": Found " + features.size() + " features, having " + squares.size() + " " +
 						(next instanceof UTMRefWithHash ? "squares" : "tiles") +
 						" remaining, details: " + rectangle);
 
@@ -167,7 +167,7 @@ public class CreateGeoJSON {
 			}
 		}
 
-		log.info("Found " + features.size() + " rectangles, having " + squares.size() + " single squares remaining");
+		log.info(title + ": Found " + features.size() + " rectangles, having " + squares.size() + " single squares remaining");
 
 		// then add all remaining single-squares
 		for (T square : squares) {
@@ -183,7 +183,7 @@ public class CreateGeoJSON {
 		FileUtils.copyToFile(GeoJSON.getGeoJSON(features), new File(
 				StringUtils.removeEnd(jsonOutputFile, ".js") + ".json"));
 
-		log.info("Wrote " + squares.size() + " " + title + " from " + squaresFile + " to " + jsonOutputFile);
+		log.info(title + ": Wrote " + squares.size() + " " + title + " from " + squaresFile + " to " + jsonOutputFile);
 	}
 
 	private static Set<String> readSquares(File file) throws IOException {
