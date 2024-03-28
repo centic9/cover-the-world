@@ -5,6 +5,7 @@ import static org.dstadler.ctw.utils.Constants.TILE_ZOOM;
 
 import java.awt.Rectangle;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,14 +39,16 @@ public class MatrixUtils {
 		int xSquares = (int) ((maxEast - minEast) / SQUARE_SIZE) + 1;
 		int ySquares = (int) ((maxNorth - minNorth) / SQUARE_SIZE) + 1;
 
-		log.fine("Having min/max: " +
-				"\nEasting: " + minEast + "/" + maxEast +
-				"\nNorthing: " + minNorth + "/" + maxNorth +
-				"\nx,y: " + xSquares + "," + ySquares +
-				"\nlat/lng: " + new UTMRefWithHash(utmZoneFilter, 'T', minEast, minNorth).toLatLng() + " - " +
-				new UTMRefWithHash(utmZoneFilter, 'U', maxEast, maxNorth).toLatLng() +
-				"\nUTM: " + new UTMRefWithHash(utmZoneFilter, 'T', minEast, minNorth) + " - " +
-				new UTMRefWithHash(utmZoneFilter, 'U', maxEast, maxNorth));
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Having min/max: " +
+					"\nEasting: " + minEast + "/" + maxEast +
+					"\nNorthing: " + minNorth + "/" + maxNorth +
+					"\nx,y: " + xSquares + "," + ySquares +
+					"\nlat/lng: " + new UTMRefWithHash(utmZoneFilter, 'T', minEast, minNorth).toLatLng() + " - " +
+					new UTMRefWithHash(utmZoneFilter, 'U', maxEast, maxNorth).toLatLng() +
+					"\nUTM: " + new UTMRefWithHash(utmZoneFilter, 'T', minEast, minNorth) + " - " +
+					new UTMRefWithHash(utmZoneFilter, 'U', maxEast, maxNorth));
+		}
 
 		// Min: Ref:  29U 436444.6222519411 5916707.037366929: (53.395620002685064, -9.955800000062068)
 
@@ -89,12 +92,14 @@ public class MatrixUtils {
 		int xSquares = (maxX - minX) + 1;
 		int ySquares = (maxY - minY) + 1;
 
-		log.fine("Having min/max: " +
-				"\nX: " + minX + "/" + maxX +
-				"\nY: " + minY + "/" + maxY +
-				"\nx,y: " + xSquares + "," + ySquares +
-				"\nlat/lng: " + new OSMTile(TILE_ZOOM, minX, minY).toLatLng() + " - " +
-								new OSMTile(TILE_ZOOM, maxX, maxY).toLatLng());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Having min/max: " +
+					"\nX: " + minX + "/" + maxX +
+					"\nY: " + minY + "/" + maxY +
+					"\nx,y: " + xSquares + "," + ySquares +
+					"\nlat/lng: " + new OSMTile(TILE_ZOOM, minX, minY).toLatLng() + " - " +
+					new OSMTile(TILE_ZOOM, maxX, maxY).toLatLng());
+		}
 
 		// Min: Ref:  29U 436444.6222519411 5916707.037366929: (53.395620002685064, -9.955800000062068)
 
@@ -115,6 +120,7 @@ public class MatrixUtils {
 
 			M[y][x] = 1;
 		}
+
 		return M;
 	}
 

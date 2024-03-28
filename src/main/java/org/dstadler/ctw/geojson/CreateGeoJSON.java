@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -241,8 +242,10 @@ public class CreateGeoJSON {
 			return null;
 		}
 
-		log.fine("Area of maximum rectangle " + rect + ": " + rect.width + "x" + rect.height +
-				" = " + result.getValue());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Area of maximum rectangle " + rect + ": " + rect.width + "x" + rect.height +
+					" = " + result.getValue());
+		}
 
 		OSMTile squareMin = new OSMTile(TILE_ZOOM, minX + rect.x - rect.width, minY + rect.y - rect.height + 1);
 		OSMTile squareMax = new OSMTile(TILE_ZOOM, minX + rect.x, minY + rect.y + 1);
@@ -343,8 +346,10 @@ public class CreateGeoJSON {
 			return null;
 		}
 
-		log.fine("Area of maximum rectangle " + rect + ": " + rect.width + "x" + rect.height +
-				" = " + result.getValue());
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Area of maximum rectangle " + rect + ": " + rect.width + "x" + rect.height +
+					" = " + result.getValue());
+		}
 
 		UTMRefWithHash recRefMinMin = new UTMRefWithHash(ZONE, 'U',
 				(minEast + (rect.x - rect.width) * SQUARE_SIZE), (minNorth + (rect.y - rect.height) * SQUARE_SIZE + SQUARE_SIZE));
@@ -355,19 +360,21 @@ public class CreateGeoJSON {
 		UTMRefWithHash recRefMaxMax = new UTMRefWithHash(ZONE, 'U',
 				(minEast + rect.x * SQUARE_SIZE), (minNorth + rect.y * SQUARE_SIZE + SQUARE_SIZE));
 
-		log.fine("Found largest rectangle at " + rect.x + "x" + rect.y +
-				"\n" + recRefMinMin +
-				"\n" + recRefMaxMin +
-				"\n" + recRefMinMax +
-				"\n" + recRefMaxMax +
-				"\n" + recRefMinMin.toLatLng() +
-				"\n" + recRefMaxMin.toLatLng() +
-				"\n" + recRefMinMax.toLatLng() +
-				"\n" + recRefMaxMax.toLatLng() +
-				"\n" + OSMTile.fromLatLngZoom(recRefMinMin.toLatLng().getLatitude(), recRefMinMin.toLatLng().getLongitude(), 13) +
-				"\n" + OSMTile.fromLatLngZoom(recRefMaxMin.toLatLng().getLatitude(), recRefMaxMin.toLatLng().getLongitude(), 13) +
-				"\n" + OSMTile.fromLatLngZoom(recRefMinMax.toLatLng().getLatitude(), recRefMinMax.toLatLng().getLongitude(), 13) +
-				"\n" + OSMTile.fromLatLngZoom(recRefMaxMax.toLatLng().getLatitude(), recRefMaxMax.toLatLng().getLongitude(), 13));
+		if (log.isLoggable(Level.FINE)) {
+			log.fine("Found largest rectangle at " + rect.x + "x" + rect.y +
+					"\n" + recRefMinMin +
+					"\n" + recRefMaxMin +
+					"\n" + recRefMinMax +
+					"\n" + recRefMaxMax +
+					"\n" + recRefMinMin.toLatLng() +
+					"\n" + recRefMaxMin.toLatLng() +
+					"\n" + recRefMinMax.toLatLng() +
+					"\n" + recRefMaxMax.toLatLng() +
+					"\n" + OSMTile.fromLatLngZoom(recRefMinMin.toLatLng().getLatitude(), recRefMinMin.toLatLng().getLongitude(),13) +
+					"\n" + OSMTile.fromLatLngZoom(recRefMaxMin.toLatLng().getLatitude(), recRefMaxMin.toLatLng().getLongitude(),13) +
+					"\n" + OSMTile.fromLatLngZoom(recRefMinMax.toLatLng().getLatitude(), recRefMinMax.toLatLng().getLongitude(),13) +
+					"\n" + OSMTile.fromLatLngZoom(recRefMaxMax.toLatLng().getLatitude(), recRefMaxMax.toLatLng().getLongitude(),13));
+		}
 
 		// remove all squares of the rectangle from the list of remaining squares
 		for (double easting = recRefMinMin.getEasting(); easting < recRefMinMax.getEasting(); easting+=SQUARE_SIZE) {
