@@ -81,6 +81,17 @@ public class UTMRefWithHashTest {
         assertTrue(UTMREF_SQUARE_PATTERN.matcher(ref.toString()).matches());
     }
 
+	@Test
+	void testSquareStringNormalize() {
+		// special case: we would get back different "zone" "T" and "U" for those two coordinates
+		// if we do not normalize the zone as well in getSquareString()
+		String ref1 = UTMRefWithHash.getSquareString(new LatLng(47.999573, 15.187657));
+		String ref2 = UTMRefWithHash.getSquareString(new LatLng(48.002663, 15.187625));
+
+		assertEquals(ref1, ref2,
+				"Expecting to get the same square for the two coordinates, but had " + ref1 + " and " + ref2);
+	}
+
     @Test
     void testFromString() {
 		checkFromString("33U 428000.0 5366000.0", 33, 'U', 428000.0, 5366000.0);

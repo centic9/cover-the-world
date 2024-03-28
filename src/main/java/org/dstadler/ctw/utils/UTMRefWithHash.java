@@ -69,6 +69,22 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash> {
 	 * 			e.g. 33U 428000.0 5366000.0
 	 */
 	public static String getSquareString(LatLng latLng) {
+		String square = getSquareStringInternal(latLng);
+
+		// don't try to normalize again if lat would be out of range
+		LatLng latLngSquare = UTMRefWithHash.fromString(square).toLatLng();
+		if (latLngSquare.getLatitude() > 80 || latLngSquare.getLatitude() < -80) {
+			return square;
+		}
+
+		// there may be squares which span two "zones", e.g. "U" and "T" around Scheibbs in Lower Austria
+		// We need to ensure that we normalize "zone" as well
+		// for now we simply convert the square-ref back and forth once to get
+		// this can probably be optimized if we find it too costly at some point
+		return getSquareStringInternal(latLngSquare);
+	}
+
+	private static String getSquareStringInternal(LatLng latLng) {
 		UTMRef utmRef = latLng.toUTMRef();
 		return "" +
 				utmRef.getLngZone() +
@@ -105,7 +121,10 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash> {
 
 	private static double normalize(double bearing) {
 		// reduce accuracy to 1000 (SQUARE_SIZE) meters
-		return (long)(bearing / SQUARE_SIZE) * SQUARE_SIZE;
+		// use round to avoid strange effects with double being
+		// slightly off in some cases
+		//noinspection IntegerDivisionInFloatingPointContext
+		return (Math.round(bearing) / SQUARE_SIZE) * SQUARE_SIZE;
 	}
 
 	public UTMRefWithHash up() {
