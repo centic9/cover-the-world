@@ -6,7 +6,8 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.dstadler/cover-the-world.svg)](https://maven-badges.herokuapp.com/maven-central/org.dstadler/cover-the-world)
 
 This project can be used to read tracks from GPX files and produce a web-page which
-displays covered "tiles" on a world map.
+displays covered "tiles" on a world map with some advanced features not found on the
+usual "tile hunting" websites.
 
 ## Introduction
 
@@ -19,6 +20,12 @@ applications which process data so that you can visualize your covered "tiles" o
 The flow of data is roughly as follows
 `GPX files -> list of covered tiles (txt) -> GeoJSON file for map-display (js) -> HTML page`
 
+It should be fairly easy to rebuild the map with data from your own tracks. Also adding more tracks over
+time is supported by visualizing "new" tiles and also allowing to do the CPU-intensive tasks of
+producing static images only for areas touched recently.
+
+The processing and the map should scale up to large numbers of visited tiles
+
 ## Definitions
 
 * `square`: a 1km x 1km square on the map
@@ -28,6 +35,10 @@ The flow of data is roughly as follows
 * `largest cluster`: The largest area of tiles/squares that can be filled with a rectangle
 * `new squares/tiles`: Each time the application runs and processes new GPX tracks, it allows to visualize which tiles
   have been newly covered
+* `adjacent tiles`: For planning upcoming routes, it is useful if you see a grid on the map
+  for tiles which are not covered yet. The code produces so-called "adjacent tiles" which 
+  show a border around tiles "near" already covered ones, thus allowing you to see where 
+  exactly you need to go when you are out hunting some more tiles 
 
 ## How does it look like?
 
@@ -47,10 +58,11 @@ On the left side:
 * Allows to zoom in/out
 * Loading indicator when data is still loading
 * Allows to toggle "largest cluster"
+* Allows to toggle "largest rectangle"
 * Allows to toggle "largest square"
 * Allows to toggle "new" squares/tiles
-* Allows to display covered "squares", i.e. 1kmx1km areas
-* Allows to display covered "tiles", i.e. aprox. 1milex1mile areas
+* Allows to display covered "squares", i.e. 1km x 1km areas
+* Allows to display covered "tiles", i.e. aprox. 1mile x 1mile areas
 
 On the right side:
 * Menu button which allows to switch to different maps and enable/disable various overlays
@@ -80,15 +92,20 @@ Run the application `org.dstadler.ctw.CoverTheWorld`, e.g. via Gradle:
 In order to prepare additional "static" tiles, you can run additional applications:
 * `org.dstadler.ctw.tiles.CreateTileOverlaysFromTiles`: Create static overlay tiles (transparent PNGs with covered area in red)
 * `org.dstadler.ctw.tiles.CreateTileOverlaysFromUTMRef`: Create static overlay squares (transparent PNGs with covered area in red)
-* `org.dstadler.ctw.tiles.CreateStaticTiles`: Create PNGs with OSM map image and the covered area combined into one image
+* `org.dstadler.ctw.tiles.CreateAdjacentTileOverlaysFromTiles`: Create static overlay images for adjacent tiles
+  (transparent PNGs with area with red border)
+* `org.dstadler.ctw.tiles.CreateStaticTiles`: Create PNGs with OSM map image and the covered area combined into one image. 
+  This requires a running OSM tile-server to provide map tiles, which is currently not described here, see
+  [openstreetmap-tile-server](https://github.com/Overv/openstreetmap-tile-server) for a docker-based way to spin up a 
+  tile-server which can render some parts of the world.
 
 These PNGs can be useful to get the map of covered tiles displayed in other applications, 
 at least the following are known to work:
 
 * GpsPrune: Can use the static overlay tiles as 2nd map
 * OsmAnd: Can use the static overlay tiles as 2nd map
-* Komoot: It is possible to replace the map in the Komoot web application with the combined PNGs, however this
-  requires some more advanced scripting via e.g. TamperMonkey
+* Komoot: It is possible to replace the map in the Komoot web application with the combined PNGs produced via `CreateStaticTiles`, 
+  however this requires some more advanced scripting via e.g. TamperMonkey which is currently not (yet) described here
 
 ## Using it as a library
 
@@ -97,7 +114,7 @@ you want to automate things in some more advanced way.
 
 ### Add it to your project as Gradle dependency
 
-    compile 'org.dstadler:cover-the-world:1.+'
+    implementation 'org.dstadler:cover-the-world:1.+'
 
 ## Caveats
 
