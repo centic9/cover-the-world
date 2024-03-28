@@ -96,6 +96,8 @@ public class CreateGeoJSON {
 				map(toObject).
 				collect(Collectors.toSet());
 
+		log.info("Read " + squares.size() + " " + title);
+
 		// build an optimized GeoJSON as including all squares/tiles lead to a fairly large GeoJSON
 		// which causes performance issues e.g. on Smartphone-Browsers
 
