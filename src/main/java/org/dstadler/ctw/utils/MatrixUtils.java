@@ -61,13 +61,13 @@ public class MatrixUtils {
 			int y = (int) ((square.getNorthing() - minNorth) / SQUARE_SIZE);
 
 			Preconditions.checkState(x >= 0 && x <= xSquares,
-					"Failed with %s for %s and %s and %s",
-					x, square, minEast, xSquares);
+					"Expect x to be positive and at max %s, failed with %s for %s and %s",
+					xSquares, x, square, minEast);
 			Preconditions.checkState(y >= 0 && y <= ySquares,
-					"Failed with %s for %s and %s and %s",
-					y, square, minNorth, ySquares);
+					"Expect y to be positive and at max %s, failed with %s for %s and %s",
+					ySquares, y, square, minNorth);
 			Preconditions.checkState(M[y][x] == 0,
-					"Failed for %s and %s,%s",
+					"Expect element to be not yet set, failed for %s and %s,%s",
 					square, x, y);
 
 			M[y][x] = 1;
@@ -104,13 +104,13 @@ public class MatrixUtils {
 			int y = (square.getYTile() - minY);
 
 			Preconditions.checkState(x >= 0 && x <= xSquares,
-					"Failed with %s for %s and %s and %s",
-					x, square, minX, xSquares);
+					"Expect x to be positive and at max %s, failed with %s for %s and %s",
+					xSquares, x, square, minX);
 			Preconditions.checkState(y >= 0 && y <= ySquares,
-					"Failed with %s for %s and %s and %s",
-					y, square, minY, ySquares);
+					"Expect y to be positive and at max %s, failed with %s for %s and %s",
+					ySquares, y, square, minY);
 			Preconditions.checkState(M[y][x] == 0,
-					"Failed for %s and %s,%s",
+					"Expect element to be not yet set, failed for %s and %s,%s",
 					square, x, y);
 
 			M[y][x] = 1;
