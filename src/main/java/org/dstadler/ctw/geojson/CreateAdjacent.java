@@ -1,6 +1,8 @@
 package org.dstadler.ctw.geojson;
 
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
+import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_NEW_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 
 import java.io.BufferedWriter;
@@ -29,10 +31,11 @@ import org.dstadler.ctw.utils.UTMRefWithHash;
 import com.github.filosganga.geogson.model.Feature;
 
 /**
- * Small application which reads the list of covered squares
- * from a simple text-file and produces GeoJSON embedded in
- * a JavaScript file which can be loaded in a leaflet.js map
- * to display covered squares.
+ * Small application which reads the list of covered squares/tiles
+ * from a simple text-file and produces GeoJSON for so-called
+ * "adjacent" squares/tiles embedded in a JavaScript file which
+ * can be loaded in a leaflet.js map to display a border around these
+ * tiles to help in planning routes.
  *
  * Results are stored in JS files which can be used as overlay
  * layer in a Leaflet-based HTML page.
@@ -42,27 +45,37 @@ public class CreateAdjacent {
 
 	// squares
 	public static final String ADJACENT_SQUARES_JS = "js/AdjacentSquares.js";
+	public static final String ADJACENT_SQUARES_NEW_JS = "js/AdjacentSquaresNew.js";
 	public static final String ADJACENT_SQUARES_TXT = "txt/AdjacentSquares.txt";
+	public static final String ADJACENT_SQUARES_NEW_TXT = "txt/AdjacentSquaresNew.txt";
 
 	// tiles
 	public static final String ADJACENT_TILES_JS = "js/AdjacentTiles.js";
+	public static final String ADJACENT_TILES_NEW_JS = "js/AdjacentTilesNew.js";
 	public static final String ADJACENT_TILES_TXT = "txt/AdjacentTiles.txt";
+	public static final String ADJACENT_TILES_NEW_TXT = "txt/AdjacentTilesNew.txt";
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
 
-		log.info("Computing GeoJSON for visited squares and tiles");
+		log.info("Computing GeoJSON for adjacent squares and tiles");
 
 		writeGeoJSON(VISITED_SQUARES_TXT, ADJACENT_SQUARES_JS, "adjacentSquares",
-				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_TXT);
+				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_TXT, null);
+
+		writeGeoJSON(VISITED_SQUARES_NEW_TXT, ADJACENT_SQUARES_NEW_JS, "adjacentSquaresNew",
+				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_NEW_TXT, VISITED_SQUARES_TXT);
 
 		writeGeoJSON(VISITED_TILES_TXT, ADJACENT_TILES_JS, "adjacentTiles",
-				OSMTile::fromString, "tiles", ADJACENT_TILES_TXT);
+				OSMTile::fromString, "tiles", ADJACENT_TILES_TXT, null);
+
+		writeGeoJSON(VISITED_TILES_NEW_TXT, ADJACENT_TILES_NEW_JS, "adjacentTilesNew",
+				OSMTile::fromString, "tiles", ADJACENT_TILES_NEW_TXT, VISITED_TILES_TXT);
 	}
 
 	private static <T extends BaseTile<T>> void writeGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
 			Function<String, T> toObject,
-			String title, String adjacentTxtFile) throws IOException {
+			String title, String adjacentTxtFile, String fullTxtFile) throws IOException {
 		log.info("Writing from " + squaresFile + " to " + jsonOutputFile +
 				" with prefix '" + varPrefix + "' and title " + title);
 
@@ -85,20 +98,19 @@ public class CreateAdjacent {
 
 		log.info("Having " + adjacentTiles.size() + " adjacent tiles");
 
-		// add GeoJSON for all squares/tiles
-		List<Feature> features = new ArrayList<>();
-		for (BaseTile<T> adjacentTile : adjacentTiles) {
-			features.add(GeoJSON.createLines(adjacentTile.getRectangle(),
-					null
-					/*square + "\n" + toRectangle.apply(square)*/));
+		// remove adjacent-tiles which are already covered
+		if (fullTxtFile != null) {
+			Set<BaseTile<T>> fullSquares = readFile(new File(fullTxtFile)).
+					stream().
+					map(toObject).
+					collect(Collectors.toSet());
+
+			adjacentTiles.removeAll(fullSquares);
+
+			log.info("Having " + adjacentTiles.size() + " adjacent tiles after removing already covered ones");
 		}
 
-		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(jsonOutputFile, varPrefix, features);
-
-		// also write the file in pure JSON for use in later steps
-		FileUtils.copyToFile(GeoJSON.getGeoJSON(features), new File(
-				StringUtils.removeEnd(jsonOutputFile, ".js") + ".json"));
+		writeJsFile(adjacentTiles, varPrefix, jsonOutputFile);
 
 		// write list of adjacent tiles to text-file
 		writeListOfAdjacent(
@@ -107,7 +119,7 @@ public class CreateAdjacent {
 						collect(Collectors.toSet()),
 				adjacentTxtFile);
 
-		log.info("Wrote " + squares.size() + " " + title + " from " + squaresFile + " to " + jsonOutputFile);
+		log.info("Wrote " + adjacentTiles.size() + " adjacent " + title + " from " + squaresFile + " to " + jsonOutputFile);
 	}
 
 	private static Set<String> readFile(File file) throws IOException {
@@ -127,6 +139,26 @@ public class CreateAdjacent {
 		if (!tilesIn.contains(newTile)) {
 			adjacentTiles.add(newTile);
 		}
+	}
+
+	private static <T extends BaseTile<T>> void writeJsFile(Set<BaseTile<T>> adjacentTiles,
+			String varPrefix,
+			String jsonOutputFile)
+			throws IOException {
+		// add GeoJSON for all squares/tiles
+		List<Feature> features = new ArrayList<>();
+		for (BaseTile<T> adjacentTile : adjacentTiles) {
+			features.add(GeoJSON.createLines(adjacentTile.getRectangle(),
+					null
+					/*square + "\n" + toRectangle.apply(square)*/));
+		}
+
+		// finally write out JavaScript code with embedded GeoJSON
+		GeoJSON.writeGeoJSON(jsonOutputFile, varPrefix, features);
+
+		// also write the file in pure JSON for use in later steps
+		FileUtils.copyToFile(GeoJSON.getGeoJSON(features), new File(
+				StringUtils.removeEnd(jsonOutputFile, ".js") + ".json"));
 	}
 
 	private static void writeListOfAdjacent(Set<String> adjacent, String adjacentTxtFile) throws IOException {
