@@ -1,5 +1,6 @@
 package org.dstadler.ctw.tiles;
 
+import static org.dstadler.ctw.geojson.CreateAdjacent.ADJACENT_TILES_NEW_TXT;
 import static org.dstadler.ctw.geojson.CreateAdjacent.ADJACENT_TILES_TXT;
 
 import java.io.File;
@@ -12,6 +13,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.ctw.utils.OSMTile;
 
 /**
  * This application takes the list of covered tiles from
@@ -35,6 +37,7 @@ public class CreateAdjacentTileOverlaysFromTiles {
 
 	public static final File ADJACENT_TILES_DIR = new File("tilesTilesAdjacent");
 	public static final File ADJACENT_TILES_JSON = new File("js/AdjacentTiles.json");
+	public static final File ADJACENT_TILES_NEW_JSON = new File("js/AdjacentTilesNew.json");
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		LoggerFactory.initLogging();
@@ -42,11 +45,17 @@ public class CreateAdjacentTileOverlaysFromTiles {
 		// as we write many small files, we do not want to use disk-based caching
 		ImageIO.setUseCache(false);
 
-		File tileDir = ADJACENT_TILES_DIR;
-		String tilesFile = ADJACENT_TILES_TXT;
-		File jsonFile = ADJACENT_TILES_JSON;
+		boolean onlyNewTiles = !(args.length > 0 && "all".equals(args[0]));
 
-		log.info("Writing adjacent tiles to directory " + tileDir);
+		File tileDir = ADJACENT_TILES_DIR;
+		String tilesFile = onlyNewTiles ? ADJACENT_TILES_NEW_TXT: ADJACENT_TILES_TXT;
+		File jsonFile = onlyNewTiles ? ADJACENT_TILES_NEW_JSON : ADJACENT_TILES_JSON;
+
+		if (onlyNewTiles) {
+			log.info("Writing only new adjacent tiles to directory " + tileDir);
+		} else {
+			log.info("Writing adjacent tiles to directory " + tileDir);
+		}
 
 		if (!tileDir.exists() && !tileDir.mkdirs()) {
 			throw new IOException("Could not create directory at " + tileDir);
