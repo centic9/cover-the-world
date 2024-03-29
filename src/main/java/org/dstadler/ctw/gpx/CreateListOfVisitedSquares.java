@@ -155,8 +155,8 @@ public class CreateListOfVisitedSquares {
 			for (TrackPoint trackPoint : trackPoints.values()) {
 				toStringFun.accept(trackPoint);
 			}
-		} catch (IOException | SAXException e) {
-			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException("While handling " + gpxFile, e);
 		}
 	}
 
