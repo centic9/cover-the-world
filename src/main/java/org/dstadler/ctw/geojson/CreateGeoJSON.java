@@ -17,6 +17,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -84,7 +85,7 @@ public class CreateGeoJSON {
 				OSMTile::getRectangle, OSMTile::fromString, "new tiles");
 	}
 
-	private static <T extends BaseTile<T>> void writeGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
+	protected static <T extends BaseTile<T>> void writeGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
 			Function<T, LatLonRectangle> toRectangle,
 			Function<String, T> toObject,
 			String title) throws IOException {
@@ -99,9 +100,14 @@ public class CreateGeoJSON {
 
 		log.info(title + ": Read " + squares.size() + " " + title);
 
+		List<Feature> features = new ArrayList<>();
+
+		// first look for single squares/tiles which we cannot combine anyway to
+		// make computing largest rectangles a bit cheaper
+		handleSingleAreas(toRectangle, squares, features);
+
 		// build an optimized GeoJSON as including all squares/tiles lead to a fairly large GeoJSON
 		// which causes performance issues e.g. on Smartphone-Browsers
-
 		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE,
 				minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
 
@@ -132,8 +138,7 @@ public class CreateGeoJSON {
 			MatrixUtils.findPopulatedRows(M, isY);
 		}
 
-		// first create as many rectangles as possible to minimize the resulting GeoJSON
-		List<Feature> features = new ArrayList<>();
+		// next create as many rectangles as possible to minimize the resulting GeoJSON
 		while (squares.size() > 0) {
 			final Feature rectangle;
 			final BaseTile<T> next = squares.iterator().next();
@@ -164,6 +169,17 @@ public class CreateGeoJSON {
 						(next instanceof UTMRefWithHash ? "squares" : "tiles") +
 						" remaining, details: " + rectangle);
 
+				// recompute optimization from time to time to skip more single squares
+				// and more
+				handleSingleAreas(toRectangle, squares, features);
+
+				if (next instanceof OSMTile) {
+					int[][] M = MatrixUtils.populateMatrix((Set<OSMTile>) squares, minX, minY, maxX, maxY);
+					isY = new boolean[M.length];
+					int count = MatrixUtils.findPopulatedRows(M, isY);
+					log.info("Found " + count + " populated rows of " + isY.length + " overall");
+				}
+
 				lastLog.set(System.currentTimeMillis());
 			}
 		}
@@ -184,10 +200,35 @@ public class CreateGeoJSON {
 		FileUtils.copyToFile(GeoJSON.getGeoJSON(features), new File(
 				StringUtils.removeEnd(jsonOutputFile, ".js") + ".json"));
 
-		log.info(title + ": Wrote " + squares.size() + " " + title + " from " + squaresFile + " to " + jsonOutputFile);
+		log.info(title + ": Wrote " + features.size() + " features with " + squares.size() + " single " + title + " from " + squaresFile + " to " + jsonOutputFile);
 	}
 
-	private static Set<String> readSquares(File file) throws IOException {
+	private static <T extends BaseTile<T>> void handleSingleAreas(Function<T, LatLonRectangle> toRectangle,
+			Set<T> squares,
+			List<Feature> features) {
+		int count = 0;
+		Iterator<T> it = squares.iterator();
+		while (it.hasNext()) {
+			T square = it.next();
+
+			// check if this square is single
+			if (!squares.contains(square.up()) &&
+					!squares.contains(square.down()) &&
+					!squares.contains(square.left()) &&
+					!squares.contains(square.right())
+			) {
+				features.add(GeoJSON.createSquare(toRectangle.apply(square),
+						null
+						/*square + "\n" + toRectangle.apply(square)*/));
+				it.remove();
+				count++;
+			}
+		}
+
+		log.info("Found " + count + " single areas");
+	}
+
+	protected static Set<String> readSquares(File file) throws IOException {
 		return file.exists() ?
 				new TreeSet<>(FileUtils.readLines(file, StandardCharsets.UTF_8)) :
 				Collections.emptySet();

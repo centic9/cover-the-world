@@ -243,15 +243,19 @@ public class MatrixUtils {
 		return max_area;
 	}
 
-	public static void findPopulatedRows(int[][] A, boolean[] isRowValue) {
+	public static int findPopulatedRows(int[][] A, boolean[] isRowValue) {
+		int count = 0;
 		for (int i = 1; i < A.length; i++) {
 			for (int j = 0; j < A[0].length; j++) {
 				if (A[i][j] == 1) {
 					isRowValue[i] = true;
+					count++;
 					break;
 				}
 			}
 		}
+
+		return count;
 	}
 
 	/**
