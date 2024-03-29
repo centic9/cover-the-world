@@ -21,6 +21,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dstadler.commons.gpx.GPXTrackpointsParser;
 import org.dstadler.commons.gpx.TrackPoint;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
@@ -108,7 +110,33 @@ public class CreateListOfVisitedSquares {
 							return;
 						}
 
-						log.info("Move " + count.incrementAndGet() + ": " + gpxFile);
+					if (gpxFile.length() == 0) {
+						System.out.println("Skipping empty file " + gpxFile);
+						return;
+					}
+
+					if (gpxFile.length() == 1048576 ||
+							gpxFile.getName().equals("tourenwelt.at_download.php_tourid=206&download=206_fuenfmandling.gpx")) {
+						System.out.println("Skipping truncated file " + gpxFile);
+						return;
+					}
+
+					try {
+						String str = FileUtils.readFileToString(gpxFile, "UTF-8").trim();
+						if (str.contains("301 Moved Permanently") ||
+								str.startsWith("Moved Permanently") ||
+								str.toLowerCase().startsWith("<!doctype html") ||
+								str.toLowerCase().startsWith("<html") ||
+								str.toUpperCase().startsWith("GEOMETRYCOLLECTION") ||
+								StringUtils.isBlank(str)) {
+							System.out.println("Skipping file with HTTP error " + gpxFile);
+							return;
+						}
+					} catch (IOException | RuntimeException e) {
+						throw new RuntimeException("Failed to process " + gpxFile, e);
+					}
+
+					log.info("Move " + count.incrementAndGet() + ": " + gpxFile);
 						readTrackPoints(gpxFile, toStringFun);
 					});
 		}
