@@ -90,7 +90,7 @@ public class CreateGeoJSON {
 			Function<String, T> toObject,
 			String title) throws IOException {
 		log.info(title + ": Writing from " + squaresFile + " to " + jsonOutputFile +
-				" with prefix '" + varPrefix + "' and title " + title);
+				" with prefix '" + varPrefix + "'");
 
 		// read list of UTMRefs for covered or new squares
 		Set<T> squares = readSquares(new File(squaresFile)).
@@ -98,7 +98,7 @@ public class CreateGeoJSON {
 				map(toObject).
 				collect(Collectors.toSet());
 
-		log.info(title + ": Read " + squares.size() + " " + title);
+		log.info(title + ": Read " + squares.size());
 
 		List<Feature> features = new ArrayList<>();
 
@@ -166,8 +166,7 @@ public class CreateGeoJSON {
 
 			if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
 				log.info(title + ": Found " + features.size() + " features, having " + squares.size() + " " +
-						(next instanceof UTMRefWithHash ? "squares" : "tiles") +
-						" remaining, details: " + rectangle);
+						title + " remaining, details: " + rectangle);
 
 				// recompute optimization from time to time to skip more single squares
 				// and more
@@ -177,7 +176,7 @@ public class CreateGeoJSON {
 					int[][] M = MatrixUtils.populateMatrix((Set<OSMTile>) squares, minX, minY, maxX, maxY);
 					isY = new boolean[M.length];
 					int count = MatrixUtils.findPopulatedRows(M, isY);
-					log.info("Found " + count + " populated rows of " + isY.length + " overall");
+					log.info(title + ": Found " + count + " populated rows of " + isY.length + " overall");
 				}
 
 				lastLog.set(System.currentTimeMillis());
