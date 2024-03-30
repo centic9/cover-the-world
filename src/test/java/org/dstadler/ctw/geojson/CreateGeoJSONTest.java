@@ -21,6 +21,7 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +31,11 @@ class CreateGeoJSONTest {
 	private static final Logger log = LoggerFactory.make();
 
 	private static final AtomicLong lastLog = new AtomicLong();
+
+	@BeforeAll
+	static void beforeAll() throws IOException {
+		LoggerFactory.initLogging();
+	}
 
 	@Test
 	void test() throws IOException {

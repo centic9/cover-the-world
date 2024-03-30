@@ -96,14 +96,14 @@ public class CreateGeoJSON {
 		Set<T> squares = readSquares(new File(squaresFile)).
 				stream().
 				map(toObject).
-				collect(Collectors.toSet());
+				collect(Collectors.toCollection(TreeSet::new));
 
 		log.info(title + ": Read " + squares.size());
 
 		List<Feature> features = new ArrayList<>();
 
 		// first look for single squares/tiles which we cannot combine anyway to
-		// make computing largest rectangles a bit cheaper
+		// make computing the largest rectangles a bit cheaper
 		handleSingleAreas(toRectangle, squares, features);
 
 		// build an optimized GeoJSON as including all squares/tiles lead to a fairly large GeoJSON
@@ -139,6 +139,7 @@ public class CreateGeoJSON {
 		}
 
 		// next create as many rectangles as possible to minimize the resulting GeoJSON
+		int iterationCount = 0;
 		while (squares.size() > 0) {
 			final Feature rectangle;
 			final BaseTile<T> next = squares.iterator().next();
@@ -164,6 +165,15 @@ public class CreateGeoJSON {
 
 			features.add(rectangle);
 
+			iterationCount++;
+			if (iterationCount % 200 == 0 && next instanceof OSMTile) {
+				// re-compute which rows are empty from time to time to speed up processing a bit
+				int[][] M = MatrixUtils.populateMatrix((Set<OSMTile>) squares, minX, minY, maxX, maxY);
+				isY = new boolean[M.length];
+				int count = MatrixUtils.findPopulatedRows(M, isY);
+				log.info(title + ": Found " + count + " populated rows of " + isY.length + " overall");
+			}
+
 			if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
 				log.info(title + ": Found " + features.size() + " features, having " + squares.size() + " " +
 						title + " remaining, details: " + rectangle);
@@ -171,13 +181,6 @@ public class CreateGeoJSON {
 				// recompute optimization from time to time to skip more single squares
 				// and more
 				handleSingleAreas(toRectangle, squares, features);
-
-				if (next instanceof OSMTile) {
-					int[][] M = MatrixUtils.populateMatrix((Set<OSMTile>) squares, minX, minY, maxX, maxY);
-					isY = new boolean[M.length];
-					int count = MatrixUtils.findPopulatedRows(M, isY);
-					log.info(title + ": Found " + count + " populated rows of " + isY.length + " overall");
-				}
 
 				lastLog.set(System.currentTimeMillis());
 			}
