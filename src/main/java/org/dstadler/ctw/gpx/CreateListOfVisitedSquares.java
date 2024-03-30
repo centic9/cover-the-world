@@ -109,7 +109,7 @@ public class CreateListOfVisitedSquares {
 			writeListOfVisited(visited, visitedNewFile);
 		}
 
-		log.info(String.format("Having  %,d newly covered " + title + " after %,dms",
+		log.info(String.format("Having %,d newly covered " + title + " after %,dms",
 				visited.size(), System.currentTimeMillis() - start));
 	}
 
