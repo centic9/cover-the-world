@@ -113,7 +113,7 @@ public class CreateGeoJSON {
 
 		boolean found = false;
 		boolean[] isY = null;
-		if (!(squares.iterator().next() instanceof UTMRefWithHash)) {
+		if (squares.size() > 0 && !(squares.iterator().next() instanceof UTMRefWithHash)) {
 			for (OSMTile tile : (Set<OSMTile>) squares) {
 				if (tile.getXTile() > maxX) {
 					maxX = tile.getXTile();

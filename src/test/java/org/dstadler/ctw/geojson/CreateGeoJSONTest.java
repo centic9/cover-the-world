@@ -4,6 +4,7 @@ import static org.dstadler.ctw.geojson.CreateGeoJSON.VISITED_SQUARES_JS;
 import static org.dstadler.ctw.geojson.CreateGeoJSON.VISITED_TILES_JS;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +16,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.github.filosganga.geogson.model.Feature;
@@ -35,13 +38,50 @@ class CreateGeoJSONTest {
 	}
 
 	@Test
-	public void testSquares() throws IOException {
+	void testEmptyFile() throws IOException {
+		File tempTxt = File.createTempFile("CreateGeoJSONTest", ".txt");
+		File tempJs = File.createTempFile("CreateGeoJSONTest", ".js");
+		try {
+			CreateGeoJSON.writeGeoJSON(tempTxt.getAbsolutePath(), tempJs.getAbsolutePath(), "tiles",
+					OSMTile::getRectangle, OSMTile::fromString, "tiles");
+
+			assertTrue(tempJs.exists());
+			assertTrue(tempJs.length() > 0);
+		} finally {
+			assertTrue(!tempTxt.exists() || tempTxt.delete());
+			assertTrue(!tempJs.exists() || tempJs.delete());
+		}
+	}
+
+	@Test
+	void testOneTile() throws IOException {
+		File tempTxt = File.createTempFile("CreateGeoJSONTest", ".txt");
+		File tempJs = File.createTempFile("CreateGeoJSONTest", ".js");
+		try {
+			FileUtils.writeStringToFile(tempTxt, "14/8846/5677", "UTF-8");
+			assertTrue(tempJs.delete());
+
+			CreateGeoJSON.writeGeoJSON(tempTxt.getAbsolutePath(), tempJs.getAbsolutePath(), "tiles",
+					OSMTile::getRectangle, OSMTile::fromString, "tiles");
+
+			assertTrue(tempJs.exists());
+			assertTrue(tempJs.length() > 0);
+		} finally {
+			assertTrue(!tempTxt.exists() || tempTxt.delete());
+			assertTrue(!tempJs.exists() || tempJs.delete());
+		}
+	}
+
+	@Disabled("Only used for local testing, already tested via main above")
+	@Test
+	void testSquares() throws IOException {
 		CreateGeoJSON.writeGeoJSON(VISITED_SQUARES_TXT, VISITED_SQUARES_JS, "squares",
 				UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "squares");
 	}
 
+	@Disabled("Only used for local testing, already tested via main above")
 	@Test
-	public void testSquaresDetail() throws IOException {
+	void testSquaresDetail() throws IOException {
 		// read list of UTMRefs for covered or new squares
 		Set<UTMRefWithHash> squares = CreateGeoJSON.readSquares(new File(VISITED_SQUARES_TXT)).
 				stream().
@@ -70,14 +110,16 @@ class CreateGeoJSONTest {
 		}
 	}
 
+	@Disabled("Only used for local testing, already tested via main above")
 	@Test
-	public void testTiles() throws IOException {
+	void testTiles() throws IOException {
 		CreateGeoJSON.writeGeoJSON(VISITED_TILES_TXT, VISITED_TILES_JS, "tiles",
 				OSMTile::getRectangle, OSMTile::fromString, "tiles");
 	}
 
+	@Disabled("Only used for local testing, already tested via main above")
 	@Test
-	public void testTilesDetails() throws IOException {
+	void testTilesDetails() throws IOException {
 		// read list of UTMRefs for covered or new squares
 		Set<OSMTile> squares = CreateGeoJSON.readSquares(new File(VISITED_TILES_TXT)).
 				stream().
