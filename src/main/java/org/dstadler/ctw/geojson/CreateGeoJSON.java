@@ -166,7 +166,11 @@ public class CreateGeoJSON {
 			features.add(rectangle);
 
 			iterationCount++;
-			if (iterationCount % 200 == 0 && next instanceof OSMTile) {
+			if (iterationCount % 100 == 0 && next instanceof OSMTile) {
+				// recompute optimization from time to time to skip any new single squares
+				// which are now there because of found and removed rectangles
+				handleSingleAreas(toRectangle, squares, features);
+
 				// re-compute which rows are empty from time to time to speed up processing a bit
 				int[][] M = MatrixUtils.populateMatrix((Set<OSMTile>) squares, minX, minY, maxX, maxY);
 				isY = new boolean[M.length];
@@ -177,10 +181,6 @@ public class CreateGeoJSON {
 			if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
 				log.info(title + ": Found " + features.size() + " features, having " + squares.size() + " " +
 						title + " remaining, details: " + rectangle);
-
-				// recompute optimization from time to time to skip more single squares
-				// and more
-				handleSingleAreas(toRectangle, squares, features);
 
 				lastLog.set(System.currentTimeMillis());
 			}
