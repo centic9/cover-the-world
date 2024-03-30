@@ -30,7 +30,6 @@ import org.dstadler.ctw.utils.UTMRefWithHash;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
 
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
@@ -165,32 +164,32 @@ public class CreateTileOverlaysFromUTMRefTest {
 		Set<Pair<Double, Double>> points = ConcurrentHashMap.newKeySet();
 		try (Stream<Path> walk = Files.walk(GPX_DIR.toPath(), FileVisitOption.FOLLOW_LINKS)) {
 			walk.
-					parallel().
-					forEach(path -> {
-						File gpxFile = path.toFile();
-						if(gpxFile.isDirectory() ||
-								!gpxFile.getName().toLowerCase().endsWith(".gpx")) {
-							return;
-						}
+			parallel().
+			forEach(path -> {
+				File gpxFile = path.toFile();
+				if(gpxFile.isDirectory() ||
+						!gpxFile.getName().toLowerCase().endsWith(".gpx")) {
+					return;
+				}
 
-						try {
-							//log.info("Reading GPX trackpoints from " + gpxFile);
-							final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile);
+				try {
+					//log.info("Reading GPX trackpoints from " + gpxFile);
+					final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile);
 
-							for (TrackPoint trackPoint : trackPoints.values()) {
-								if (points.add(Pair.of(trackPoint.getLatitude(), trackPoint.getLongitude()))) {
-									LatLng latLng = new LatLng(trackPoint.getLatitude(), trackPoint.getLongitude());
+					for (TrackPoint trackPoint : trackPoints.values()) {
+						if (points.add(Pair.of(trackPoint.getLatitude(), trackPoint.getLongitude()))) {
+							LatLng latLng = new LatLng(trackPoint.getLatitude(), trackPoint.getLongitude());
 
-									if(matches.contains(UTMRefWithHash.getSquareString(latLng))) {
-										log.info("found track: " + gpxFile);
-										break;
-									}
-								}
+							if(matches.contains(UTMRefWithHash.getSquareString(latLng))) {
+								log.info("found track: " + gpxFile);
+								break;
 							}
-						} catch (IOException | SAXException e) {
-							throw new RuntimeException(e);
 						}
-					});
+					}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			});
 		}
 	}
 }
