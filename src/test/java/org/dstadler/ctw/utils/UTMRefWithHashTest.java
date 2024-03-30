@@ -5,6 +5,7 @@ import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TX
 import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import static org.dstadler.ctw.utils.OSMTileTest.ASSERT_DELTA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,7 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -311,5 +314,34 @@ public class UTMRefWithHashTest {
 		TestHelpers.ToStringTest(ref);
 
 		assertEquals(ref.toString(), ref.string());
+	}
+
+	@Test
+	void testComparator() {
+		UTMRefWithHash ref1 = new UTMRefWithHash(1, 'U', 23423.23, 5234.233);
+		UTMRefWithHash ref2 = new UTMRefWithHash(1, 'U', 23423.23, 5234.233);
+
+
+		UTMRefWithHash notEqual = new UTMRefWithHash(1, 'U', 23423.23, 5234.232);
+		TestHelpers.CompareToTest(ref1, ref2, notEqual, true);
+
+		notEqual = new UTMRefWithHash(1, 'U', 23424.23, 5234.233);
+		TestHelpers.CompareToTest(ref1, ref2, notEqual, false);
+
+		notEqual = new UTMRefWithHash(1, 'T', 23423.23, 5234.233);
+		TestHelpers.CompareToTest(ref1, ref2, notEqual, true);
+
+		notEqual = new UTMRefWithHash(2, 'U', 23423.23, 5234.233);
+		TestHelpers.CompareToTest(ref1, ref2, notEqual, false);
+
+		Set<UTMRefWithHash> set = new TreeSet<>();
+		set.add(ref1);
+		set.add(ref2);
+		set.add(notEqual);
+
+		Iterator<UTMRefWithHash> it = set.iterator();
+		assertEquals(ref1, it.next());
+		assertEquals(notEqual, it.next());
+		assertFalse(it.hasNext());
 	}
 }

@@ -12,6 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.io.FileUtils;
 
 import uk.me.jstott.jcoord.LatLng;
@@ -25,7 +27,7 @@ import uk.me.jstott.jcoord.UTMRef;
  * It also provides support for computing the 1km-"square" into which given
  * {@link uk.me.jstott.jcoord.LatLng} coordinates fall into.
  */
-public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash> {
+public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, Comparable<UTMRefWithHash> {
 	// numerical value between 1 and 60
 	private static final String LNG_ZONE_PATTERN = "(\\d{1,2})";
 	// Uppercase letter between C and X without I and O
@@ -146,6 +148,15 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash> {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getLatZone(), getLngZone(), getEasting(), getNorthing());
+	}
+
+	@Override
+	public int compareTo(@Nullable UTMRefWithHash o) {
+		if (o == null) {
+			return 1;
+		}
+
+		return string().compareTo(o.string());
 	}
 
 	@Override
