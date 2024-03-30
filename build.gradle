@@ -263,11 +263,15 @@ tasks.register('removeTiles', Exec) {
 
 updateFiles.mustRunAfter removeTiles
 createAllSquares.mustRunAfter updateFiles
-createAllTiles.mustRunAfter updateFiles
 createNewSquares.mustRunAfter updateFiles
+createAllTiles.mustRunAfter updateFiles
 createNewTiles.mustRunAfter updateFiles
 createAllAdjacentTiles.mustRunAfter updateFiles
 createNewAdjacentTiles.mustRunAfter updateFiles
+
+tasks.register('tiles') {
+	dependsOn updateFiles, createNewSquares, createNewTiles, createNewAdjacentTiles
+}
 
 tasks.register('rebuildTiles') {
 	dependsOn removeTiles,
