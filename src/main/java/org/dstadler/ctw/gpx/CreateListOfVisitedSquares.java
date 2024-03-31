@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.dstadler.commons.gpx.GPXTrackpointsParser;
 import org.dstadler.commons.gpx.TrackPoint;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
@@ -125,6 +126,8 @@ public class CreateListOfVisitedSquares {
 						String str = FileUtils.readFileToString(gpxFile, "UTF-8").trim();
 						if (str.contains("301 Moved Permanently") ||
 								str.startsWith("Moved Permanently") ||
+								str.startsWith("BCFZ") ||
+								str.startsWith("Found") ||
 								str.toLowerCase().startsWith("<!doctype html") ||
 								str.toLowerCase().startsWith("<html") ||
 								str.toUpperCase().startsWith("GEOMETRYCOLLECTION") ||
@@ -149,7 +152,14 @@ public class CreateListOfVisitedSquares {
 			for (TrackPoint trackPoint : trackPoints.values()) {
 				toStringFun.accept(trackPoint);
 			}
-		} catch (IOException e) {
+		} catch (IOException | RuntimeException e) {
+			// ignore some broken files
+			String stackTrace = ExceptionUtils.getStackTrace(e);
+			if (stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
+					stackTrace.contains("For input string")) {
+				System.out.println("Skipping broken file " + gpxFile);
+				return;
+			}
 			throw new RuntimeException("While handling " + gpxFile, e);
 		}
 	}
