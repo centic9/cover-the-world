@@ -120,7 +120,7 @@ public class CreateLargestSquareGeoJSONSquares {
 				result.getValue() + " squares: " + rect.width + "x" + rect.height)).build());
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(LARGEST_SQUARE_SQUARES_JSON, "square", features);
+		GeoJSON.writeGeoJavaScript(LARGEST_SQUARE_SQUARES_JSON, "square", features);
 
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_SQUARE_SQUARES_TXT))) {

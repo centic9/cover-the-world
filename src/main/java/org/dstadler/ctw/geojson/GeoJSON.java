@@ -154,13 +154,21 @@ public class GeoJSON {
 		return builder.build();
 	}
 
-	public static void writeGeoJSON(String jsonOutputFile, String varPrefix, List<Feature> features) throws
+	public static void writeGeoJavaScript(String jsOutputFile, String varPrefix, List<Feature> features) throws
 			IOException {
 		FeatureCollection collection = new FeatureCollection(features);
-		try (Writer writer = new BufferedWriter(new FileWriter(jsonOutputFile))) {
+		try (Writer writer = new BufferedWriter(new FileWriter(jsOutputFile))) {
 			writer.write("var " + varPrefix + "states=[");
 			gson.toJson(collection, writer);
 			writer.write("];");
+		}
+	}
+
+	public static void writeGeoJSON(String jsonOutputFile, List<Feature> features) throws
+			IOException {
+		FeatureCollection collection = new FeatureCollection(features);
+		try (Writer writer = new BufferedWriter(new FileWriter(jsonOutputFile))) {
+			gson.toJson(collection, writer);
 		}
 	}
 

@@ -51,6 +51,6 @@ public class CreateLargestRectangleGeoJSONTiles {
 		List<Feature> features = Collections.singletonList(rectangle);
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(LARGEST_RECTANGLE_TILES_JSON, "tilerectangle", features);
+		GeoJSON.writeGeoJavaScript(LARGEST_RECTANGLE_TILES_JSON, "tilerectangle", features);
 	}
 }

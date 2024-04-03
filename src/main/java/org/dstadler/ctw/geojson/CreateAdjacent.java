@@ -154,11 +154,10 @@ public class CreateAdjacent {
 		}
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(jsonOutputFile, varPrefix, features);
+		GeoJSON.writeGeoJavaScript(jsonOutputFile, varPrefix, features);
 
 		// also write the file in pure JSON for use in later steps
-		FileUtils.copyToFile(GeoJSON.getGeoJSON(features), new File(
-				StringUtils.removeEnd(jsonOutputFile, ".js") + ".json"));
+		GeoJSON.writeGeoJSON(StringUtils.removeEnd(jsonOutputFile, ".js") + ".json", features);
 	}
 
 	private static void writeListOfAdjacent(Set<String> adjacent, String adjacentTxtFile) throws IOException {

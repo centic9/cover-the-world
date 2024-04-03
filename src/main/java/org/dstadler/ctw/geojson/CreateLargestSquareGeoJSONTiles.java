@@ -103,7 +103,7 @@ public class CreateLargestSquareGeoJSONTiles {
 				result.getValue() + " tiles: " + rect.width + "x" + rect.height)).build());
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(LARGEST_SQUARE_TILES_JSON, "tilesquare", features);
+		GeoJSON.writeGeoJavaScript(LARGEST_SQUARE_TILES_JSON, "tilesquare", features);
 
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_SQUARE_TILES_TXT))) {

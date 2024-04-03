@@ -59,7 +59,7 @@ public class CreateClusterGeoJSON {
 		log.info("Found " + clusterSquares.size() + " cluster-squares for " + squares.size() + " squares");
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(CLUSTER_SQUARES_JSON, "cluster", features);
+		GeoJSON.writeGeoJavaScript(CLUSTER_SQUARES_JSON, "cluster", features);
 
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(CLUSTER_SQUARES_TXT))) {

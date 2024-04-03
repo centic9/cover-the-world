@@ -70,7 +70,7 @@ public class CreateLargestClusterGeoJSONSquares {
 
 		if (clusters.isEmpty()) {
 			log.info("Did not find any clusters for squares");
-			GeoJSON.writeGeoJSON(LARGEST_CLUSTER_SQUARES_JSON, "largest", Collections.emptyList());
+			GeoJSON.writeGeoJavaScript(LARGEST_CLUSTER_SQUARES_JSON, "largest", Collections.emptyList());
 			FileUtils.writeStringToFile(new File(LARGEST_CLUSTER_SQUARES_TXT), "", "UTF-8");
 			return;
 		}
@@ -86,7 +86,7 @@ public class CreateLargestClusterGeoJSONSquares {
 		}
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(LARGEST_CLUSTER_SQUARES_JSON, "largest", features);
+		GeoJSON.writeGeoJavaScript(LARGEST_CLUSTER_SQUARES_JSON, "largest", features);
 
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_CLUSTER_SQUARES_TXT))) {

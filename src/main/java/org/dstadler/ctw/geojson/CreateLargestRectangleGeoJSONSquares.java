@@ -51,6 +51,6 @@ public class CreateLargestRectangleGeoJSONSquares {
 		List<Feature> features = Collections.singletonList(rectangle);
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(LARGEST_RECTANGLE_SQUARES_JSON, "rectangle", features);
+		GeoJSON.writeGeoJavaScript(LARGEST_RECTANGLE_SQUARES_JSON, "rectangle", features);
 	}
 }

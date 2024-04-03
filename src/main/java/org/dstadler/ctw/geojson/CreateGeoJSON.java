@@ -196,11 +196,10 @@ public class CreateGeoJSON {
 		}
 
 		// finally write out JavaScript code with embedded GeoJSON
-		GeoJSON.writeGeoJSON(jsonOutputFile, varPrefix, features);
+		GeoJSON.writeGeoJavaScript(jsonOutputFile, varPrefix, features);
 
 		// also write the file in pure JSON for use in later steps
-		FileUtils.copyToFile(GeoJSON.getGeoJSON(features), new File(
-				StringUtils.removeEnd(jsonOutputFile, ".js") + ".json"));
+		GeoJSON.writeGeoJSON(StringUtils.removeEnd(jsonOutputFile, ".js") + ".json", features);
 
 		log.info(title + ": Wrote " + features.size() + " features with " + squares.size() + " single " + title + " from " + squaresFile + " to " + jsonOutputFile);
 	}

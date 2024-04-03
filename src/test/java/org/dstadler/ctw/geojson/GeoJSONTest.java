@@ -108,7 +108,31 @@ public class GeoJSONTest {
 
 			List<Feature> features = new ArrayList<>();
 			features.add(GeoJSON.createSquare(rect, null));
-			GeoJSON.writeGeoJSON(temp.getAbsolutePath(), "test", features);
+			GeoJSON.writeGeoJavaScript(temp.getAbsolutePath(), "test", features);
+
+			assertTrue(temp.exists());
+			String js = FileUtils.readFileToString(temp, StandardCharsets.UTF_8);
+			assertTrue(js.contains("\"features\""), "Had: " + js);
+
+			assertTrue(
+					js.contains("[" + GeoJSON.formatDecimal(rect.lon1) + "," + GeoJSON.formatDecimal(rect.lat1) + "]"),
+					"Should have only 5 decimal digits for \nrect " + rect + ", but had: \n" + js);
+		} finally {
+			assertTrue(!temp.exists() || temp.delete(), "Had: " + temp.getAbsolutePath());
+		}
+	}
+
+	@Test
+	void testWriteLines() throws IOException {
+		File temp = File.createTempFile("GeoJSONTest", ".js");
+		try {
+			assertTrue(temp.delete());
+
+			LatLonRectangle rect = UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle();
+
+			List<Feature> features = new ArrayList<>();
+			features.add(GeoJSON.createLines(rect, null));
+			GeoJSON.writeGeoJavaScript(temp.getAbsolutePath(), "test", features);
 
 			assertTrue(temp.exists());
 			String js = FileUtils.readFileToString(temp, StandardCharsets.UTF_8);
@@ -124,7 +148,31 @@ public class GeoJSONTest {
 
 
 	@Test
-	void testWriteLines() throws IOException {
+	void testWriteSquareJSON() throws IOException {
+		File temp = File.createTempFile("GeoJSONTest", ".js");
+		try {
+			assertTrue(temp.delete());
+
+			LatLonRectangle rect = UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle();
+
+			List<Feature> features = new ArrayList<>();
+			features.add(GeoJSON.createSquare(rect, null));
+			GeoJSON.writeGeoJSON(temp.getAbsolutePath(), features);
+
+			assertTrue(temp.exists());
+			String js = FileUtils.readFileToString(temp, StandardCharsets.UTF_8);
+			assertTrue(js.contains("\"features\""), "Had: " + js);
+
+			assertTrue(
+					js.contains("[" + GeoJSON.formatDecimal(rect.lon1) + "," + GeoJSON.formatDecimal(rect.lat1) + "]"),
+					"Should have only 5 decimal digits for \nrect " + rect + ", but had: \n" + js);
+		} finally {
+			assertTrue(!temp.exists() || temp.delete(), "Had: " + temp.getAbsolutePath());
+		}
+	}
+
+	@Test
+	void testWriteLinesJSON() throws IOException {
 		File temp = File.createTempFile("GeoJSONTest", ".js");
 		try {
 			assertTrue(temp.delete());
@@ -133,7 +181,7 @@ public class GeoJSONTest {
 
 			List<Feature> features = new ArrayList<>();
 			features.add(GeoJSON.createLines(rect, null));
-			GeoJSON.writeGeoJSON(temp.getAbsolutePath(), "test", features);
+			GeoJSON.writeGeoJSON(temp.getAbsolutePath(), features);
 
 			assertTrue(temp.exists());
 			String js = FileUtils.readFileToString(temp, StandardCharsets.UTF_8);
