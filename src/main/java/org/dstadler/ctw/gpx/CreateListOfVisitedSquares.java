@@ -31,6 +31,7 @@ import org.dstadler.ctw.utils.Constants;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import com.google.common.base.Preconditions;
 
@@ -128,6 +129,7 @@ public class CreateListOfVisitedSquares {
 								str.startsWith("Moved Permanently") ||
 								str.startsWith("BCFZ") ||
 								str.startsWith("Found") ||
+								str.startsWith("302 Found") ||
 								str.toLowerCase().startsWith("<!doctype html") ||
 								str.toLowerCase().startsWith("<html") ||
 								str.toUpperCase().startsWith("GEOMETRYCOLLECTION") ||
@@ -155,9 +157,10 @@ public class CreateListOfVisitedSquares {
 		} catch (IOException | RuntimeException e) {
 			// ignore some broken files
 			String stackTrace = ExceptionUtils.getStackTrace(e);
-			if (stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
+			if (e.getCause() instanceof SAXParseException ||
+					stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
 					stackTrace.contains("For input string")) {
-				System.out.println("Skipping broken file " + gpxFile);
+				System.out.println("Skipping broken file " + gpxFile + ": " + e + " - " + e.getCause());
 				return;
 			}
 			throw new RuntimeException("While handling " + gpxFile, e);
