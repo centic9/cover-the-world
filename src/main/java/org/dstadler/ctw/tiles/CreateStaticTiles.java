@@ -16,8 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -102,7 +102,7 @@ public class CreateStaticTiles {
 		existsCount = 0;
 		filesDone.set(0);
 
-		Set<String> files = new HashSet<>();
+		Set<String> files = new TreeSet<>();
 
 		// look for tiles with covered area
 		Files.walkFileTree(tileDir.toPath(), new SimpleFileVisitor<>() {
