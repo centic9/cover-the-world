@@ -93,7 +93,7 @@ public class CreateTileOverlaysFromTiles {
 
 			tilesOverall = new AtomicInteger();
 			generateTiles(CreateTileOverlaysHelper.read(VISITED_TILES_TXT, "tiles"), tilesOverall, TILES_TILES_DIR,
-					jsonFile, newTiles::contains, false);
+					VISITED_TILES_JSON, newTiles::contains, false);
 
 			log.info(String.format(Locale.US, "Wrote %,d files for changed tiles in %,dms",
 					tilesOverall.get(), System.currentTimeMillis() - start));

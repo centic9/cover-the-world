@@ -95,7 +95,7 @@ public class CreateTileOverlaysFromUTMRef {
 
 			tilesOverall = new AtomicInteger();
 			generateTiles(CreateTileOverlaysHelper.read(VISITED_SQUARES_TXT, "squares"), tilesOverall, TILES_SQUARES_DIR,
-					jsonFile, newTiles::contains);
+					VISITED_SQUARES_JSON, newTiles::contains);
 
 			log.info(String.format(Locale.US, "Wrote %,d files for changed tiles in %,dms",
 					tilesOverall.get(), System.currentTimeMillis() - start));

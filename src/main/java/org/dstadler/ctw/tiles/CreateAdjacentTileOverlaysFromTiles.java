@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.dstadler.commons.logging.jdk.LoggerFactory;
-import org.dstadler.ctw.utils.OSMTile;
 
 /**
  * This application takes the list of covered tiles from
@@ -37,7 +36,6 @@ public class CreateAdjacentTileOverlaysFromTiles {
 
 	public static final File ADJACENT_TILES_DIR = new File("tilesTilesAdjacent");
 	public static final File ADJACENT_TILES_JSON = new File("js/AdjacentTiles.json");
-	public static final File ADJACENT_TILES_NEW_JSON = new File("js/AdjacentTilesNew.json");
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		LoggerFactory.initLogging();
@@ -49,7 +47,6 @@ public class CreateAdjacentTileOverlaysFromTiles {
 
 		File tileDir = ADJACENT_TILES_DIR;
 		String tilesFile = onlyNewTiles ? ADJACENT_TILES_NEW_TXT: ADJACENT_TILES_TXT;
-		File jsonFile = onlyNewTiles ? ADJACENT_TILES_NEW_JSON : ADJACENT_TILES_JSON;
 
 		if (onlyNewTiles) {
 			log.info("Writing only new adjacent tiles to directory " + tileDir);
@@ -57,6 +54,11 @@ public class CreateAdjacentTileOverlaysFromTiles {
 			log.info("Writing adjacent tiles to directory " + tileDir);
 		}
 
+		/* we write both into the same directory, so do not remove these here
+		if (onlyNewTiles) {
+			CreateTileOverlaysHelper.cleanTiles(tileDir);
+		}
+		*/
 		if (!tileDir.exists() && !tileDir.mkdirs()) {
 			throw new IOException("Could not create directory at " + tileDir);
 		}
@@ -67,7 +69,8 @@ public class CreateAdjacentTileOverlaysFromTiles {
 
 		AtomicInteger tilesOverall = new AtomicInteger();
 		// t.toCoords().equals("17/70647/45300")
-		CreateTileOverlaysFromTiles.generateTiles(tiles, tilesOverall, tileDir, jsonFile, t -> true, true);
+		CreateTileOverlaysFromTiles.generateTiles(tiles, tilesOverall,
+				tileDir, ADJACENT_TILES_JSON, t -> true, true);
 
 		log.info(String.format(Locale.US, "Wrote %,d files overall in %,dms",
 				tilesOverall.get(), System.currentTimeMillis() - start));
