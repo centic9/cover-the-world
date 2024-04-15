@@ -259,7 +259,7 @@ tasks.register('removeTiles', Exec) {
 	workingDir '.'
 
 	commandLine 'bash', '-c',
-			'rm -rf tilesSquares tilesSquaresNew tilesSquaresCombined tilesTiles tilesTilesNew tilesTilesCombined'
+			'rm -rf tilesSquares tilesSquaresAdjacent tilesSquaresNew tilesSquaresCombined tilesTiles tilesTilesAdjacent tilesTilesNew tilesTilesCombined'
 }
 
 updateFiles.mustRunAfter removeTiles
