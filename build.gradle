@@ -172,13 +172,14 @@ signing {
 idea {
   module {
     excludeDirs += [
-        file("tilesSquares"),
-        file("tilesSquaresCombined"),
-        file("tilesSquaresNew"),
-        file("tilesTiles"),
-        file("tilesTilesAdjacent"),
-        file("tilesTilesCombined"),
-        file("tilesTilesNew"),
+        file('tilesSquares'),
+        file('tilesSquaresAdjacent'),
+        file('tilesSquaresCombined'),
+        file('tilesSquaresNew'),
+        file('tilesTiles'),
+        file('tilesTilesAdjacent'),
+        file('tilesTilesCombined'),
+        file('tilesTilesNew')
     ]
   }
 }
@@ -245,7 +246,7 @@ tasks.register('createAllAdjacentTiles', JavaExec) {
 }
 
 tasks.register('createNewAdjacentTiles', JavaExec) {
-	description = 'Create adjacent tiles for all supported zooms'
+	description = 'Create recent adjacent tiles for all supported zooms'
 
 	mainClass = 'org.dstadler.ctw.tiles.CreateAdjacentTileOverlaysFromTiles'
 	classpath = sourceSets.main.runtimeClasspath
@@ -274,8 +275,5 @@ tasks.register('tiles') {
 }
 
 tasks.register('rebuildTiles') {
-	dependsOn removeTiles,
-		updateFiles,
-		createAllSquares, createAllTiles, createAllAdjacentTiles,
-		createNewSquares, createNewTiles, createNewAdjacentTiles
+	dependsOn removeTiles, createAllSquares, createAllTiles, createAllAdjacentTiles, tiles
 }
