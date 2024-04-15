@@ -66,7 +66,7 @@ public class GeoTools {
 		// create an invisible stroke
 		Stroke stroke = sf.createStroke(ff.literal(RED),
 				// width
-				ff.literal(borderOnly ? 2.0f : 0.0f),
+				ff.literal(borderOnly ? 1.0f : 0.0f),
 				// opacity
 				ff.literal(borderOnly ? 1.0f : 0.0f));
 
