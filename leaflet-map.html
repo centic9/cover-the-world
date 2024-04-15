@@ -189,6 +189,25 @@ const bergfexOrtho = L.tileLayer('https://tiles.bergfex.at/styles/basemap-ortho/
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 });
 
+
+// https://example.com/ctw/tilesSquaresCombined/12/2207/1415.png
+const ctwSquaresCombined = L.tileLayer('tilesSquaresCombined/{z}/{x}/{y}.png', {
+	// we currently only generate up to zoom-level 18
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
+});
+
+// https://example.com/ctw/tilesTilesCombined/12/2207/1415.png
+const ctwTilesCombined = L.tileLayer('tilesTilesCombined/{z}/{x}/{y}.png', {
+	// we currently only generate up to zoom-level 18
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
+});
+
 // Overlay layers
 ////////////////////////////////////////
 // https://tile.waymarkedtrails.org/mtb/12/2207/1415.png
@@ -340,6 +359,10 @@ if (params.get("squares") === "1") {
 	map.addLayer(ctwTiles);
 	map.addLayer(ctwTilesNew);
 	map.addLayer(ctwTilesAdjacent);
+} else if (params.get("prerenderedSquares") === "1") {
+	map.addLayer(ctwSquaresCombined);
+} else if (params.get("prerenderedTiles") === "1") {
+	map.addLayer(ctwTilesCombined);
 } else {
 	map.addLayer(geoTiles);
 	map.addLayer(geoTilesNew);
@@ -360,6 +383,8 @@ const baseLayers = {
 	'Bergfex JPG': bergfexJpg,
 	'Bergfex OEK50': bergfexOEK50,
 	'Bergfex Ortho': bergfexOrtho,
+	'CTW Squares Prerender': ctwSquaresCombined,
+	'CTW Tiles Prerender': ctwTilesCombined,
 };
 
 const overlays = {
