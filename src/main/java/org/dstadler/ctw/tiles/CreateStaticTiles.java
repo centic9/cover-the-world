@@ -104,6 +104,8 @@ public class CreateStaticTiles {
 
 		Set<String> files = new TreeSet<>();
 
+		log.info("Looking for all files in " + tileDir);
+
 		// look for tiles with covered area
 		Files.walkFileTree(tileDir.toPath(), new SimpleFileVisitor<>() {
 			@Override
@@ -116,7 +118,7 @@ public class CreateStaticTiles {
 			}
 		});
 
-		log.info("Found " + fileCount + " tiles, " + files.size() + " unique");
+		log.info(String.format("Found %,d tiles, %,d unique", fileCount, files.size()));
 
 		// if available, look for additional tiles with rendered border (aka adjacent tiles)
 		// some might overlap with normal covered tiles, so use a set to process each only
@@ -134,7 +136,7 @@ public class CreateStaticTiles {
 			});
 
 			fileCount += adjacentCount;
-			log.info("Found " + adjacentCount + " adjacent tiles, " + fileCount + " overall, " + files.size() + " unique");
+			log.info(String.format("Found %,d adjacent tiles, %,d overall, %,d unique", adjacentCount, fileCount, files.size()));
 		}
 
 		// Note: we could keep two separate lists and combine them afterwards
