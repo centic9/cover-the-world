@@ -89,6 +89,43 @@ public class CreateListOfVisitedSquares {
 		processVisitedArea(VISITED_TILES_TXT, VISITED_TILES_NEW_TXT, "tiles", visitedTiles);
 	}
 
+	private static void readVisited(Consumer<TrackPoint> toStringFun) throws IOException {
+		AtomicInteger count = new AtomicInteger();
+
+		Preconditions.checkState(GPX_DIR.exists() && GPX_DIR.isDirectory(),
+				"Directory '%s' does not exist or is not a directory (%s/%s)",
+				GPX_DIR, GPX_DIR.exists(), GPX_DIR.isDirectory());
+
+		log.info("Searching directory '" + GPX_DIR + "' for GPX tracks");
+		try (Stream<Path> walk = Files.walk(GPX_DIR.toPath(), FileVisitOption.FOLLOW_LINKS)) {
+			walk.
+					parallel().
+					forEach(path -> {
+						File gpxFile = path.toFile();
+
+						if(gpxFile.isDirectory() ||
+								!gpxFile.getName().toLowerCase().endsWith(".gpx")) {
+							return;
+						}
+
+						log.info("Move " + count.incrementAndGet() + ": " + gpxFile);
+						readTrackPoints(gpxFile, toStringFun);
+					});
+		}
+	}
+
+	private static void readTrackPoints(File gpxFile, Consumer<TrackPoint> toStringFun) {
+		try {
+			final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile);
+
+			for (TrackPoint trackPoint : trackPoints.values()) {
+				toStringFun.accept(trackPoint);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("While handling " + gpxFile, e);
+		}
+	}
+
 	private static void processVisitedArea(String visitedFile, String visitedNewFile,
 			String title, Set<String> visited) throws IOException {
 		long start = System.currentTimeMillis();
@@ -121,43 +158,6 @@ public class CreateListOfVisitedSquares {
 		}
 
 		return Collections.emptySet();
-	}
-
-	private static void readVisited(Consumer<TrackPoint> toStringFun) throws IOException {
-		AtomicInteger i = new AtomicInteger(0);
-
-		Preconditions.checkState(GPX_DIR.exists() && GPX_DIR.isDirectory(),
-				"Directory '%s' does not exist or is not a directory (%s/%s)",
-				GPX_DIR, GPX_DIR.exists(), GPX_DIR.isDirectory());
-
-		log.info("Searching directory '" + GPX_DIR + "' for GPX tracks");
-		try (Stream<Path> walk = Files.walk(GPX_DIR.toPath(), FileVisitOption.FOLLOW_LINKS)) {
-			walk.
-				parallel().
-				forEach(path -> {
-					File gpxFile = path.toFile();
-
-					if(gpxFile.isDirectory() ||
-							!gpxFile.getName().toLowerCase().endsWith(".gpx")) {
-						return;
-					}
-
-					log.info("Move " + i.incrementAndGet() + ": " + gpxFile);
-					readTrackPoints(gpxFile, toStringFun);
-				});
-		}
-	}
-
-	private static void readTrackPoints(File gpxFile, Consumer<TrackPoint> toStringFun) {
-		try {
-			final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile);
-
-			for (TrackPoint trackPoint : trackPoints.values()) {
-				toStringFun.accept(trackPoint);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("While handling " + gpxFile, e);
-		}
 	}
 
 	private static void writeListOfVisited(Set<String> visited, String visitedTxtFile) throws IOException {
