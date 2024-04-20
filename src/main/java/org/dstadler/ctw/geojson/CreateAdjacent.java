@@ -55,27 +55,37 @@ public class CreateAdjacent {
 	public static final String ADJACENT_TILES_TXT = "txt/AdjacentTiles.txt";
 	public static final String ADJACENT_TILES_NEW_TXT = "txt/AdjacentTilesNew.txt";
 
+	// how many adjacent tiles we create around covered squares/tiles
+	private static final int RECURSE_LEVEL = 3;
+
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
 
-		log.info("Computing GeoJSON for adjacent squares and tiles");
+		final int recurseLevel;
+		if (args.length > 0) {
+			recurseLevel = Integer.parseInt(args[0]);
+		} else {
+			recurseLevel = RECURSE_LEVEL;
+		}
+
+		log.info("Computing GeoJSON for adjacent squares and tiles with recurseLevel " + recurseLevel);
 
 		writeGeoJSON(VISITED_SQUARES_TXT, ADJACENT_SQUARES_JS, "adjacentSquares",
-				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_TXT, null);
+				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_TXT, null, recurseLevel);
 
 		writeGeoJSON(VISITED_SQUARES_NEW_TXT, ADJACENT_SQUARES_NEW_JS, "adjacentSquaresNew",
-				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_NEW_TXT, VISITED_SQUARES_TXT);
+				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_NEW_TXT, VISITED_SQUARES_TXT, recurseLevel);
 
 		writeGeoJSON(VISITED_TILES_TXT, ADJACENT_TILES_JS, "adjacentTiles",
-				OSMTile::fromString, "tiles", ADJACENT_TILES_TXT, null);
+				OSMTile::fromString, "tiles", ADJACENT_TILES_TXT, null, recurseLevel);
 
 		writeGeoJSON(VISITED_TILES_NEW_TXT, ADJACENT_TILES_NEW_JS, "adjacentTilesNew",
-				OSMTile::fromString, "tiles", ADJACENT_TILES_NEW_TXT, VISITED_TILES_TXT);
+				OSMTile::fromString, "tiles", ADJACENT_TILES_NEW_TXT, VISITED_TILES_TXT, recurseLevel);
 	}
 
 	private static <T extends BaseTile<T>> void writeGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
 			Function<String, T> toObject,
-			String title, String adjacentTxtFile, String fullTxtFile) throws IOException {
+			String title, String adjacentTxtFile, String fullTxtFile, int recurseLevel) throws IOException {
 		log.info("Writing from " + squaresFile + " to " + jsonOutputFile +
 				" with prefix '" + varPrefix + "' and title " + title);
 
@@ -89,11 +99,7 @@ public class CreateAdjacent {
 		// do not generate for zoom 12 and lower
 		Set<BaseTile<T>> adjacentTiles = new HashSet<>();
 		for (BaseTile<T> tile : squares) {
-			addAdjacentTiles(squares, adjacentTiles, tile);
-			addAdjacentTiles(squares, adjacentTiles, tile.up());
-			addAdjacentTiles(squares, adjacentTiles, tile.down());
-			addAdjacentTiles(squares, adjacentTiles, tile.left());
-			addAdjacentTiles(squares, adjacentTiles, tile.right());
+			addAdjacentTiles(squares, adjacentTiles, tile, recurseLevel);
 		}
 
 		log.info("Having " + adjacentTiles.size() + " adjacent tiles");
@@ -128,11 +134,16 @@ public class CreateAdjacent {
 				Collections.emptySet();
 	}
 
-	private static <T> void addAdjacentTiles(Set<BaseTile<T>> tilesIn, Set<BaseTile<T>> adjacentTiles, BaseTile<T> tile) {
-		addAdjacentTile(tilesIn, adjacentTiles, tile.up());
-		addAdjacentTile(tilesIn, adjacentTiles, tile.down());
-		addAdjacentTile(tilesIn, adjacentTiles, tile.left());
-		addAdjacentTile(tilesIn, adjacentTiles, tile.right());
+	private static <T> void addAdjacentTiles(Set<BaseTile<T>> tilesIn, Set<BaseTile<T>> adjacentTiles, BaseTile<T> tile, int recurse) {
+		addAdjacentTile(tilesIn, adjacentTiles, tile);
+		if (recurse == 0) {
+			return;
+		}
+
+		addAdjacentTiles(tilesIn, adjacentTiles, tile.up(), recurse - 1);
+		addAdjacentTiles(tilesIn, adjacentTiles, tile.down(), recurse - 1);
+		addAdjacentTiles(tilesIn, adjacentTiles, tile.left(), recurse - 1);
+		addAdjacentTiles(tilesIn, adjacentTiles, tile.right(), recurse - 1);
 	}
 
 	private static <T> void addAdjacentTile(Set<BaseTile<T>> tilesIn, Set<BaseTile<T>> adjacentTiles, BaseTile<T> newTile) {
