@@ -157,7 +157,9 @@ public class CreateListOfVisitedSquares {
 		} catch (IOException | RuntimeException e) {
 			// ignore some broken files
 			String stackTrace = ExceptionUtils.getStackTrace(e);
-			if (e.getCause() instanceof SAXParseException ||
+			if (e.getCause() instanceof SAXException ||
+					e instanceof IllegalStateException ||
+					e instanceof NullPointerException ||
 					stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
 					stackTrace.contains("For input string")) {
 				System.out.println("Skipping broken file " + gpxFile + ": " + e + " - " + e.getCause());
