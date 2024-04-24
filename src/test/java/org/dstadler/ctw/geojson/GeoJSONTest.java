@@ -239,4 +239,13 @@ public class GeoJSONTest {
 					json);
 		}
 	}
+
+	@Test
+	void testGetJsonFileName() {
+		assertEquals(".json", GeoJSON.getJSONFileName(""));
+		assertEquals("abcdef.json", GeoJSON.getJSONFileName("abcdef"));
+		assertEquals("abcdef.json", GeoJSON.getJSONFileName("abcdef.js"));
+		assertEquals("abcdef.json.json", GeoJSON.getJSONFileName("abcdef.json"));
+		assertEquals("abcdef.json.json", GeoJSON.getJSONFileName("abcdef.json.js"));
+	}
 }

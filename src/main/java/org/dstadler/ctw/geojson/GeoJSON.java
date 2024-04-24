@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dstadler.ctw.utils.LatLonRectangle;
 
 import com.github.filosganga.geogson.gson.FeatureAdapter;
@@ -183,5 +184,9 @@ public class GeoJSON {
 
 			return new ByteArrayInputStream(stream.toByteArray());
 		}
+	}
+
+	public static String getJSONFileName(String jsFileName) {
+		return StringUtils.removeEnd(jsFileName, ".js") + ".json";
 	}
 }

@@ -56,6 +56,9 @@ class CreateGeoJSONTest {
 		} finally {
 			assertTrue(!tempTxt.exists() || tempTxt.delete());
 			assertTrue(!tempJs.exists() || tempJs.delete());
+
+			File tempJson = new File(GeoJSON.getJSONFileName(tempJs.getAbsolutePath()));
+			assertTrue(!tempJson.exists() || tempJson.delete());
 		}
 	}
 
@@ -75,6 +78,9 @@ class CreateGeoJSONTest {
 		} finally {
 			assertTrue(!tempTxt.exists() || tempTxt.delete());
 			assertTrue(!tempJs.exists() || tempJs.delete());
+
+			File tempJson = new File(GeoJSON.getJSONFileName(tempJs.getAbsolutePath()));
+			assertTrue(!tempJson.exists() || tempJson.delete());
 		}
 	}
 
