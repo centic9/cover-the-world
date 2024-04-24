@@ -113,7 +113,7 @@ public class CreateGeoJSON {
 
 		boolean found = false;
 		boolean[] isY = null;
-		if (squares.size() > 0 && !(squares.iterator().next() instanceof UTMRefWithHash)) {
+		if (squares.size() > 0 && squares.iterator().next() instanceof OSMTile) {
 			for (OSMTile tile : (Set<OSMTile>) squares) {
 				if (tile.getXTile() > maxX) {
 					maxX = tile.getXTile();
@@ -132,10 +132,7 @@ public class CreateGeoJSON {
 				found = true;
 			}
 
-			int[][] M = MatrixUtils.populateMatrix((Set<OSMTile>) squares, minX, minY, maxX, maxY);
-
-			isY = new boolean[M.length];
-			MatrixUtils.findPopulatedRows(M, isY);
+			isY = computePopulatedRows(title, (Set<OSMTile>) squares, minX, minY, maxX, maxY);
 		}
 
 		// next create as many rectangles as possible to minimize the resulting GeoJSON
@@ -172,10 +169,7 @@ public class CreateGeoJSON {
 				handleSingleAreas(toRectangle, squares, features);
 
 				// re-compute which rows are empty from time to time to speed up processing a bit
-				int[][] M = MatrixUtils.populateMatrix((Set<OSMTile>) squares, minX, minY, maxX, maxY);
-				isY = new boolean[M.length];
-				int count = MatrixUtils.findPopulatedRows(M, isY);
-				log.info(title + ": Found " + count + " populated rows of " + isY.length + " overall");
+				isY = computePopulatedRows(title, (Set<OSMTile>) squares, minX, minY, maxX, maxY);
 			}
 
 			if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
@@ -202,6 +196,18 @@ public class CreateGeoJSON {
 		GeoJSON.writeGeoJSON(GeoJSON.getJSONFileName(jsonOutputFile), features);
 
 		log.info(title + ": Wrote " + features.size() + " features with " + squares.size() + " single " + title + " from " + squaresFile + " to " + jsonOutputFile);
+	}
+
+	private static <T extends BaseTile<T>> boolean[] computePopulatedRows(String title,
+			Set<OSMTile> squares, int minX, int minY, int maxX, int maxY) {
+		int[][] M = MatrixUtils.populateMatrix(squares, minX, minY, maxX, maxY);
+
+		boolean[] isY = new boolean[M.length];
+		int count = MatrixUtils.findPopulatedRows(M, isY);
+
+		log.info(title + ": Found " + count + " populated rows of " + isY.length + " overall");
+
+		return isY;
 	}
 
 	private static <T extends BaseTile<T>> void handleSingleAreas(Function<T, LatLonRectangle> toRectangle,
