@@ -68,7 +68,7 @@ const params = new URLSearchParams(window.location.search);
 /* supported query params:
 Base Map: squares, bergfex, cycle, renderedSquares, renderedTiles
 Overlay: tiles, mtb
-Feature:
+Feature: adjacent, square, rectangle, cluster, twenty
 */
 
 function mapstyle() {
@@ -349,18 +349,22 @@ if (params.get("bergfex") === "1") {
     map.addLayer(osm);
 }
 
+var isSquares = false;
 if (params.get("squares") === "1") {
 	map.addLayer(geoSquares);
 	map.addLayer(geoSquaresNew);
+	isSquares = true;
 } else if (params.get("renderedSquares") === "1") {
 	map.addLayer(ctwSquares);
 	map.addLayer(ctwSquaresNew);
+	isSquares = true;
 } else if (params.get("renderedTiles") === "1") {
 	map.addLayer(ctwTiles);
 	map.addLayer(ctwTilesNew);
 	map.addLayer(ctwTilesAdjacent);
 } else if (params.get("prerenderedSquares") === "1") {
 	map.addLayer(ctwSquaresCombined);
+	isSquares = true;
 } else if (params.get("prerenderedTiles") === "1") {
 	map.addLayer(ctwTilesCombined);
 } else {
@@ -371,6 +375,22 @@ if (params.get("squares") === "1") {
 
 if (params.get("mtb") === "1") {
     map.addLayer(mtb);
+}
+
+if (params.get("adjacent") === "1") {
+    map.addLayer(isSquares ? geoSquaresAdjacent : geoTilesAdjacent);
+}
+if (params.get("square") === "1") {
+    map.addLayer(isSquares ? square : squareTiles);
+}
+if (params.get("rectangle") === "1") {
+    map.addLayer(isSquares ? rectangle : rectangleTiles);
+}
+if (params.get("cluster") === "1") {
+    map.addLayer(isSquares ? largest : clusterTiles);
+}
+if (params.get("twenty") === "1") {
+    map.addLayer(squareTiles20);
 }
 
 const baseLayers = {
@@ -488,10 +508,20 @@ L.easyButton('<strong>Sq</strong>', function(){
 
 
 L.easyButton('<strong>A</strong>', function(){
-    if (map.hasLayer(geoTilesAdjacent)) {
-        map.removeLayer(geoTilesAdjacent);
+	if (map.hasLayer(geoTiles)) {
+		map.removeLayer(geoSquaresAdjacent);
+        if (map.hasLayer(geoTilesAdjacent)) {
+            map.removeLayer(geoTilesAdjacent);
+        } else {
+            map.addLayer(geoTilesAdjacent);
+        }
     } else {
-        map.addLayer(geoTilesAdjacent);
+		map.removeLayer(geoTilesAdjacent);
+        if (map.hasLayer(geoSquaresAdjacent)) {
+            map.removeLayer(geoSquaresAdjacent);
+        } else {
+            map.addLayer(geoSquaresAdjacent);
+        }
     }
 }).addTo(map);
 
@@ -524,6 +554,12 @@ L.easyButton('<strong>S</strong>', function(){
 	map.removeLayer(geoTiles);
 	map.removeLayer(geoTilesAdjacent);
 	map.removeLayer(geoTilesNew);
+	map.removeLayer(ctwTiles);
+	map.removeLayer(ctwTilesNew);
+	map.removeLayer(ctwTilesAdjacent);
+	map.removeLayer(squareTiles);
+	map.removeLayer(rectangleTiles);
+	map.removeLayer(clusterTiles);
 	if (map.hasLayer(geoSquares)) {
 		map.removeLayer(geoSquares);
 	} else {
@@ -540,6 +576,9 @@ L.easyButton('<strong>T</strong>', function(){
 	map.removeLayer(geoSquares);
 	map.removeLayer(geoSquaresAdjacent);
 	map.removeLayer(geoSquaresNew);
+	map.removeLayer(square);
+	map.removeLayer(rectangle);
+	map.removeLayer(largest);
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(geoTiles);
 	} else {
