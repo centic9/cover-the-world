@@ -293,4 +293,24 @@ public class OSMTileTest {
 		assertEquals(tile.toCoords(), tile.string());
 		assertNotEquals(tile.toString(), tile.string());
 	}
+
+	@Test
+	public void printSquare() {
+		// this shows how you can compute the border-coordinates
+		// of a given n x n square at a given position
+		int square = 25;
+		OSMTile lowerRight = new OSMTile(14, 8844, 5677);
+		OSMTile upperLeft = new OSMTile(14, lowerRight.getXTile() - square + 1, lowerRight.getYTile() - square + 1);
+
+		LatLonRectangle newRect = new LatLonRectangle(
+				upperLeft.getRectangle().lat1, upperLeft.getRectangle().lon1,
+				lowerRight.getRectangle().lat2, lowerRight.getRectangle().lon2);
+
+		System.out.println();
+		System.out.println(newRect.toGeoJSONArray());
+		System.out.println();
+
+		System.out.println(upperLeft.toCoords());
+		System.out.println(lowerRight.toCoords());
+	}
 }

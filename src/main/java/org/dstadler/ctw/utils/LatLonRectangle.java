@@ -137,4 +137,25 @@ public class LatLonRectangle {
 		result = 31 * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
+
+	public String toGeoJSONArray() {
+		/*
+                [13.77686, 48.61839],
+                [14.32617, 48.61839],
+                [14.32617, 48.25394],
+                [13.77686, 48.25394],
+                [13.77686, 48.61839]
+		 */
+		return String.format(
+				"[%.5f, %.5f],\n" +
+				"[%.5f, %.5f],\n" +
+				"[%.5f, %.5f],\n" +
+				"[%.5f, %.5f],\n" +
+				"[%.5f, %.5f]",
+				lon1, lat1,
+				lon2, lat1,
+				lon2, lat2,
+				lon1, lat2,
+				lon1, lat1);
+	}
 }

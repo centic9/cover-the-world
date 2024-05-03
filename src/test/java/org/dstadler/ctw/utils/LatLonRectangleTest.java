@@ -300,4 +300,16 @@ public class LatLonRectangleTest {
 			throw new IllegalArgumentException("Failed for \n" + rect1 + "\n" + rect2, e);
 		}
 	}
+
+	@Test
+	public void testToGeoJSONArray() {
+		LatLonRectangle rect = new LatLonRectangle(3, 2, 1,4);
+		assertEquals(
+				"[2.00000, 3.00000],\n" +
+				"[4.00000, 3.00000],\n" +
+				"[4.00000, 1.00000],\n" +
+				"[2.00000, 1.00000],\n" +
+				"[2.00000, 3.00000]",
+				rect.toGeoJSONArray());
+	}
 }
