@@ -3,6 +3,7 @@ package org.dstadler.ctw.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import com.google.common.base.Preconditions;
 
@@ -146,7 +147,7 @@ public class LatLonRectangle {
                 [13.77686, 48.25394],
                 [13.77686, 48.61839]
 		 */
-		return String.format(
+		return String.format(Locale.ROOT,
 				"[%.5f, %.5f],\n" +
 				"[%.5f, %.5f],\n" +
 				"[%.5f, %.5f],\n" +
