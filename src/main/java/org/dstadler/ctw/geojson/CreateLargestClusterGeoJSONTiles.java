@@ -84,6 +84,9 @@ public class CreateLargestClusterGeoJSONTiles {
 		// finally write out JavaScript code with embedded GeoJSON
 		GeoJSON.writeGeoJavaScript(LARGEST_CLUSTER_TILES_JSON, "largesttiles", features);
 
+		// also write the file in pure JSON for use in later steps
+		GeoJSON.writeGeoJSON(GeoJSON.getJSONFileName(LARGEST_CLUSTER_TILES_JSON), features);
+
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_CLUSTER_TILES_TXT))) {
 			for (String tile : largestClusterStr) {

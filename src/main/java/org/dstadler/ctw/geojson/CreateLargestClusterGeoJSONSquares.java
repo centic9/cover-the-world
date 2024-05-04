@@ -88,6 +88,9 @@ public class CreateLargestClusterGeoJSONSquares {
 		// finally write out JavaScript code with embedded GeoJSON
 		GeoJSON.writeGeoJavaScript(LARGEST_CLUSTER_SQUARES_JSON, "largest", features);
 
+		// also write the file in pure JSON for use in later steps
+		GeoJSON.writeGeoJSON(GeoJSON.getJSONFileName(LARGEST_CLUSTER_SQUARES_JSON), features);
+
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_CLUSTER_SQUARES_TXT))) {
 			for (String square : largestClusterStr) {

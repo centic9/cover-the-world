@@ -61,6 +61,9 @@ public class CreateClusterGeoJSON {
 		// finally write out JavaScript code with embedded GeoJSON
 		GeoJSON.writeGeoJavaScript(CLUSTER_SQUARES_JSON, "cluster", features);
 
+		// also write the file in pure JSON for use in later steps
+		GeoJSON.writeGeoJSON(GeoJSON.getJSONFileName(CLUSTER_SQUARES_JSON), features);
+
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(CLUSTER_SQUARES_TXT))) {
 			for (String square : clusterSquares) {

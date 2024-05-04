@@ -52,5 +52,8 @@ public class CreateLargestRectangleGeoJSONTiles {
 
 		// finally write out JavaScript code with embedded GeoJSON
 		GeoJSON.writeGeoJavaScript(LARGEST_RECTANGLE_TILES_JSON, "tilerectangle", features);
+
+		// also write the file in pure JSON for use in later steps
+		GeoJSON.writeGeoJSON(GeoJSON.getJSONFileName(LARGEST_RECTANGLE_TILES_JSON), features);
 	}
 }

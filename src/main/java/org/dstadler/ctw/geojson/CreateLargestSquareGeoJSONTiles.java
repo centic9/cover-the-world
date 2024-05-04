@@ -105,6 +105,9 @@ public class CreateLargestSquareGeoJSONTiles {
 		// finally write out JavaScript code with embedded GeoJSON
 		GeoJSON.writeGeoJavaScript(LARGEST_SQUARE_TILES_JSON, "tilesquare", features);
 
+		// also write the file in pure JSON for use in later steps
+		GeoJSON.writeGeoJSON(GeoJSON.getJSONFileName(LARGEST_SQUARE_TILES_JSON), features);
+
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_SQUARE_TILES_TXT))) {
 			writer.write(squareMin.toCoords());
