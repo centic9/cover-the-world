@@ -8,7 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import org.apache.commons.lang3.RandomUtils;
+import org.dstadler.commons.collections.MappedCounter;
+import org.dstadler.commons.collections.MappedCounterImpl;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.util.SuppressForbidden;
 import org.junit.jupiter.api.Test;
@@ -18,6 +23,9 @@ import com.google.common.collect.ImmutableList;
 import uk.me.jstott.jcoord.LatLng;
 
 public class LatLonRectangleTest {
+	private final static int MIN_LATITUDE = -80;
+	private final static int MAX_LATITUDE = 84;
+
 	@Test
 	void testIntersectItself() {
 		checkIntersect(
@@ -190,8 +198,14 @@ public class LatLonRectangleTest {
 				48.400, 14.238);
 
 		TestHelpers.HashCodeTest(rect, rectEqu);
-	}
 
+		assertTrue(new LatLonRectangle(
+				48.458, 14.150,
+				48.400, 14.238).hashCode() !=
+				new LatLonRectangle(
+						48.458, 14.150,
+						48.400, 14.239).hashCode());
+	}
 
 	@Test
 	void testEquals() {
@@ -311,5 +325,37 @@ public class LatLonRectangleTest {
 				"[2.00000, 1.00000],\n" +
 				"[2.00000, 3.00000]",
 				rect.toGeoJSONArray());
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	void testRandom() {
+		MappedCounter<Integer> hashes = new MappedCounterImpl<>();
+		for (int i = 0; i < 100_000; i++) {
+			double lat1 = RandomUtils.nextDouble(0, (-1) * MIN_LATITUDE + MAX_LATITUDE);
+			double lon1 = RandomUtils.nextDouble(0, 2 * 180);
+			double lat2 = RandomUtils.nextDouble(0, (-1) * MIN_LATITUDE + MAX_LATITUDE);
+			double lon2 = RandomUtils.nextDouble(0, 2 * 180);
+			lat1 += MIN_LATITUDE;
+			lon1 -= 180;
+			lat2 += MIN_LATITUDE;
+			lon2 -= 180;
+
+			LatLonRectangle rect = new LatLonRectangle(
+					Math.max(lat1, lat2),
+					Math.min(lon1, lon2),
+					Math.min(lat1, lat2),
+					Math.max(lon1, lon2)
+			);
+
+			hashes.inc(rect.hashCode());
+		}
+
+		Optional<Map.Entry<Integer, Long>> max = hashes.sortedMap().
+				entrySet().
+				stream().
+				max(Map.Entry.comparingByValue());
+		assertTrue(max.orElseThrow().getValue() <= 3,
+				"Did not expect many equal hash-values in random rectangles, but failed with " + max);
 	}
 }

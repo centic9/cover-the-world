@@ -1,19 +1,27 @@
 package org.dstadler.ctw.utils;
 
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
+import static org.dstadler.ctw.utils.Constants.MAX_ZOOM;
 import static org.dstadler.ctw.utils.OSMTile.OSM_MAX_ZOOM;
 import static org.dstadler.ctw.utils.OSMTile.OSM_MIN_ZOOM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.dstadler.commons.collections.MappedCounter;
+import org.dstadler.commons.collections.MappedCounterImpl;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.util.SuppressForbidden;
@@ -62,6 +70,13 @@ public class OSMTileTest {
 		OSMTile nr1 = OSMTile.fromLatLngZoom(34, 3, 10);
 		OSMTile nr2 = OSMTile.fromLatLngZoom(34, 3, 10);
 		TestHelpers.HashCodeTest(nr1, nr2);
+
+		assertTrue(new OSMTile(7, 3, 10).hashCode() !=
+				new OSMTile(7, 3, 11).hashCode());
+		assertTrue(new OSMTile(7, 3, 10).hashCode() !=
+				new OSMTile(7, 2, 10).hashCode());
+		assertTrue(new OSMTile(7, 3, 10).hashCode() !=
+				new OSMTile(8, 3, 10).hashCode());
 
 		OSMTile other = OSMTile.fromLatLngZoom(34, 3, 9);
 		TestHelpers.EqualsTest(nr1, nr2, other);
@@ -151,6 +166,35 @@ public class OSMTileTest {
 			assertEquals(tile.toCoords(), tile.string());
 			assertNotEquals(tile.toString(), tile.string());
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Test
+	void testRandomHashCode() {
+		MappedCounter<Integer> hashes = new MappedCounterImpl<>();
+		Set<String> tiles = new HashSet<>();
+		for (int i = 0; i < 100_000; i++) {
+			int zoom = RandomUtils.nextInt(1, MAX_ZOOM);
+			int max = zoom == 0 ? 1 : 2 << (zoom - 1);
+			OSMTile tile = new OSMTile(zoom,
+					RandomUtils.nextInt(1, max - 1), RandomUtils.nextInt(1, max - 1));
+			TestHelpers.ToStringTest(tile);
+
+			assertEquals(tile.toCoords(), tile.string());
+			assertNotEquals(tile.toString(), tile.string());
+
+			// only check hash if we did not have this tile yet
+			if (tiles.add(tile.toCoords())) {
+				hashes.inc(tile.hashCode());
+			}
+		}
+
+		Optional<Map.Entry<Integer, Long>> max = hashes.sortedMap().
+				entrySet().
+				stream().
+				max(Map.Entry.comparingByValue());
+		assertTrue(max.orElseThrow().getValue() <= 15,
+				"Did not expect many equal hash-values in random tiles, but failed with " + max);
 	}
 
 	@Test

@@ -126,16 +126,10 @@ public class LatLonRectangle {
 
 	@Override
 	public int hashCode() {
-		int result;
-		long temp;
-		temp = Double.doubleToLongBits(lat1);
-		result = (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(lon1);
-		result = 31 * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(lat2);
-		result = 31 * result + (int) (temp ^ (temp >>> 32));
-		temp = Double.doubleToLongBits(lon2);
-		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		int result = Double.hashCode(lat1);
+		result = 31 * result + Double.hashCode(lon1);
+		result = 31 * result + Double.hashCode(lat2);
+		result = 31 * result + Double.hashCode(lon2);
 		return result;
 	}
 
