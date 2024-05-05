@@ -236,7 +236,7 @@ public class CreateStaticTiles {
 							exceptionCount.get() + " exceptions: " + exception.get() :
 							""),
 				dir, lastFile.get() == null ? "N/A" : lastFile.get(), fileCount,
-				existsCount, filesDone.get(), commonPool.getQueuedSubmissionCount(),
+				existsCount, filesDone.get(), commonPool.getQueuedSubmissionCount() + commonPool.getQueuedTaskCount() + commonPool.getActiveThreadCount(),
 				perSecond, percent));
 	}
 
