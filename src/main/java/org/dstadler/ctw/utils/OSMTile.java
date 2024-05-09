@@ -133,6 +133,7 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return (1.0 - Math.log(Math.tan(Math.toRadians(lat)) + 1.0 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 << zoom);
 	}
 
+	@Override
 	public LatLng toLatLng() {
 		return new LatLng(computeLat(yTile, zoom), computeLon(xTile, zoom));
 	}

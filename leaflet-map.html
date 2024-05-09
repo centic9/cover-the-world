@@ -39,6 +39,7 @@
 	<script src="js/AdjacentTiles.js"></script>
 	<script src="js/VisitedTilesNew.js"></script>
 	<script src="js/ClusterSquares.js"></script>
+	<script src="js/ClusterTiles.js"></script>
 	<script src="js/LargestClusterSquares.js"></script>
 	<script src="js/LargestClusterTiles.js"></script>
 	<script src="js/LargestRectangleSquares.js"></script>
@@ -295,7 +296,9 @@ var geoTilesAdjacent = L.geoJSON(adjacentTilesstates,{style:adjacentstyle, onEac
 
 var geoTilesNew = L.geoJSON(tilesnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var cluster = L.geoJSON(clusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+var cluster = L.geoJSON(squaresclusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+var clusterTiles = L.geoJSON(tilesclusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 var largest = L.geoJSON(largeststates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
@@ -307,7 +310,7 @@ var squareTiles = L.geoJSON(tilesquarestates,{style:squarestyle, onEachFeature: 
 
 var rectangleTiles = L.geoJSON(tilerectanglestates,{style:rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var clusterTiles = L.geoJSON(largesttilesstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+var largestTiles = L.geoJSON(largesttilesstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 // just needed for the divider-line in the menu
 var emptystates=[{"type":"FeatureCollection","features":[]}];
@@ -387,7 +390,7 @@ if (params.get("rectangle") === "1") {
     map.addLayer(isSquares ? rectangle : rectangleTiles);
 }
 if (params.get("cluster") === "1") {
-    map.addLayer(isSquares ? largest : clusterTiles);
+    map.addLayer(isSquares ? largest : largestTiles);
 }
 if (params.get("twenty") === "1") {
     map.addLayer(squareTiles20);
@@ -419,9 +422,10 @@ const overlays = {
 	'StatsHunter Tiles': geoTiles,
 	'StatsHunter New Tiles': geoTilesNew,
 	'StatsHunter Adjacent': geoTilesAdjacent,
+    'StatsHunter Cluster': clusterTiles,
 	'StatsHunter Square': squareTiles,
 	'StatsHunter Rectangle': rectangleTiles,
-	'StatsHunter Cluster': clusterTiles,
+	'StatsHunter Largest Cluster': largestTiles,
 	'-- Rendered overlay --': empty,
 	'Rendered Squares': ctwSquares,
 	'Rendered New': ctwSquaresNew,
@@ -455,13 +459,13 @@ L.control.mousePosition().addTo(map);
 L.easyButton('<strong>Cl</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(largest);
-		if (map.hasLayer(clusterTiles)) {
-			map.removeLayer(clusterTiles);
+		if (map.hasLayer(largestTiles)) {
+			map.removeLayer(largestTiles);
 		} else {
-			map.addLayer(clusterTiles);
+			map.addLayer(largestTiles);
 		}
 	} else {
-		map.removeLayer(clusterTiles);
+		map.removeLayer(largestTiles);
 		if (map.hasLayer(largest)) {
 			map.removeLayer(largest);
 		} else {
@@ -559,7 +563,7 @@ L.easyButton('<strong>S</strong>', function(){
 	map.removeLayer(ctwTilesAdjacent);
 	map.removeLayer(squareTiles);
 	map.removeLayer(rectangleTiles);
-	map.removeLayer(clusterTiles);
+	map.removeLayer(largestTiles);
 	if (map.hasLayer(geoSquares)) {
 		map.removeLayer(geoSquares);
 	} else {

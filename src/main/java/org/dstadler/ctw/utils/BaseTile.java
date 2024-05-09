@@ -1,5 +1,7 @@
 package org.dstadler.ctw.utils;
 
+import uk.me.jstott.jcoord.LatLng;
+
 /**
  * Small interface to allow to handle different
  * types of tiles via common utility code.
@@ -16,6 +18,8 @@ public interface BaseTile<T> {
 	BaseTile<T> right();
 
 	BaseTile<T> left();
+
+	LatLng toLatLng();
 
 	String string();
 }
