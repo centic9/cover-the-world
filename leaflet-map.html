@@ -272,6 +272,10 @@ const ctwTilesAdjacent = L.tileLayer('tilesTilesAdjacent/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
+// just needed for the divider-line in the menu
+const emptystates = [{"type": "FeatureCollection", "features": []}];
+const empty = L.geoJSON(emptystates, {style: clusterstyle, onEachFeature: onEachFeature});
+
 
 // GeoJSON based overlay layers
 ////////////////////////////////////////
@@ -282,41 +286,37 @@ function onEachFeature(feature, layer) {
 	}
 }
 
-var paddedRenderer = L.svg({ padding: 0.8 });
+const paddedRenderer = L.svg({ padding: 0.8 });
 
-var geoSquares = L.geoJSON(squaresstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoSquares = L.geoJSON(squaresstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var geoSquaresAdjacent = L.geoJSON(adjacentSquaresstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoSquaresAdjacent = L.geoJSON(adjacentSquaresstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var geoSquaresNew = L.geoJSON(squaresnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoSquaresNew = L.geoJSON(squaresnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var geoTiles = L.geoJSON(tilesstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoTiles = L.geoJSON(tilesstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var geoTilesAdjacent = L.geoJSON(adjacentTilesstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoTilesAdjacent = L.geoJSON(adjacentTilesstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var geoTilesNew = L.geoJSON(tilesnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoTilesNew = L.geoJSON(tilesnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var cluster = L.geoJSON(squaresclusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const cluster = L.geoJSON(squaresclusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var clusterTiles = L.geoJSON(tilesclusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const clusterTiles = L.geoJSON(tilesclusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var largest = L.geoJSON(largeststates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const largest = L.geoJSON(largeststates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var rectangle = L.geoJSON(rectanglestates,{style:rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const rectangle = L.geoJSON(rectanglestates,{style:rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var square = L.geoJSON(squarestates,{style:squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const square = L.geoJSON(squarestates,{style:squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var squareTiles = L.geoJSON(tilesquarestates,{style:squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const squareTiles = L.geoJSON(tilesquarestates,{style:squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var rectangleTiles = L.geoJSON(tilerectanglestates,{style:rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const rectangleTiles = L.geoJSON(tilerectanglestates,{style:rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-var largestTiles = L.geoJSON(largesttilesstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const largestTiles = L.geoJSON(largesttilesstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-// just needed for the divider-line in the menu
-var emptystates=[{"type":"FeatureCollection","features":[]}];
-var empty = L.geoJSON(emptystates,{style:clusterstyle, onEachFeature: onEachFeature});
-
-var gridOsm = L.gridLayer();
+const gridOsm = L.gridLayer();
 
 gridOsm.createTile = function (coords) {
 	const tile = document.createElement('div');
@@ -328,7 +328,7 @@ gridOsm.createTile = function (coords) {
 };
 
 // create a 2nd grid option where the grid sticks to zoom 14
-var gridOsmFixed = L.gridLayer({
+const gridOsmFixed = L.gridLayer({
 	minNativeZoom: 14,
 	maxNativeZoom: 14,
 	minZoom: 13
@@ -352,7 +352,7 @@ if (params.get("bergfex") === "1") {
     map.addLayer(osm);
 }
 
-var isSquares = false;
+let isSquares = false;
 if (params.get("squares") === "1") {
 	map.addLayer(geoSquares);
 	map.addLayer(geoSquaresNew);
@@ -444,7 +444,7 @@ L.control.layers(baseLayers, overlays).addTo(map);
 L.control.scale().addTo(map);
 
 // GPS Plugin
-var lc = L.control
+L.control
 		.locate({
 			position: "topright",
 			strings: {
