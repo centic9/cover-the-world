@@ -34,11 +34,11 @@ import org.junit.jupiter.api.Test;
 import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.UTMRef;
 
-public class CreateTileOverlaysFromUTMRefTest {
+class CreateTileOverlaysFromUTMRefTest {
 	private static final Logger log = LoggerFactory.make();
 
 	@BeforeAll
-	public static void beforeClass() throws IOException {
+	static void beforeClass() throws IOException {
 		LoggerFactory.initLogging();
 	}
 

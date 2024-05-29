@@ -30,7 +30,7 @@ import uk.me.jstott.jcoord.LatLng;
 import uk.me.jstott.jcoord.NotDefinedOnUTMGridException;
 import uk.me.jstott.jcoord.UTMRef;
 
-public class UTMRefWithHashTest {
+class UTMRefWithHashTest {
 	private static final Logger log = LoggerFactory.make();
 
 	private static final Pattern UTMREF_SQUARE_PATTERN = Pattern.compile("\\d+[C-HJ-NP-X] \\d+000.0 (?:\\d+00)?0.0");
@@ -333,7 +333,7 @@ public class UTMRefWithHashTest {
 	}
 
 	@Test
-	public void string() {
+	void string() {
 		UTMRefWithHash ref = new UTMRefWithHash(1, 'U', 23423.23, 5234.233);
 
 		TestHelpers.ToStringTest(ref);

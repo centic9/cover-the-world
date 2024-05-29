@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.filosganga.geogson.model.Feature;
 
-public class GeoJSONTest {
+class GeoJSONTest {
 	@Test
 	void testCreateSquare() {
 		Feature square = GeoJSON.createSquare(UTMRefWithHash.fromString("32U 234543.0 345342.20").getRectangle(), null);

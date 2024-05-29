@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import uk.me.jstott.jcoord.LatLng;
 
-public class LatLonRectangleTest {
+class LatLonRectangleTest {
 	private final static int MIN_LATITUDE = -80;
 	private final static int MAX_LATITUDE = 84;
 
@@ -334,7 +334,7 @@ public class LatLonRectangleTest {
 	}
 
 	@Test
-	public void testToGeoJSONArray() {
+	void testToGeoJSONArray() {
 		LatLonRectangle rect = new LatLonRectangle(3, 2, 1,4);
 		assertEquals("""
 						[2.00000, 3.00000],

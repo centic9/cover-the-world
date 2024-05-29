@@ -39,7 +39,7 @@ public class OSMTileTest {
 	private final static int MAX_LATITUDE = 84;
 
 	@BeforeAll
-	public static void beforeClass() throws IOException {
+	static void beforeClass() throws IOException {
 		LoggerFactory.initLogging();
 	}
 
@@ -376,7 +376,7 @@ public class OSMTileTest {
 	}
 
 	@Test
-	public void string() {
+	void string() {
 		OSMTile tile = new OSMTile(14, 8837, 5660);
 
 		TestHelpers.ToStringTest(tile);

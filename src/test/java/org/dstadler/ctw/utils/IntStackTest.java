@@ -9,7 +9,7 @@ import java.util.EmptyStackException;
 
 import org.junit.jupiter.api.Test;
 
-public class IntStackTest {
+class IntStackTest {
     @Test
     void testEmpty() {
         IntStack stack = new IntStack();

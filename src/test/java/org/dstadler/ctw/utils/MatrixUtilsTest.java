@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import uk.me.jstott.jcoord.NotDefinedOnUTMGridException;
 
-public class MatrixUtilsTest {
+class MatrixUtilsTest {
 	private Set<UTMRefWithHash> squares;
 	private Set<OSMTile> tiles;
 
