@@ -18,8 +18,6 @@ import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.util.SuppressForbidden;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableList;
-
 import uk.me.jstott.jcoord.LatLng;
 
 public class LatLonRectangleTest {
@@ -243,7 +241,7 @@ public class LatLonRectangleTest {
 		checkBordersInside(
 				20, 0, 0, 20,
 				2, 2, 1, 3,
-				ImmutableList.of(
+				List.of(
 						new LatLonRectangle(2,2,2,3),
 						new LatLonRectangle(2,2,1,2),
 						new LatLonRectangle(1,2,1,3),
@@ -252,7 +250,7 @@ public class LatLonRectangleTest {
 		checkBordersInside(
 				1, 1, 1, 1,
 				1, 1, 1, 1,
-				ImmutableList.of(
+				List.of(
 					new LatLonRectangle(1.0,1.0,1.0,1.0),
 					new LatLonRectangle(1.0,1.0,1.0,1.0),
 					new LatLonRectangle(1.0,1.0,1.0,1.0),
@@ -265,7 +263,7 @@ public class LatLonRectangleTest {
 		checkBordersInside(
 				1, 2, 1, 3,
 				1, 2, 1, 5,
-				ImmutableList.of(
+				List.of(
 						new LatLonRectangle(1.0,2.0,1.0,3.0),
 						new LatLonRectangle(1.0,2.0,1.0,2.0),
 						new LatLonRectangle(1.0,2.0,1.0,3.0)));
@@ -273,14 +271,14 @@ public class LatLonRectangleTest {
 		checkBordersInside(
 				6, 1, 1, 6,
 				8, 3, 4, 8,
-				ImmutableList.of(
+				List.of(
 						new LatLonRectangle(6.0,3.0,4.0,3.0),
 						new LatLonRectangle(4.0,3.0,4.0,6.0)));
 
 		checkBordersInside(
 				6, 1, 1, 6,
 				6, 1, 1, 6,
-				ImmutableList.of(
+				List.of(
 						new LatLonRectangle(6.0,1.0,6.0,6.0),
 						new LatLonRectangle(6.0,1.0,1.0,1.0),
 						new LatLonRectangle(1.0,1.0,1.0,6.0),
@@ -289,7 +287,7 @@ public class LatLonRectangleTest {
 		checkBordersInside(
 				48.34164617237459, 14.2822265625, 48.32703913063477, 14.30419921875,
 				48.34164617237459, 14.2822265625, 48.312427904071775, 14.326171875,
-				ImmutableList.of(
+				List.of(
 						new LatLonRectangle(48.34164617237459,14.2822265625,48.34164617237459,14.30419921875),
 						new LatLonRectangle(48.34164617237459,14.2822265625,48.32703913063477,14.2822265625)));
 	}

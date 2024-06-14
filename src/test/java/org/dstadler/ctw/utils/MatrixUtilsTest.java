@@ -16,14 +16,13 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.io.Files;
 
 public class MatrixUtilsTest {
 	private Set<UTMRefWithHash> squares;
@@ -341,7 +340,7 @@ public class MatrixUtilsTest {
 			return def;
 		}
 
-		List<String> lines = Files.readLines(file, StandardCharsets.UTF_8);
+		List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
 
 		int x, y, w, h;
 		String[] split = lines.get(2).split("x");
