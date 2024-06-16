@@ -341,11 +341,32 @@ public class OSMTileTest {
 
 	@SuppressForbidden(reason = "Uses System.out.println on purpose")
 	@Test
-	public void printSquare() {
+	public void printSquareTopLeft() {
 		// this shows how you can compute the border-coordinates
 		// of a given n x n square at a given position
-		int square = 25;
-		OSMTile lowerRight = new OSMTile(14, 8844, 5677);
+		int square = 30;
+		OSMTile upperLeft = new OSMTile(14, 8817, 5640);
+		OSMTile lowerRight = new OSMTile(14, upperLeft.getXTile() + square - 1, upperLeft.getYTile() + square - 1);
+
+		LatLonRectangle newRect = new LatLonRectangle(
+				upperLeft.getRectangle().lat1, upperLeft.getRectangle().lon1,
+				lowerRight.getRectangle().lat2, lowerRight.getRectangle().lon2);
+
+		System.out.println();
+		System.out.println(newRect.toGeoJSONArray());
+		System.out.println();
+
+		System.out.println(upperLeft.toCoords());
+		System.out.println(lowerRight.toCoords());
+	}
+
+	@SuppressForbidden(reason = "Uses System.out.println on purpose")
+	@Test
+	public void printSquareBottomRight() {
+		// this shows how you can compute the border-coordinates
+		// of a given n x n square at a given position
+		int square = 30;
+		OSMTile lowerRight = new OSMTile(14, 8846, 5678);
 		OSMTile upperLeft = new OSMTile(14, lowerRight.getXTile() - square + 1, lowerRight.getYTile() - square + 1);
 
 		LatLonRectangle newRect = new LatLonRectangle(
