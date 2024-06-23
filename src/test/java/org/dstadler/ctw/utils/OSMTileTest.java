@@ -353,6 +353,7 @@ public class OSMTileTest {
 				lowerRight.getRectangle().lat2, lowerRight.getRectangle().lon2);
 
 		System.out.println();
+		System.out.println("// Settings-TopLeft: " + square + ": " + upperLeft.getXTile() + ", " + upperLeft.getYTile());
 		System.out.println(newRect.toGeoJSONArray());
 		System.out.println();
 
@@ -374,6 +375,7 @@ public class OSMTileTest {
 				lowerRight.getRectangle().lat2, lowerRight.getRectangle().lon2);
 
 		System.out.println();
+		System.out.println("// Settings-BottomRight: " + square + ": " + lowerRight.getXTile() + ", " + lowerRight.getYTile());
 		System.out.println(newRect.toGeoJSONArray());
 		System.out.println();
 
