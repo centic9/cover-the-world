@@ -7,6 +7,8 @@ import org.dstadler.ctw.geojson.CreateClusterGeoJSON;
 import org.dstadler.ctw.geojson.CreateGeoJSON;
 import org.dstadler.ctw.geojson.CreateLargestClusterGeoJSONSquares;
 import org.dstadler.ctw.geojson.CreateLargestClusterGeoJSONTiles;
+import org.dstadler.ctw.geojson.CreateLargestConnectedGeoJSONSquares;
+import org.dstadler.ctw.geojson.CreateLargestConnectedGeoJSONTiles;
 import org.dstadler.ctw.geojson.CreateLargestRectangleGeoJSONSquares;
 import org.dstadler.ctw.geojson.CreateLargestRectangleGeoJSONTiles;
 import org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONSquares;
@@ -36,6 +38,10 @@ public class CoverTheWorld {
 		// produce "LargestCluster*"
 		CreateLargestClusterGeoJSONSquares.main(args);
 		CreateLargestClusterGeoJSONTiles.main(args);
+
+		// produce "LargestConnected*"
+		CreateLargestConnectedGeoJSONSquares.main(args);
+		CreateLargestConnectedGeoJSONTiles.main(args);
 
 		// produce "LargestRectangle*"
 		CreateLargestRectangleGeoJSONSquares.main(args);
