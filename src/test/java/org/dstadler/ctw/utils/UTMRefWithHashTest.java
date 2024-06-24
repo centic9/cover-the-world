@@ -24,6 +24,7 @@ import org.dstadler.commons.util.SuppressForbidden;
 import org.junit.jupiter.api.Test;
 
 import uk.me.jstott.jcoord.LatLng;
+import uk.me.jstott.jcoord.NotDefinedOnUTMGridException;
 import uk.me.jstott.jcoord.UTMRef;
 
 public class UTMRefWithHashTest {
@@ -173,6 +174,9 @@ public class UTMRefWithHashTest {
 
 		assertThrows(IllegalArgumentException.class,
 				() -> UTMRefWithHash.fromString("182U 428000.0 5366000.0"));
+
+		assertThrows(NotDefinedOnUTMGridException.class,
+				() -> new UTMRefWithHash(99, '_', -1, -1));
     }
 
 	@Test

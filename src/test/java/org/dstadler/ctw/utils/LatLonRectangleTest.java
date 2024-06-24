@@ -4,6 +4,7 @@ import static org.dstadler.ctw.utils.OSMTileTest.ASSERT_DELTA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
@@ -218,6 +219,26 @@ public class LatLonRectangleTest {
 				48.400, 14.238);
 
 		TestHelpers.EqualsTest(rect, rectEqu, rectNotEqu);
+
+		rectNotEqu = new LatLonRectangle(
+				48.459, 14.150,
+				48.400, 14.238);
+		TestHelpers.EqualsTest(rect, rectEqu, rectNotEqu);
+
+		rectNotEqu = new LatLonRectangle(
+				48.458, 14.151,
+				48.400, 14.238);
+		TestHelpers.EqualsTest(rect, rectEqu, rectNotEqu);
+
+		rectNotEqu = new LatLonRectangle(
+				48.458, 14.150,
+				48.401, 14.238);
+		TestHelpers.EqualsTest(rect, rectEqu, rectNotEqu);
+
+		rectNotEqu = new LatLonRectangle(
+				48.458, 14.150,
+				48.400, 14.239);
+		TestHelpers.EqualsTest(rect, rectEqu, rectNotEqu);
 	}
 
 	@Test
@@ -234,7 +255,6 @@ public class LatLonRectangleTest {
 		assertEquals(distance, origin.distance(dest), ASSERT_DELTA);
 		assertEquals(distance, dest.distance(origin), ASSERT_DELTA);
 	}
-
 
 	@Test
 	void testBordersInside() {
@@ -355,5 +375,13 @@ public class LatLonRectangleTest {
 				max(Map.Entry.comparingByValue());
 		assertTrue(max.orElseThrow().getValue() <= 3,
 				"Did not expect many equal hash-values in random rectangles, but failed with " + max);
+	}
+
+	@Test
+	void testInvalid() {
+		assertThrows(IllegalArgumentException.class,
+				() -> new LatLonRectangle(1, 1, 2, 1));
+		assertThrows(IllegalArgumentException.class,
+				() -> new LatLonRectangle(1, 2, 1, 1));
 	}
 }

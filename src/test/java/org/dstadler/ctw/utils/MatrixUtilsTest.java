@@ -19,10 +19,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import uk.me.jstott.jcoord.NotDefinedOnUTMGridException;
 
 public class MatrixUtilsTest {
 	private Set<UTMRefWithHash> squares;
@@ -93,6 +97,15 @@ public class MatrixUtilsTest {
         assertNotNull(matrix);
         assertTrue(matrix.length > 5, "Having: " + matrix.length);
         assertTrue(matrix[0].length > 5, "Having: " + matrix[0].length);
+    }
+
+	@Test
+    void testPopulateMatrixSquaresWithFilter() {
+        int[][] matrix = MatrixUtils.populateMatrix(squares,
+                minEast, minNorth, maxEast, maxNorth, 1);
+        assertNotNull(matrix);
+		assertTrue(matrix.length > 5, "Having: " + matrix.length);
+		assertTrue(matrix[0].length > 5, "Having: " + matrix[0].length);
     }
 
 	@Test
@@ -352,5 +365,26 @@ public class MatrixUtilsTest {
 		h = Integer.parseInt(split[1]);
 
 		return new Rectangle(x, y, w, h);
+	}
+
+	@Test
+	void testWithLog() {
+		Logger log = Logger.getLogger(MatrixUtils.class.getName());
+
+		Level prev = log.getLevel();
+		try {
+			log.setLevel(Level.FINE);
+
+			testInvalidValue();
+			testPopulateMatrixSquares();
+			testPopulateMatrixSquaresWithFilter();
+			testPopulateMatrixTiles();
+
+			// when log is enabled, an invalid zone causes an exception
+			assertThrows(NotDefinedOnUTMGridException.class,
+					() -> MatrixUtils.populateMatrix(squares, minEast, minNorth, maxEast, maxNorth, 90));
+		} finally {
+			log.setLevel(prev);
+		}
 	}
 }

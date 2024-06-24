@@ -79,6 +79,10 @@ public class IntStackTest {
 		assertTrue(stack.getCapacity() > 0);
 		stack.trimToSize();
 		assertEquals(0, stack.getCapacity());
+
+		// once more does not do anything anymore
+		stack.trimToSize();
+		assertEquals(0, stack.getCapacity());
 	}
 
     @Test
@@ -94,4 +98,33 @@ public class IntStackTest {
         stack.trimToSize();
         assertEquals(0, stack.getCapacity());
     }
+
+	@Test
+	void testEnsureCapacity() {
+		IntStack stack = new IntStack();
+
+		stack.ensureCapacity(11);
+		assertEquals(11, stack.getCapacity());
+		assertEquals(0, stack.size());
+
+		stack.ensureCapacity(0);
+		assertEquals(11, stack.getCapacity());
+		assertEquals(0, stack.size());
+
+		stack.ensureCapacity(11);
+		assertEquals(11, stack.getCapacity());
+		assertEquals(0, stack.size());
+
+		stack.ensureCapacity(22);
+		assertEquals(22, stack.getCapacity());
+		assertEquals(0, stack.size());
+	}
+
+	@Test
+	void testInvalid() {
+		assertThrows(IllegalArgumentException.class,
+				() -> new IntStack(-1));
+		assertThrows(IllegalArgumentException.class,
+				() -> new IntStack(-13834));
+	}
 }
