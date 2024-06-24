@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -78,11 +77,10 @@ public class CreateLargestClusterGeoJSONSquares {
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
 		List<UTMRefWithHash> largestCluster = clusters.get(0);
-		Set<String> largestClusterStr = new TreeSet<>();
+		largestCluster.sort(Comparator.naturalOrder());
 		for (UTMRefWithHash square : largestCluster) {
 			features.add(GeoJSON.createSquare(square.getRectangle(),
 					"Largest Cluster: " + largestCluster.size() + " squares"));
-			largestClusterStr.add(square.toString());
 		}
 
 		// finally write out JavaScript code with embedded GeoJSON
@@ -93,8 +91,8 @@ public class CreateLargestClusterGeoJSONSquares {
 
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_CLUSTER_SQUARES_TXT))) {
-			for (String square : largestClusterStr) {
-				writer.write(square);
+			for (UTMRefWithHash square : largestCluster) {
+				writer.write(square.toString());
 				writer.write('\n');
 			}
 		}
@@ -119,7 +117,7 @@ public class CreateLargestClusterGeoJSONSquares {
 			it.remove();
 
 			// connected on four sides?
-			if (partOfCluster(square, allSquares)) {
+			if (partOfCluster(allSquares, square)) {
 				// add to a cluster or create a new one
 				boolean found = false;
 				List<UTMRefWithHash> foundCluster = null;
@@ -167,7 +165,7 @@ public class CreateLargestClusterGeoJSONSquares {
 
 				// if this square has 4 neighbours and is adjacent to
 				// the current cluster, then add it
-				if (partOfCluster(square, allSquares) && isAdjacent(foundCluster, square)) {
+				if (partOfCluster(allSquares, square) && isAdjacent(foundCluster, square)) {
 					foundCluster.add(square);
 					it.remove();
 					count++;
@@ -189,7 +187,7 @@ public class CreateLargestClusterGeoJSONSquares {
 				cluster.contains(ref.left());
 	}
 
-	private static boolean partOfCluster(UTMRefWithHash ref, Set<UTMRefWithHash> squares) {
+	private static boolean partOfCluster(Set<UTMRefWithHash> squares, UTMRefWithHash ref) {
         return squares.contains(ref.up()) &&
                 squares.contains(ref.down()) &&
                 squares.contains(ref.right()) &&

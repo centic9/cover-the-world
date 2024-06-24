@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -74,11 +73,10 @@ public class CreateLargestClusterGeoJSONTiles {
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
 		List<OSMTile> largestCluster = clusters.get(clusters.size() - 1);
-		Set<String> largestClusterStr = new TreeSet<>();
+		largestCluster.sort(Comparator.naturalOrder());
 		for (OSMTile tile : largestCluster) {
 			features.add(GeoJSON.createSquare(tile.getRectangle(),
 					"Largest Cluster: " + largestCluster.size() + " tiles"));
-			largestClusterStr.add(tile.toCoords());
 		}
 
 		// finally write out JavaScript code with embedded GeoJSON
@@ -89,8 +87,8 @@ public class CreateLargestClusterGeoJSONTiles {
 
 		// create list of latLngBounds for SVG elements to overlay
 		try (Writer writer = new BufferedWriter(new FileWriter(LARGEST_CLUSTER_TILES_TXT))) {
-			for (String tile : largestClusterStr) {
-				writer.write(tile);
+			for (OSMTile tile : largestCluster) {
+				writer.write(tile.toCoords());
 				writer.write('\n');
 			}
 		}
@@ -115,7 +113,7 @@ public class CreateLargestClusterGeoJSONTiles {
 			it.remove();
 
 			// connected on four sides?
-			if (partOfCluster(tile, allTiles)) {
+			if (partOfCluster(allTiles, tile)) {
 				// add to a cluster or create a new one
 				boolean found = false;
 				List<OSMTile> foundCluster = null;
@@ -158,7 +156,7 @@ public class CreateLargestClusterGeoJSONTiles {
 
 				// if this tile has 4 neighbours and is adjacent to
 				// the current cluster, then add it
-				if (partOfCluster(tile, allTiles) && isAdjacent(foundCluster, tile)) {
+				if (partOfCluster(allTiles, tile) && isAdjacent(foundCluster, tile)) {
 					foundCluster.add(tile);
 					it.remove();
 					count++;
@@ -180,7 +178,7 @@ public class CreateLargestClusterGeoJSONTiles {
 				cluster.contains(ref.left());
 	}
 
-	private static boolean partOfCluster(OSMTile ref, Set<OSMTile> tiles) {
+	private static boolean partOfCluster(Set<OSMTile> tiles, OSMTile ref) {
         return tiles.contains(ref.up()) &&
                 tiles.contains(ref.down()) &&
                 tiles.contains(ref.right()) &&
