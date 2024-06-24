@@ -54,7 +54,7 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 			return new UTMRefWithHash(Integer.parseInt(matcher.group(1)), matcher.group(2).charAt(0),
 					Double.parseDouble(matcher.group(3)), Double.parseDouble(matcher.group(4)));
 		} catch (NotDefinedOnUTMGridException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException("For input: " + ref, e);
 		}
 	}
 

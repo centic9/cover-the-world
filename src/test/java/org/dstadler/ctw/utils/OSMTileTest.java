@@ -66,6 +66,53 @@ public class OSMTileTest {
 	}
 
 	@Test
+	void testConstructInvalid() {
+		assertNotNull(new OSMTile(10, 23, 23).toCoords());
+
+		assertThrows(IllegalArgumentException.class,
+				() -> new OSMTile(-1, 23, 23));
+		assertThrows(IllegalArgumentException.class,
+				() -> new OSMTile(100, 23, 23));
+
+		assertThrows(IllegalArgumentException.class,
+				() -> new OSMTile(10, -1, 23));
+		assertThrows(IllegalArgumentException.class,
+				() -> new OSMTile(10, 38283823, 23));
+
+		assertThrows(IllegalArgumentException.class,
+				() -> new OSMTile(10, 23, -1));
+		assertThrows(IllegalArgumentException.class,
+				() -> new OSMTile(10, 23, 238374623));
+	}
+
+	@Test
+	void testFromLatLngInvalid() {
+		// verify a few valid ones
+		assertNotNull(OSMTile.fromLatLngZoom(10, 10, 10).toCoords());
+		assertNotNull(OSMTile.fromLatLngZoom(90, 180, 0).toCoords());
+		assertNotNull(OSMTile.fromLatLngZoom(10, 180, 0).toCoords());
+		assertNotNull(OSMTile.fromLatLngZoom(-90, -180, 19).toCoords());
+		assertNotNull(OSMTile.fromLatLngZoom(-90, -10, 19).toCoords());
+		assertNotNull(OSMTile.fromLatLngZoom(0, -180, 19).toCoords());
+
+		// then use values that are out of range
+		assertThrows(IllegalArgumentException.class,
+				() -> OSMTile.fromLatLngZoom(10, 10, -1));
+		assertThrows(IllegalArgumentException.class,
+				() -> OSMTile.fromLatLngZoom(10, 10, 100));
+
+		assertThrows(IllegalArgumentException.class,
+				() -> OSMTile.fromLatLngZoom(-190, 10, 10));
+		assertThrows(IllegalArgumentException.class,
+				() -> OSMTile.fromLatLngZoom(91, 10, 10));
+
+		assertThrows(IllegalArgumentException.class,
+				() -> OSMTile.fromLatLngZoom(10, -1800, 10));
+		assertThrows(IllegalArgumentException.class,
+				() -> OSMTile.fromLatLngZoom(10, 181, 10));
+	}
+
+	@Test
 	void testHashCodeEquals() {
 		OSMTile nr1 = OSMTile.fromLatLngZoom(34, 3, 10);
 		OSMTile nr2 = OSMTile.fromLatLngZoom(34, 3, 10);

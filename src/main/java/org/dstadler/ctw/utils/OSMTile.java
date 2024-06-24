@@ -82,16 +82,19 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		checkParameters(lat, lon, zoom);
 
 		int xtile = (int) Math.floor(computeXTile(lon, zoom));
-		int ytile = (int) Math.floor(computeYTile(lat, zoom));
-		if (xtile < 0) {
-			xtile = 0;
-		}
+		Preconditions.checkArgument(xtile >= 0,
+				"Had invalid x-tile %s for lon: %s and zoom: %s", xtile, lon, zoom);
+		// for lon == 90 we get one more than the max tile
 		if (xtile >= (1 << zoom)) {
 			xtile = ((1 << zoom) - 1);
 		}
+
+		int ytile = (int) Math.floor(computeYTile(lat, zoom));
+		// precision seems to be not high enough to properly compute this in some cases (e.g. lat = -90)
 		if (ytile < 0) {
 			ytile = 0;
 		}
+		// for lat == 180 we get one more than the max tile
 		if (ytile >= (1 << zoom)) {
 			ytile = ((1 << zoom) - 1);
 		}

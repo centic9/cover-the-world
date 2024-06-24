@@ -111,6 +111,18 @@ public class UTMRefWithHashTest {
 	}
 
 	@Test
+	void testFromStringOutOfBounds() {
+		assertNotNull(UTMRefWithHash.fromString("33U 428000.0 5366000.0"));
+
+		assertThrows(IllegalArgumentException.class,
+				() -> UTMRefWithHash.fromString("99U 428000.0 5366000.0"));
+		assertThrows(IllegalArgumentException.class,
+				() -> UTMRefWithHash.fromString("33U 123428000.0 5366000.0"));
+		assertThrows(IllegalArgumentException.class,
+				() -> UTMRefWithHash.fromString("33U 428000.0 23445366000.0"));
+	}
+
+	@Test
     void testGetRectangle() {
         UTMRefWithHash ref = UTMRefWithHash.fromString("33U 428000.0 5366000.0");
 		LatLonRectangle rec = ref.getRectangle();
