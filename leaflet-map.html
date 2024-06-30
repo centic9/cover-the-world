@@ -42,6 +42,8 @@
 	<script src="js/ClusterTiles.js"></script>
 	<script src="js/LargestClusterSquares.js"></script>
 	<script src="js/LargestClusterTiles.js"></script>
+	<script src="js/LargestConnectedSquares.js"></script>
+	<script src="js/LargestConnectedTiles.js"></script>
 	<script src="js/LargestRectangleSquares.js"></script>
 	<script src="js/LargestRectangleTiles.js"></script>
 	<script src="js/LargestSquareSquares.js"></script>
@@ -318,6 +320,10 @@ const rectangleTiles = L.geoJSON(tilerectanglestates,{style:rectanglestyle, onEa
 
 const largestTiles = L.geoJSON(largesttilesstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
+const largestConnectedSquares = L.geoJSON(largestconnectedstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
+const largestConnectedTiles = L.geoJSON(largestconnectedtilesstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+
 const gridOsm = L.gridLayer();
 
 gridOsm.createTile = function (coords) {
@@ -418,6 +424,7 @@ const overlays = {
 	'Adjacent': geoSquaresAdjacent,
 	'Cluster': cluster,
 	'Largest Cluster': largest,
+	'Largest Connected': largestConnectedSquares,
 	'Rectangle': rectangle,
 	'Square': square,
 	'-- StatsHunter --': empty,
@@ -428,6 +435,7 @@ const overlays = {
 	'StatsHunter Square': squareTiles,
 	'StatsHunter Rectangle': rectangleTiles,
 	'StatsHunter Largest Cluster': largestTiles,
+	'StatsHunter Largest Connected': largestConnectedTiles,
 	'-- Rendered overlay --': empty,
 	'Rendered Squares': ctwSquares,
 	'Rendered New': ctwSquaresNew,
