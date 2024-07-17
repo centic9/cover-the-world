@@ -24,7 +24,6 @@ import org.dstadler.commons.collections.MappedCounter;
 import org.dstadler.commons.collections.MappedCounterImpl;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.TestHelpers;
-import org.dstadler.commons.util.SuppressForbidden;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
