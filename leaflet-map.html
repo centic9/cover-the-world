@@ -15,6 +15,8 @@
 	<link rel="stylesheet" href="css/L.Control.MousePosition.css" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-loading@0.1.24/src/Control.Loading.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@3.0.2/Control.FullScreen.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-contextmenu@1.4.0/dist/leaflet.contextmenu.min.css" />
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 	<!-- Zoom Plugin from https://github.com/azavea/Leaflet.zoomdisplay/ -->
@@ -31,6 +33,10 @@
     <script src="https://cdn.jsdelivr.net/npm/leaflet-edgebuffer@1.0.6/src/leaflet.edgebuffer.min.js"></script>
 	<!-- https://github.com/ebrelsford/Leaflet.loading -->
 	<script src="https://cdn.jsdelivr.net/npm/leaflet-loading@0.1.24/src/Control.Loading.min.js "></script>
+    <!-- Fullscreen option: https://github.com/brunob/leaflet.fullscreen -->
+    <script src="https://unpkg.com/leaflet.fullscreen@3.0.2/Control.FullScreen.js"></script>
+	<!-- https://github.com/aratcliffe/Leaflet.contextmenu -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-contextmenu@1.4.0/dist/leaflet.contextmenu.min.js"></script>
 
 	<script src="js/VisitedSquares.js"></script>
 	<script src="js/AdjacentSquares.js"></script>
@@ -67,13 +73,11 @@
 <div id='map'></div>
 
 <script>
-const icon = new L.Icon.Default;
-
 const params = new URLSearchParams(window.location.search);
 /* supported query params:
 Base Map: squares, bergfex, cycle, renderedSquares, renderedTiles
-Overlay: tiles, mtb
-Feature: adjacent, square, rectangle, cluster, twenty
+Overlay: tiles, mtb, slopes
+Feature: adjacent, square, rectangle, cluster
 */
 
 function mapstyle() {
@@ -125,9 +129,62 @@ const map = L.map('map', {
 	center: [48.4503, 14.0170],
 	zoom: 11,
 
-	// enable loading spinner
-	loadingControl: true
+	// full-screen button
+	fullscreenControl: true,
+	fullscreenControlOptions: {
+		position: 'topleft'
+	},
+	contextmenu: true,
+	contextmenuWidth: 140,
+	contextmenuItems: [{
+		text: 'Show coordinates',
+		callback: showCoordinates
+	}, {
+		text: 'Center map here',
+		callback: centerMap
+	}, '-', {
+		text: 'Zoom in',
+		//icon: 'images/zoom-in.png',
+		callback: zoomIn
+	}, {
+		text: 'Zoom out',
+		//icon: 'images/zoom-out.png',
+		callback: zoomOut
+	}, {
+		text: 'Grid 14',
+		callback: grid14
+	}]
 });
+
+function showCoordinates (e) {
+	alert(e.latlng.lat.toFixed(5) + "," + e.latlng.lng.toFixed(5));
+}
+
+function centerMap (e) {
+	map.panTo(e.latlng);
+}
+
+function zoomIn (e) {
+	map.zoomIn();
+}
+
+function zoomOut (e) {
+	map.zoomOut();
+}
+
+function grid14 (e) {
+	if (map.hasLayer(gridOsmFixed)) {
+		map.removeLayer(gridOsmFixed);
+	} else {
+		map.addLayer(gridOsmFixed);
+	}
+}
+
+var loadingControl = L.Control.loading({
+    separate: true,
+    position: 'bottomright'
+});
+map.addControl(loadingControl);
 
 // full tile-based layers
 ////////////////////////////////////////
@@ -231,7 +288,24 @@ const cycle = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.
 	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
 });
 
-// https://example.com/ctw/tilesSquares/12/2207/1415.png
+// https://b.tile-cyclosm.openstreetmap.fr/cyclosm/12/2207/1415.png
+// See https://www.cyclosm.org/
+const cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+	maxZoom: 20,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+});
+
+// https://tile.waymarkedtrails.org/slopes/12/2207/1415.png
+const slopes = L.tileLayer('https://tile.waymarkedtrails.org/slopes/{z}/{x}/{y}.png', {
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
+// https://cs37700.dogadoserver.de/ctw/tilesSquares/12/2207/1415.png
 const ctwSquares = L.tileLayer('tilesSquares/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
@@ -339,7 +413,7 @@ gridOsm.createTile = function (coords) {
 const gridOsmFixed = L.gridLayer({
 	minNativeZoom: 14,
 	maxNativeZoom: 14,
-	minZoom: 13
+	minZoom: 11
 });
 
 gridOsmFixed.createTile = function (coords) {
@@ -388,6 +462,10 @@ if (params.get("mtb") === "1") {
     map.addLayer(mtb);
 }
 
+if (params.get("slopes") === "1") {
+    map.addLayer(slopes);
+}
+
 if (params.get("adjacent") === "1") {
     map.addLayer(isSquares ? geoSquaresAdjacent : geoTilesAdjacent);
 }
@@ -400,9 +478,6 @@ if (params.get("rectangle") === "1") {
 if (params.get("cluster") === "1") {
     map.addLayer(isSquares ? largest : largestTiles);
 }
-if (params.get("twenty") === "1") {
-    map.addLayer(squareTiles20);
-}
 
 const baseLayers = {
 	'OpenStreetMap': osm,
@@ -410,6 +485,7 @@ const baseLayers = {
 	'OpenStreetMap.HOT': osmHOT,
 	'OpenTopo': openTopo,
 	'Cycle': cycle,
+	'CyclOSM': cyclosm,
 	'Bergfex': bergfex,
 	'Bergfex JPG': bergfexJpg,
 	'Bergfex OEK50': bergfexOEK50,
@@ -444,6 +520,7 @@ const overlays = {
 	'Rendered Tiles Adjacent': ctwTilesAdjacent,
 	'-- Other --': empty,
 	'MTB': mtb,
+	'Slopes': slopes,
 	'Grid': gridOsm,
 	'Grid 14': gridOsmFixed,
 	'-- -- --': empty,
@@ -466,7 +543,7 @@ L.control
 L.control.mousePosition().addTo(map);
 
 
-L.easyButton('<strong>Cl</strong>', function(){
+var buttonCl = L.easyButton('<strong>Cl</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(largest);
 		if (map.hasLayer(largestTiles)) {
@@ -482,9 +559,9 @@ L.easyButton('<strong>Cl</strong>', function(){
 			map.addLayer(largest);
 		}
 	}
-}).addTo(map);
+});
 
-L.easyButton('<strong>Re</strong>', function(){
+var buttonRe = L.easyButton('<strong>Re</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(rectangle);
 		if (map.hasLayer(rectangleTiles)) {
@@ -500,9 +577,9 @@ L.easyButton('<strong>Re</strong>', function(){
 			map.addLayer(rectangle);
 		}
 	}
-}).addTo(map);
+});
 
-L.easyButton('<strong>Sq</strong>', function(){
+var buttonSq = L.easyButton('<strong>Sq</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(square);
 		if (map.hasLayer(squareTiles)) {
@@ -518,10 +595,12 @@ L.easyButton('<strong>Sq</strong>', function(){
 			map.addLayer(square);
 		}
 	}
-}).addTo(map);
+});
+
+L.easyBar([buttonCl, buttonRe, buttonSq]).addTo(map);
 
 
-L.easyButton('<strong>A</strong>', function(){
+var buttonA = L.easyButton('<strong>A</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(geoSquaresAdjacent);
         if (map.hasLayer(geoTilesAdjacent)) {
@@ -537,9 +616,9 @@ L.easyButton('<strong>A</strong>', function(){
             map.addLayer(geoSquaresAdjacent);
         }
     }
-}).addTo(map);
+});
 
-L.easyButton('<strong>N</strong>', function(){
+var buttonN = L.easyButton('<strong>N</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(ctwSquaresNew);
 		map.removeLayer(ctwTilesNew);
@@ -561,9 +640,9 @@ L.easyButton('<strong>N</strong>', function(){
 			map.addLayer(geoSquaresNew);
 		}
 	}
-}).addTo(map);
+});
 
-L.easyButton('<strong>S</strong>', function(){
+var buttonS = L.easyButton('<strong>S</strong>', function(){
 	map.removeLayer(ctwSquares);
 	map.removeLayer(geoTiles);
 	map.removeLayer(geoTilesAdjacent);
@@ -579,9 +658,9 @@ L.easyButton('<strong>S</strong>', function(){
 	} else {
 		map.addLayer(geoSquares);
 	}
-}).addTo(map);
+});
 
-L.easyButton('<strong>T</strong>', function(){
+var buttonT = L.easyButton('<strong>T</strong>', function(){
 	map.removeLayer(ctwSquares);
 	map.removeLayer(ctwSquaresNew);
 	map.removeLayer(ctwTiles);
@@ -598,7 +677,9 @@ L.easyButton('<strong>T</strong>', function(){
 	} else {
 		map.addLayer(geoTiles);
 	}
-}).addTo(map);
+});
+
+L.easyBar([buttonA, buttonN, buttonS, buttonT]).addTo(map);
 
 map.setGeocoder('Nominatim');
 map.addControl(L.control.search({ }));
