@@ -360,4 +360,13 @@ public class UTMRefWithHashTest {
 		assertEquals(notEqual, it.next());
 		assertFalse(it.hasNext());
 	}
+
+	@Test
+	void testUpDownAtLatZone() {
+		UTMRefWithHash ref1 = UTMRefWithHash.fromString("33T 441000.0 5316000.0");
+		UTMRefWithHash ref2 = UTMRefWithHash.fromString("33U 441000.0 5317000.0");
+
+		assertEquals(ref1.up().toString(), ref2.toString());
+		assertEquals(ref2.down().toString(), ref1.toString());
+	}
 }

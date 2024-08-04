@@ -129,12 +129,20 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 		return (Math.round(bearing) / SQUARE_SIZE) * SQUARE_SIZE;
 	}
 
+	private UTMRefWithHash fixupZone() {
+		return new UTMRefWithHash(getLngZone(), toLatLng().toUTMRef().getLatZone(), getEasting(), getNorthing());
+	}
+
 	public UTMRefWithHash up() {
-		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting(), getNorthing() + SQUARE_SIZE);
+		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting(), getNorthing() + SQUARE_SIZE).
+				// LatZone can change, so we may need a fixup here
+				fixupZone();
 	}
 
 	public UTMRefWithHash down() {
-		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting(), getNorthing() - SQUARE_SIZE);
+		return new UTMRefWithHash(getLngZone(), getLatZone(), getEasting(), getNorthing() - SQUARE_SIZE).
+				// LatZone can change, so we may need a fixup here
+				fixupZone();
 	}
 
 	public UTMRefWithHash right() {
