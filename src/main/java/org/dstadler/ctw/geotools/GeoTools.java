@@ -115,6 +115,19 @@ public class GeoTools {
 		writeImageInternal(features, rect, outputFile, styleFill);
 	}
 
+	/**
+	 * Render a border for the given area of the GeoJSON feature-collection which is specified via the lat/lon-rectangle
+	 * to a PNG image stored in the given file.
+	 *
+	 * This allows to render single "tiles" of a larger set of GeoJSON objects
+	 *
+	 * Note: The image size is fixed to 256x256 so the given area should be a square
+	 *
+	 * @param features The GeoJSON feature-collection
+	 * @param rect The area-rectangle of the GeoJSON which should be rendered
+	 * @param outputFile Where to store the resulting PNG file
+	 * @throws IOException If writing the image-file fails
+	 */
 	public static void writeBorder(FeatureCollection<?, ?> features, LatLonRectangle rect, File outputFile) throws IOException {
 		writeImageInternal(features, rect, outputFile, styleBorder);
 	}
