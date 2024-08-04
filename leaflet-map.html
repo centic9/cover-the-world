@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress JSUnresolvedLibraryURL, JSUnresolvedReference -->
 <html lang="en">
 <head>
 	<base target="_top">
@@ -218,7 +219,7 @@ const openTopo = L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="https://viewfinderpanoramas.org/">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
 // https://tiles.bergfex.at/
@@ -305,6 +306,14 @@ const slopes = L.tileLayer('https://tile.waymarkedtrails.org/slopes/{z}/{x}/{y}.
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
+// https://tile.waymarkedtrails.org/hiking/12/2207/1415.png
+const hiking = L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
 // https://cs37700.dogadoserver.de/ctw/tilesSquares/12/2207/1415.png
 const ctwSquares = L.tileLayer('tilesSquares/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
@@ -366,37 +375,37 @@ function onEachFeature(feature, layer) {
 
 const paddedRenderer = L.svg({ padding: 0.8 });
 
-const geoSquares = L.geoJSON(squaresstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoSquares = L.geoJSON(squaresstates, {style: mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const geoSquaresAdjacent = L.geoJSON(adjacentSquaresstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoSquaresAdjacent = L.geoJSON(adjacentSquaresstates, {style: adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const geoSquaresNew = L.geoJSON(squaresnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoSquaresNew = L.geoJSON(squaresnewstates, {style: mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const geoTiles = L.geoJSON(tilesstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoTiles = L.geoJSON(tilesstates, {style: mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const geoTilesAdjacent = L.geoJSON(adjacentTilesstates,{style:adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoTilesAdjacent = L.geoJSON(adjacentTilesstates, {style: adjacentstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const geoTilesNew = L.geoJSON(tilesnewstates,{style:mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const geoTilesNew = L.geoJSON(tilesnewstates, {style: mapstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const cluster = L.geoJSON(squaresclusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const clusterSquares = L.geoJSON(squaresclusterstates, {style: clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const clusterTiles = L.geoJSON(tilesclusterstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const clusterTiles = L.geoJSON(tilesclusterstates, {style: clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const largest = L.geoJSON(largeststates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const largestClusterSquares = L.geoJSON(largeststates, {style: clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const rectangle = L.geoJSON(rectanglestates,{style:rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const largestClusterTiles = L.geoJSON(largesttilesstates, {style: clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const square = L.geoJSON(squarestates,{style:squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const rectangle = L.geoJSON(rectanglestates, {style: rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const squareTiles = L.geoJSON(tilesquarestates,{style:squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const square = L.geoJSON(squarestates, {style: squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const rectangleTiles = L.geoJSON(tilerectanglestates,{style:rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const squareTiles = L.geoJSON(tilesquarestates, {style: squarestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const largestTiles = L.geoJSON(largesttilesstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const rectangleTiles = L.geoJSON(tilerectanglestates, {style: rectanglestyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const largestConnectedSquares = L.geoJSON(largestconnectedstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const largestConnectedSquares = L.geoJSON(largestconnectedstates, {style: clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
-const largestConnectedTiles = L.geoJSON(largestconnectedtilesstates,{style:clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
+const largestConnectedTiles = L.geoJSON(largestconnectedtilesstates, {style: clusterstyle, onEachFeature: onEachFeature, renderer: paddedRenderer});
 
 const gridOsm = L.gridLayer();
 
@@ -476,7 +485,7 @@ if (params.get("rectangle") === "1") {
     map.addLayer(isSquares ? rectangle : rectangleTiles);
 }
 if (params.get("cluster") === "1") {
-    map.addLayer(isSquares ? largest : largestTiles);
+    map.addLayer(isSquares ? largestClusterSquares : largestClusterTiles);
 }
 
 const baseLayers = {
@@ -498,8 +507,8 @@ const overlays = {
 	'Squares': geoSquares,
 	'New': geoSquaresNew,
 	'Adjacent': geoSquaresAdjacent,
-	'Cluster': cluster,
-	'Largest Cluster': largest,
+	'Cluster': clusterSquares,
+	'Largest Cluster': largestClusterSquares,
 	'Largest Connected': largestConnectedSquares,
 	'Rectangle': rectangle,
 	'Square': square,
@@ -510,7 +519,7 @@ const overlays = {
     'StatsHunter Cluster': clusterTiles,
 	'StatsHunter Square': squareTiles,
 	'StatsHunter Rectangle': rectangleTiles,
-	'StatsHunter Largest Cluster': largestTiles,
+	'StatsHunter Largest Cluster': largestClusterTiles,
 	'StatsHunter Largest Connected': largestConnectedTiles,
 	'-- Rendered overlay --': empty,
 	'Rendered Squares': ctwSquares,
@@ -520,9 +529,10 @@ const overlays = {
 	'Rendered Tiles Adjacent': ctwTilesAdjacent,
 	'-- Other --': empty,
 	'MTB': mtb,
+	'Hiking': hiking,
 	'Slopes': slopes,
-	'Grid': gridOsm,
 	'Grid 14': gridOsmFixed,
+	'Grid': gridOsm,
 	'-- -- --': empty,
 };
 
@@ -545,18 +555,18 @@ L.control.mousePosition().addTo(map);
 
 var buttonCl = L.easyButton('<strong>Cl</strong>', function(){
 	if (map.hasLayer(geoTiles)) {
-		map.removeLayer(largest);
-		if (map.hasLayer(largestTiles)) {
-			map.removeLayer(largestTiles);
+		map.removeLayer(largestClusterSquares);
+		if (map.hasLayer(largestClusterTiles)) {
+			map.removeLayer(largestClusterTiles);
 		} else {
-			map.addLayer(largestTiles);
+			map.addLayer(largestClusterTiles);
 		}
 	} else {
-		map.removeLayer(largestTiles);
-		if (map.hasLayer(largest)) {
-			map.removeLayer(largest);
+		map.removeLayer(largestClusterTiles);
+		if (map.hasLayer(largestClusterSquares)) {
+			map.removeLayer(largestClusterSquares);
 		} else {
-			map.addLayer(largest);
+			map.addLayer(largestClusterSquares);
 		}
 	}
 });
@@ -652,7 +662,9 @@ var buttonS = L.easyButton('<strong>S</strong>', function(){
 	map.removeLayer(ctwTilesAdjacent);
 	map.removeLayer(squareTiles);
 	map.removeLayer(rectangleTiles);
-	map.removeLayer(largestTiles);
+	map.removeLayer(clusterTiles);
+	map.removeLayer(largestClusterTiles);
+	map.removeLayer(largestConnectedTiles);
 	if (map.hasLayer(geoSquares)) {
 		map.removeLayer(geoSquares);
 	} else {
@@ -671,7 +683,8 @@ var buttonT = L.easyButton('<strong>T</strong>', function(){
 	map.removeLayer(geoSquaresNew);
 	map.removeLayer(square);
 	map.removeLayer(rectangle);
-	map.removeLayer(largest);
+	map.removeLayer(clusterSquares);
+	map.removeLayer(largestClusterSquares);
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(geoTiles);
 	} else {
