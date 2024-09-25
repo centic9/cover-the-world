@@ -77,8 +77,8 @@
 const params = new URLSearchParams(window.location.search);
 /* supported query params:
 Base Map: squares, bergfex, cycle, renderedSquares, renderedTiles
-Overlay: tiles, mtb, slopes
-Feature: adjacent, square, rectangle, cluster
+Overlay: tiles, mtb, slopes, hiking
+Feature: new, adjacent, square, rectangle, cluster
 */
 
 function mapstyle() {
@@ -127,7 +127,7 @@ function squarestyle() {
 
 
 const map = L.map('map', {
-	center: [48.4503, 14.0170],
+	center: [48.27268,14.32137],
 	zoom: 11,
 
 	// full-screen button
@@ -165,15 +165,15 @@ function centerMap (e) {
 	map.panTo(e.latlng);
 }
 
-function zoomIn (e) {
+function zoomIn () {
 	map.zoomIn();
 }
 
-function zoomOut (e) {
+function zoomOut () {
 	map.zoomOut();
 }
 
-function grid14 (e) {
+function grid14 () {
 	if (map.hasLayer(gridOsmFixed)) {
 		map.removeLayer(gridOsmFixed);
 	} else {
@@ -181,15 +181,15 @@ function grid14 (e) {
 	}
 }
 
-var loadingControl = L.Control.loading({
-    separate: true,
-    position: 'bottomright'
+const loadingControl = L.Control.loading({
+	separate: true,
+	position: 'bottomright'
 });
 map.addControl(loadingControl);
 
 // full tile-based layers
 ////////////////////////////////////////
-// https://tile.openstreetmap.org/12/2207/1415.png
+// https://tile.openstreetmap.org/12/2203/1412.png
 const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	// requests for tiles on zoom-level 20 were timing out at times
 	maxZoom: 19,
@@ -198,7 +198,7 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 });
 
-// https://ptolemy.openstreetmap.de/12/2207/1415.png
+// https://ptolemy.openstreetmap.de/12/2203/1412.png
 const osmDE = L.tileLayer('https://ptolemy.openstreetmap.de/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	edgeBufferTiles: 1,
@@ -206,7 +206,7 @@ const osmDE = L.tileLayer('https://ptolemy.openstreetmap.de/{z}/{x}/{y}.png', {
 	attribution: '<a target=_blank href="https://www.openstreetmap.org/">Karte hergestellt aus OpenStreetMap-Daten</a> | Lizenz: <a rel="license" target="_blank" href="https://opendatacommons.org/licenses/odbl/">Open Database License (ODbL)</a>'
 });
 
-// https://tile.openstreetmap.fr/hot/12/2207/1415.png
+// https://tile.openstreetmap.fr/hot/12/2203/1412.png
 const osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	edgeBufferTiles: 1,
@@ -214,7 +214,7 @@ const osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.pn
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
 });
 
-// https://tile.opentopomap.org/12/2207/1415.png
+// https://tile.opentopomap.org/12/2203/1412.png
 const openTopo = L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	edgeBufferTiles: 1,
@@ -222,12 +222,30 @@ const openTopo = L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png', {
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="https://viewfinderpanoramas.org/">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
+// https://c.tile.thunderforest.com/cycle/12/2203/1412.png
+const cycle = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
+	maxZoom: 20,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
+});
+
+// https://b.tile-cyclosm.openstreetmap.fr/cyclosm/12/2203/1412.png
+// See https://www.cyclosm.org/
+const cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+	maxZoom: 20,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+});
+
 // https://tiles.bergfex.at/
-// https://tiles.bergfex.at/styles/bergfex-osm/12/2207/1415.png
+// https://tiles.bergfex.at/styles/bergfex-osm/12/2203/1412.png
 const bergfex = L.tileLayer('https://tiles.bergfex.at/styles/bergfex-osm/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	//edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
 });
 
 // https://tiles.bergfex.at/
@@ -236,6 +254,7 @@ const bergfexJpg = L.tileLayer('https://tiles.bergfex.at/styles/bergfex-osm/{z}/
 	maxZoom: 20,
 	//edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
 });
 
 // https://tiles.bergfex.at/data/oek50-512/12/2207/1415.jpg70
@@ -243,17 +262,26 @@ const bergfexOEK50 = L.tileLayer('https://tiles.bergfex.at/data/oek50-512/{z}/{x
 	maxZoom: 15,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
 });
 
-// https://tiles.bergfex.at/styles/basemap-ortho/12/2207/1415.png
+// https://tiles.bergfex.at/styles/basemap-ortho/12/2203/1412.png
 const bergfexOrtho = L.tileLayer('https://tiles.bergfex.at/styles/basemap-ortho/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
 });
 
+// https://tileserver.memomaps.de/tilegen/12/2203/1412.png
+const oepnvKarte = L.tileLayer('https://tileserver.memomaps.de/tilegen/{z}/{x}/{y}.png', {
+	maxZoom: 20,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+    attribution: 'Map <a href="https://memomaps.de/">memomaps.de</a> <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, map data <a href="https://openstreetmap.org/">Openstreetmap</a> <a href="https://opendatacommons.org/licenses/odbl/1.0/">ODbL</a>',
+});
 
-// https://example.com/ctw/tilesSquaresCombined/12/2207/1415.png
+// https://example.com/ctw/tilesSquaresCombined/12/2203/1412.png
 const ctwSquaresCombined = L.tileLayer('tilesSquaresCombined/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
@@ -262,7 +290,7 @@ const ctwSquaresCombined = L.tileLayer('tilesSquaresCombined/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
-// https://example.com/ctw/tilesTilesCombined/12/2207/1415.png
+// https://example.com/ctw/tilesTilesCombined/12/2203/1412.png
 const ctwTilesCombined = L.tileLayer('tilesTilesCombined/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
@@ -273,32 +301,15 @@ const ctwTilesCombined = L.tileLayer('tilesTilesCombined/{z}/{x}/{y}.png', {
 
 // Overlay layers
 ////////////////////////////////////////
-// https://tile.waymarkedtrails.org/mtb/12/2207/1415.png
+// https://tile.waymarkedtrails.org/mtb/12/2203/1412.png
 const mtb = L.tileLayer('https://tile.waymarkedtrails.org/mtb/{z}/{x}/{y}.png', {
-	maxZoom: 19,
+	maxZoom: 18,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
-// https://c.tile.thunderforest.com/cycle/12/2207/1415.png
-const cycle = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
-	maxZoom: 19,
-	edgeBufferTiles: 1,
-	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
-});
-
-// https://b.tile-cyclosm.openstreetmap.fr/cyclosm/12/2207/1415.png
-// See https://www.cyclosm.org/
-const cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
-	maxZoom: 20,
-	edgeBufferTiles: 1,
-	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-});
-
-// https://tile.waymarkedtrails.org/slopes/12/2207/1415.png
+// https://tile.waymarkedtrails.org/slopes/12/2203/1412.png
 const slopes = L.tileLayer('https://tile.waymarkedtrails.org/slopes/{z}/{x}/{y}.png', {
 	maxZoom: 18,
 	edgeBufferTiles: 1,
@@ -306,7 +317,7 @@ const slopes = L.tileLayer('https://tile.waymarkedtrails.org/slopes/{z}/{x}/{y}.
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
-// https://tile.waymarkedtrails.org/hiking/12/2207/1415.png
+// https://tile.waymarkedtrails.org/hiking/12/2203/1412.png
 const hiking = L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
 	maxZoom: 18,
 	edgeBufferTiles: 1,
@@ -314,7 +325,7 @@ const hiking = L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
-// https://cs37700.dogadoserver.de/ctw/tilesSquares/12/2207/1415.png
+// https://cs37700.dogadoserver.de/ctw/tilesSquares/12/2203/1412.png
 const ctwSquares = L.tileLayer('tilesSquares/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
@@ -323,7 +334,7 @@ const ctwSquares = L.tileLayer('tilesSquares/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
-// https://example.com/ctw/tilesSquaresNew/12/2207/1415.png
+// https://example.com/ctw/tilesSquaresNew/12/2203/1412.png
 const ctwSquaresNew = L.tileLayer('tilesSquaresNew/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
@@ -332,7 +343,7 @@ const ctwSquaresNew = L.tileLayer('tilesSquaresNew/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
-// https://example.com/ctw/tilesTiles/12/2207/1415.png
+// https://example.com/ctw/tilesTiles/12/2203/1412.png
 const ctwTiles = L.tileLayer('tilesTiles/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
@@ -341,7 +352,7 @@ const ctwTiles = L.tileLayer('tilesTiles/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
-// https://example.com/ctw/tilesTilesNew/12/2207/1415.png
+// https://example.com/ctw/tilesTilesNew/12/2203/1412.png
 const ctwTilesNew = L.tileLayer('tilesTilesNew/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
@@ -350,7 +361,7 @@ const ctwTilesNew = L.tileLayer('tilesTilesNew/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
 });
 
-// https://example.com/ctw/tilesTilesAdjacent/12/2207/1415.png
+// https://example.com/ctw/tilesTilesAdjacent/12/2203/1412.png
 const ctwTilesAdjacent = L.tileLayer('tilesTilesAdjacent/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
@@ -411,10 +422,18 @@ const gridOsm = L.gridLayer();
 
 gridOsm.createTile = function (coords) {
 	const tile = document.createElement('div');
+	const size = this.getTileSize()
+
+	// calculate projection coordinates of top left tile pixel
+	var nwPoint = coords.scaleBy(size)
+
+	// calculate geographic coordinates of top left tile pixel
+	var nw = map.unproject(nwPoint, coords.z)
+
 	tile.style.outline = '1px solid green';
 	tile.style.fontWeight = 'bold';
 	tile.style.fontSize = '14pt';
-	tile.innerHTML = [coords.z, coords.x, coords.y].join('/');
+	tile.innerHTML = [coords.z, coords.x, coords.y].join('/') + '<br/>' + Number(nw.lat).toFixed(5) + ' ' + Number(nw.lng).toFixed(5);
 	return tile;
 };
 
@@ -427,67 +446,22 @@ const gridOsmFixed = L.gridLayer({
 
 gridOsmFixed.createTile = function (coords) {
 	const tile = document.createElement('div');
+	const size = this.getTileSize()
+
+	// calculate projection coordinates of top left tile pixel
+	var nwPoint = coords.scaleBy(size)
+
+	// calculate geographic coordinates of top left tile pixel
+	var nw = map.unproject(nwPoint, coords.z)
+
 	tile.style.outline = '1px solid green';
 	//tile.style.fontWeight = 'bold';
 	tile.style.fontSize = '10pt';
-	tile.innerHTML = [coords.z, coords.x, coords.y].join('/');
+	tile.innerHTML = [coords.z, coords.x, coords.y].join('/') + ', ' + Number(nw.lat).toFixed(5) + ' ' + Number(nw.lng).toFixed(5);
 	return tile;
 };
 
-// default layers OSM + CTW-GeoJSON + CTWNew-GeoJSON
-if (params.get("bergfex") === "1") {
-    map.addLayer(bergfex);
-} else if (params.get("cycle") === "1") {
-    map.addLayer(cycle);
-} else {
-    map.addLayer(osm);
-}
-
-let isSquares = false;
-if (params.get("squares") === "1") {
-	map.addLayer(geoSquares);
-	map.addLayer(geoSquaresNew);
-	isSquares = true;
-} else if (params.get("renderedSquares") === "1") {
-	map.addLayer(ctwSquares);
-	map.addLayer(ctwSquaresNew);
-	isSquares = true;
-} else if (params.get("renderedTiles") === "1") {
-	map.addLayer(ctwTiles);
-	map.addLayer(ctwTilesNew);
-	map.addLayer(ctwTilesAdjacent);
-} else if (params.get("prerenderedSquares") === "1") {
-	map.addLayer(ctwSquaresCombined);
-	isSquares = true;
-} else if (params.get("prerenderedTiles") === "1") {
-	map.addLayer(ctwTilesCombined);
-} else {
-	map.addLayer(geoTiles);
-	map.addLayer(geoTilesNew);
-//	map.addLayer(geoTilesAdjacent);
-}
-
-if (params.get("mtb") === "1") {
-    map.addLayer(mtb);
-}
-
-if (params.get("slopes") === "1") {
-    map.addLayer(slopes);
-}
-
-if (params.get("adjacent") === "1") {
-    map.addLayer(isSquares ? geoSquaresAdjacent : geoTilesAdjacent);
-}
-if (params.get("square") === "1") {
-    map.addLayer(isSquares ? square : squareTiles);
-}
-if (params.get("rectangle") === "1") {
-    map.addLayer(isSquares ? rectangle : rectangleTiles);
-}
-if (params.get("cluster") === "1") {
-    map.addLayer(isSquares ? largestClusterSquares : largestClusterTiles);
-}
-
+// noinspection JSNonASCIINames
 const baseLayers = {
 	'OpenStreetMap': osm,
 	'OpenStreetMap DE': osmDE,
@@ -499,10 +473,12 @@ const baseLayers = {
 	'Bergfex JPG': bergfexJpg,
 	'Bergfex OEK50': bergfexOEK50,
 	'Bergfex Ortho': bergfexOrtho,
+	'ÖPNV Karte': oepnvKarte,
 	'CTW Squares Prerender': ctwSquaresCombined,
 	'CTW Tiles Prerender': ctwTilesCombined,
 };
 
+// noinspection JSNonASCIINames
 const overlays = {
 	'Squares': geoSquares,
 	'New': geoSquaresNew,
@@ -517,8 +493,8 @@ const overlays = {
 	'StatsHunter New Tiles': geoTilesNew,
 	'StatsHunter Adjacent': geoTilesAdjacent,
     'StatsHunter Cluster': clusterTiles,
-	'StatsHunter Square': squareTiles,
 	'StatsHunter Rectangle': rectangleTiles,
+	'StatsHunter Square': squareTiles,
 	'StatsHunter Largest Cluster': largestClusterTiles,
 	'StatsHunter Largest Connected': largestConnectedTiles,
 	'-- Rendered overlay --': empty,
@@ -553,56 +529,68 @@ L.control
 L.control.mousePosition().addTo(map);
 
 
-var buttonCl = L.easyButton('<strong>Cl</strong>', function(){
+const buttonCl = L.easyButton('<strong>Cl</strong>', function (btn, map) {
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(largestClusterSquares);
 		if (map.hasLayer(largestClusterTiles)) {
 			map.removeLayer(largestClusterTiles);
+			btn.getContainer().style.removeProperty("color");
 		} else {
 			map.addLayer(largestClusterTiles);
+			btn.getContainer().style.setProperty("color", "#FF0000");
 		}
 	} else {
 		map.removeLayer(largestClusterTiles);
 		if (map.hasLayer(largestClusterSquares)) {
 			map.removeLayer(largestClusterSquares);
+			btn.getContainer().style.removeProperty("color");
 		} else {
 			map.addLayer(largestClusterSquares);
+			btn.getContainer().style.setProperty("color", "#FF0000");
 		}
 	}
 });
 
-var buttonRe = L.easyButton('<strong>Re</strong>', function(){
+const buttonRe = L.easyButton('<strong>Re</strong>', function (btn, map) {
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(rectangle);
 		if (map.hasLayer(rectangleTiles)) {
 			map.removeLayer(rectangleTiles);
+			btn.getContainer().style.removeProperty("color");
 		} else {
 			map.addLayer(rectangleTiles);
+			btn.getContainer().style.setProperty("color", "#FF0000");
 		}
 	} else {
 		map.removeLayer(rectangleTiles);
 		if (map.hasLayer(rectangle)) {
 			map.removeLayer(rectangle);
+			btn.getContainer().style.removeProperty("color");
 		} else {
 			map.addLayer(rectangle);
+			btn.getContainer().style.setProperty("color", "#FF0000");
 		}
 	}
 });
 
-var buttonSq = L.easyButton('<strong>Sq</strong>', function(){
+const buttonSq = L.easyButton('<strong>Sq</strong>', function (btn, map) {
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(square);
 		if (map.hasLayer(squareTiles)) {
 			map.removeLayer(squareTiles);
+			btn.getContainer().style.removeProperty("color");
 		} else {
 			map.addLayer(squareTiles);
+			btn.getContainer().style.setProperty("color", "#FF0000");
 		}
 	} else {
 		map.removeLayer(squareTiles);
 		if (map.hasLayer(square)) {
 			map.removeLayer(square);
+			btn.getContainer().style.removeProperty("color");
 		} else {
 			map.addLayer(square);
+			btn.getContainer().style.setProperty("color", "#FF0000");
 		}
 	}
 });
@@ -610,25 +598,29 @@ var buttonSq = L.easyButton('<strong>Sq</strong>', function(){
 L.easyBar([buttonCl, buttonRe, buttonSq]).addTo(map);
 
 
-var buttonA = L.easyButton('<strong>A</strong>', function(){
+const buttonA = L.easyButton('<strong>A</strong>', function (btn, map) {
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(geoSquaresAdjacent);
         if (map.hasLayer(geoTilesAdjacent)) {
             map.removeLayer(geoTilesAdjacent);
+			btn.getContainer().style.removeProperty("color");
         } else {
             map.addLayer(geoTilesAdjacent);
+			btn.getContainer().style.setProperty("color", "#FF0000");
         }
     } else {
 		map.removeLayer(geoTilesAdjacent);
         if (map.hasLayer(geoSquaresAdjacent)) {
             map.removeLayer(geoSquaresAdjacent);
+			btn.getContainer().style.removeProperty("color");
         } else {
             map.addLayer(geoSquaresAdjacent);
+			btn.getContainer().style.setProperty("color", "#FF0000");
         }
     }
 });
 
-var buttonN = L.easyButton('<strong>N</strong>', function(){
+const buttonN = L.easyButton('<strong>N</strong>', function (btn, map) {
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(ctwSquaresNew);
 		map.removeLayer(ctwTilesNew);
@@ -636,8 +628,10 @@ var buttonN = L.easyButton('<strong>N</strong>', function(){
 		map.removeLayer(geoSquaresNew);
 		if (map.hasLayer(geoTilesNew)) {
 			map.removeLayer(geoTilesNew);
+			btn.getContainer().style.removeProperty("color");
 		} else {
 			map.addLayer(geoTilesNew);
+			btn.getContainer().style.setProperty("color", "#FF0000");
 		}
 	} else {
 		map.removeLayer(ctwSquaresNew);
@@ -646,13 +640,15 @@ var buttonN = L.easyButton('<strong>N</strong>', function(){
 		map.removeLayer(geoTilesNew);
 		if (map.hasLayer(geoSquaresNew)) {
 			map.removeLayer(geoSquaresNew);
+			btn.getContainer().style.removeProperty("color");
 		} else {
 			map.addLayer(geoSquaresNew);
+			btn.getContainer().style.setProperty("color", "#FF0000");
 		}
 	}
 });
 
-var buttonS = L.easyButton('<strong>S</strong>', function(){
+const buttonS = L.easyButton('<strong>S</strong>', function (btn, map) {
 	map.removeLayer(ctwSquares);
 	map.removeLayer(geoTiles);
 	map.removeLayer(geoTilesAdjacent);
@@ -665,14 +661,18 @@ var buttonS = L.easyButton('<strong>S</strong>', function(){
 	map.removeLayer(clusterTiles);
 	map.removeLayer(largestClusterTiles);
 	map.removeLayer(largestConnectedTiles);
+
+	buttonT.getContainer().style.removeProperty("color");
 	if (map.hasLayer(geoSquares)) {
 		map.removeLayer(geoSquares);
+		btn.getContainer().style.removeProperty("color");
 	} else {
 		map.addLayer(geoSquares);
+		btn.getContainer().style.setProperty("color", "#FF0000");
 	}
 });
 
-var buttonT = L.easyButton('<strong>T</strong>', function(){
+const buttonT = L.easyButton('<strong>T</strong>', function(btn, map){
 	map.removeLayer(ctwSquares);
 	map.removeLayer(ctwSquaresNew);
 	map.removeLayer(ctwTiles);
@@ -685,10 +685,15 @@ var buttonT = L.easyButton('<strong>T</strong>', function(){
 	map.removeLayer(rectangle);
 	map.removeLayer(clusterSquares);
 	map.removeLayer(largestClusterSquares);
+	map.removeLayer(largestConnectedSquares);
+
+	buttonS.getContainer().style.removeProperty("color");
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(geoTiles);
+		btn.getContainer().style.removeProperty("color");
 	} else {
 		map.addLayer(geoTiles);
+		btn.getContainer().style.setProperty("color", "#FF0000");
 	}
 });
 
@@ -696,6 +701,146 @@ L.easyBar([buttonA, buttonN, buttonS, buttonT]).addTo(map);
 
 map.setGeocoder('Nominatim');
 map.addControl(L.control.search({ }));
+
+map.on("overlayadd", function(e) {
+	//console.log("overlay added: " + e.name);
+	if (e.name === "Squares") {
+		buttonS.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "New") {
+			buttonN.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "Rectangle") {
+				buttonRe.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "Square") {
+		buttonSq.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "Largest Cluster") {
+		buttonCl.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "StatsHunter Largest Cluster") {
+		buttonCl.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "Adjacent") {
+		buttonA.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "StatsHunter Adjacent") {
+		buttonA.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "StatsHunter Tiles") {
+		buttonT.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "StatsHunter New Tiles") {
+		buttonN.getContainer().style.setProperty("color", "#FF0000");
+    } else if (e.name === "StatsHunter Rectangle") {
+        buttonRe.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "StatsHunter Square") {
+		buttonSq.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "StatsHunter Square 27x27") {
+		button27.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "StatsHunter Square 28x28") {
+		button28.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "StatsHunter Square 30x30") {
+		button30.getContainer().style.setProperty("color", "#FF0000");
+	} else if (e.name === "StatsHunter Square 35x35") {
+		button35.getContainer().style.setProperty("color", "#FF0000");
+	}
+})
+
+map.on("overlayremove", function(e) {
+	//console.log("overlay removed: " + e.name);
+	if (e.name === "Squares") {
+		buttonS.getContainer().style.removeProperty("color");
+	} else if (e.name === "New") {
+		buttonN.getContainer().style.removeProperty("color");
+	} else if (e.name === "Largest Cluster") {
+		buttonCl.getContainer().style.removeProperty("color");
+	} else if (e.name === "Rectangle") {
+		buttonRe.getContainer().style.removeProperty("color");
+	} else if (e.name === "Square") {
+		buttonSq.getContainer().style.removeProperty("color");
+	} else if (e.name === "StatsHunter Tiles") {
+		buttonT.getContainer().style.removeProperty("color");
+	} else if (e.name === "StatsHunter New Tiles") {
+		buttonN.getContainer().style.removeProperty("color");
+	} else if (e.name === "StatsHunter Largest Cluster") {
+		buttonCl.getContainer().style.removeProperty("color");
+	} else if (e.name === "StatsHunter Rectangle") {
+		buttonRe.getContainer().style.removeProperty("color");
+	} else if (e.name === "StatsHunter Square") {
+		buttonSq.getContainer().style.removeProperty("color");
+	} else if (e.name === "Adjacent") {
+		buttonA.getContainer().style.removeProperty("color");
+	} else if (e.name === "StatsHunter Adjacent") {
+		buttonA.getContainer().style.removeProperty("color");
+	}
+})
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Parameter handling
+//
+// default layers OSM + CTW-GeoJSON + CTWNew-GeoJSON
+if (params.get("bergfex") === "1") {
+	map.addLayer(bergfex);
+} else if (params.get("cycle") === "1") {
+	map.addLayer(cycle);
+} else {
+	map.addLayer(osm);
+}
+
+let isSquares = false;
+if (params.get("squares") === "1") {
+	map.addLayer(geoSquares);
+	if (params.get("new") !== "0") {
+		map.addLayer(geoSquaresNew);
+	}
+	isSquares = true;
+	buttonS.getContainer().style.setProperty("color", "#FF0000");
+} else if (params.get("renderedSquares") === "1") {
+	map.addLayer(ctwSquares);
+	if (params.get("new") !== "0") {
+		map.addLayer(ctwSquaresNew);
+	}
+	isSquares = true;
+} else if (params.get("renderedTiles") === "1") {
+	map.addLayer(ctwTiles);
+	if (params.get("new") !== "0") {
+		map.addLayer(ctwTilesNew);
+	}
+	map.addLayer(ctwTilesAdjacent);
+} else if (params.get("prerenderedSquares") === "1") {
+	map.addLayer(ctwSquaresCombined);
+	isSquares = true;
+} else if (params.get("prerenderedTiles") === "1") {
+	map.addLayer(ctwTilesCombined);
+} else {
+	map.addLayer(geoTiles);
+	if (params.get("new") !== "0") {
+		map.addLayer(geoTilesNew);
+	}
+//	map.addLayer(geoTilesAdjacent);
+	buttonT.getContainer().style.setProperty("color", "#FF0000");
+}
+
+if (params.get("mtb") === "1") {
+	map.addLayer(mtb);
+}
+if (params.get("slopes") === "1") {
+	map.addLayer(slopes);
+}
+if (params.get("hiking") === "1") {
+	map.addLayer(hiking);
+}
+
+if (params.get("adjacent") === "1") {
+	map.addLayer(isSquares ? geoSquaresAdjacent : geoTilesAdjacent);
+	buttonA.getContainer().style.setProperty("color", "#FF0000");
+}
+if (params.get("square") === "1") {
+	map.addLayer(isSquares ? square : squareTiles);
+	buttonSq.getContainer().style.setProperty("color", "#FF0000");
+}
+if (params.get("rectangle") === "1") {
+	map.addLayer(isSquares ? rectangle : rectangleTiles);
+	buttonRe.getContainer().style.setProperty("color", "#FF0000");
+}
+if (params.get("cluster") === "1") {
+	map.addLayer(isSquares ? largestClusterSquares : largestClusterTiles);
+	buttonCl.getContainer().style.setProperty("color", "#FF0000");
+}
 </script>
 </body>
 </html>
