@@ -122,7 +122,8 @@ public class CreateTileOverlaysFromUTMRef {
 			FeatureCollection<?, ?> features, Set<OSMTile> allTiles) {
 		CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
 
-		log.info("Start processing of " + squares.size() + " squares at zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+		log.info(String.format("%s: Start processing of %d squares at zoom %d%s",
+				tileDir, squares.size(), zoom, CreateTileOverlaysHelper.concatProgress()));
 
 		Set<OSMTile> tilesOut = new HashSet<>();
 
@@ -132,8 +133,8 @@ public class CreateTileOverlaysFromUTMRef {
 			handleSquare(square, zoom, tilesOut, filter);
 
 			if (lastLogSquare.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-				log.info(String.format(Locale.US, "zoom %d: %,d of %,d: %s - %,d",
-						zoom, squareNr, squareCount, square, tilesOut.size()));
+				log.info(String.format(Locale.US, "%s: Zoom %d: %,d of %,d: %s - %,d",
+						tileDir, zoom, squareNr, squareCount, square, tilesOut.size()));
 
 				lastLogSquare.set(System.currentTimeMillis());
 			}
@@ -141,7 +142,8 @@ public class CreateTileOverlaysFromUTMRef {
 			squareNr++;
 		}
 
-		log.info("Having " + tilesOut.size() + " touched tiles for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+		log.info(String.format("%s: Having %d touched tiles for zoom %d%s",
+				tileDir, tilesOut.size(), zoom, CreateTileOverlaysHelper.concatProgress()));
 		CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
 
 		allTiles.addAll(tilesOut);
@@ -150,7 +152,8 @@ public class CreateTileOverlaysFromUTMRef {
 
 		CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_SQUARES, tilesOut, tileDir, features, false);
 
-		log.info("Wrote " + tilesOutSize + " files for zoom " + zoom + CreateTileOverlaysHelper.concatProgress());
+		log.info(String.format("%s: Wrote %d files for zoom %d%s",
+				tileDir, tilesOutSize, zoom, CreateTileOverlaysHelper.concatProgress()));
 	}
 
 	private static void handleSquare(String square, int zoom, Set<OSMTile> tiles, Predicate<OSMTile> filter) {
