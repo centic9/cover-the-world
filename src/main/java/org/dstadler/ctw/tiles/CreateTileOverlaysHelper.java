@@ -77,8 +77,8 @@ public class CreateTileOverlaysHelper {
 		IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).
 				forEach(zoom -> {
 					// indicate that this zoom is started
-					CreateTileOverlaysHelper.EXPECTED.add(zoom, 0);
-					CreateTileOverlaysHelper.ACTUAL.add(zoom, -1);
+					EXPECTED.add(zoom, 0);
+					ACTUAL.add(zoom, -1);
 				});
 
 		List<Integer> aList = IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).boxed()
@@ -111,7 +111,7 @@ public class CreateTileOverlaysHelper {
 					}
 
 					tilesNr.increment();
-					CreateTileOverlaysHelper.ACTUAL.inc(tile.getZoom());
+					ACTUAL.inc(tile.getZoom());
 				}
 		);
 	}
@@ -148,8 +148,8 @@ public class CreateTileOverlaysHelper {
 		}
 
 		if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-			log.info(String.format(Locale.US, "features -> png: zoom %d: %s - %,d of %,d: %s%s",
-					tile.getZoom(), tileDir, tilesNr, tilesOut.size(), tile.toCoords(), CreateTileOverlaysHelper.concatProgress()));
+			log.info(String.format(Locale.US, "%s -> png: overall %d of %d, zoom %d: %,d of %,d: %s%s",
+					tileDir, actual(), expected(), tile.getZoom(), tilesNr, tilesOut.size(), tile.toCoords(), concatProgress()));
 
 			lastLog.set(System.currentTimeMillis());
 		}
@@ -178,5 +178,33 @@ public class CreateTileOverlaysHelper {
 		}
 
 		return progress.toString();
+	}
+
+	private static long actual() {
+		long count = 0;
+		for (int zoom = Constants.MIN_ZOOM; zoom <= Constants.MAX_ZOOM; zoom++) {
+			long actual = ACTUAL.get(zoom);
+			if (actual == -1) {
+				continue;
+			}
+
+			count += actual;
+		}
+
+		return count;
+	}
+
+	private static long expected() {
+		long count = 0;
+		for (int zoom = Constants.MIN_ZOOM; zoom <= Constants.MAX_ZOOM; zoom++) {
+			long actual = ACTUAL.get(zoom);
+			if (actual == -1) {
+				continue;
+			}
+
+			count += EXPECTED.get(zoom);
+		}
+
+		return count;
 	}
 }
