@@ -160,6 +160,10 @@ public class CreateListOfVisitedSquares {
 			if (e.getCause() instanceof SAXException ||
 					e instanceof IllegalStateException ||
 					e instanceof NullPointerException ||
+					// remove when GPX-parser is updated again
+					e instanceof NumberFormatException ||
+					// reported for invalid lat/lon
+					e instanceof IllegalArgumentException ||
 					stackTrace.contains("Expected to have tag 'lat' and 'lon'") ||
 					stackTrace.contains("For input string")) {
 				System.out.println("Skipping broken file " + gpxFile + ": " + e + " - " + e.getCause());
