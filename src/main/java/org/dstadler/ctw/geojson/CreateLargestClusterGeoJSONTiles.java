@@ -167,7 +167,7 @@ public class CreateLargestClusterGeoJSONTiles {
 				break;
 			}
 
-			log.info("Added " + count + " additional tiles to the cluster");
+			log.info("Added " + count + " additional tiles to the cluster, now having " + foundCluster.size() + " cluster tiles");
 		}
 	}
 
