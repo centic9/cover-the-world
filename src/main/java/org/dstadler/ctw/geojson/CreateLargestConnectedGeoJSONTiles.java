@@ -47,11 +47,11 @@ public class CreateLargestConnectedGeoJSONTiles {
 
 		log.info("Computing largest connected tiles");
 
-		List<List<OSMTile>> connected = computeLargestConnected();
+		List<Set<OSMTile>> connected = computeLargestConnected();
 
 		connected.sort(Comparator.
-				comparingInt((List<OSMTile> o) -> o.size()).
-				thenComparingInt(List::hashCode));
+				comparingInt((Set<OSMTile> o) -> o.size()).
+				thenComparingInt(Set::hashCode));
 
 		log.info("Found " + connected.size() + " connected, top 5: \n" +
 				connected.
@@ -72,7 +72,7 @@ public class CreateLargestConnectedGeoJSONTiles {
 
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
-		List<OSMTile> largestConnected = connected.get(connected.size() - 1);
+		List<OSMTile> largestConnected = new ArrayList<>(connected.get(connected.size() - 1));
 		largestConnected.sort(Comparator.naturalOrder());
 		for (OSMTile tile : largestConnected) {
 			features.add(GeoJSON.createSquare(tile.getRectangle(),
@@ -94,8 +94,8 @@ public class CreateLargestConnectedGeoJSONTiles {
 		}
     }
 
-	private static List<List<OSMTile>> computeLargestConnected() throws IOException {
-		List<List<OSMTile>> connected = new ArrayList<>();
+	private static List<Set<OSMTile>> computeLargestConnected() throws IOException {
+		List<Set<OSMTile>> connected = new ArrayList<>();
 
 		Set<OSMTile> tiles = OSMTile.readTiles(new File(VISITED_TILES_TXT));
 		Preconditions.checkState(tiles.size() > 0,
@@ -116,9 +116,9 @@ public class CreateLargestConnectedGeoJSONTiles {
 			if (isConnected(allTiles, tile)) {
 				// add to a cluster or create a new one
 				boolean found = false;
-				List<OSMTile> foundCluster = null;
-				for (List<OSMTile> cluster : connected) {
-					if (isAdjacent(cluster, tile)) {
+				Set<OSMTile> foundCluster = null;
+				for (Set<OSMTile> cluster : connected) {
+					if (isConnected(cluster, tile)) {
 						//log.info("Tile: " + tile + ": cluster: " + cluster);
 						cluster.add(tile);
 						found = true;
@@ -130,7 +130,7 @@ public class CreateLargestConnectedGeoJSONTiles {
 				if (!found) {
 					log.info("Found tile in new connected: " + tile);
 
-					List<OSMTile> cluster = new ArrayList<>();
+					Set<OSMTile> cluster = new HashSet<>();
 					cluster.add(tile);
 					connected.add(cluster);
 					foundCluster = cluster;
@@ -145,7 +145,7 @@ public class CreateLargestConnectedGeoJSONTiles {
 		return connected;
 	}
 
-	private static void extendConnected(Set<OSMTile> tiles, List<OSMTile> foundCluster) {
+	private static void extendConnected(Set<OSMTile> tiles, Set<OSMTile> foundCluster) {
 		// extend this connected as far as possible to speed up
 		// processing and avoid disconnected clusters
 		while (true) {
@@ -156,7 +156,7 @@ public class CreateLargestConnectedGeoJSONTiles {
 
 				// if this square is adjacent to
 				// the current cluster, then add it
-				if (isAdjacent(foundCluster, tile)) {
+				if (isConnected(foundCluster, tile)) {
 					foundCluster.add(tile);
 					it.remove();
 					count++;
@@ -167,15 +167,8 @@ public class CreateLargestConnectedGeoJSONTiles {
 				break;
 			}
 
-			log.info("Added " + count + " additional tiles to the cluster");
+			log.info("Added " + count + " additional tiles to the cluster, now having " + foundCluster.size() + " cluster tiles");
 		}
-	}
-
-	private static boolean isAdjacent(List<OSMTile> cluster, OSMTile ref) {
-		return cluster.contains(ref.up()) ||
-				cluster.contains(ref.down()) ||
-				cluster.contains(ref.right()) ||
-				cluster.contains(ref.left());
 	}
 
 	private static boolean isConnected(Set<OSMTile> tiles, OSMTile ref) {

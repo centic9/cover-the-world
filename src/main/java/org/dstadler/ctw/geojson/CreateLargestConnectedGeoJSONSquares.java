@@ -49,11 +49,11 @@ public class CreateLargestConnectedGeoJSONSquares {
 
 		log.info("Computing largest connected squares");
 
-		List<List<UTMRefWithHash>> connected = computeLargestConnected();
+		List<Set<UTMRefWithHash>> connected = computeLargestConnected();
 
 		connected.sort(Comparator.
-				comparingInt((List<UTMRefWithHash> o) -> o.size()).
-				thenComparingInt(List::hashCode).
+				comparingInt((Set<UTMRefWithHash> o) -> o.size()).
+				thenComparingInt(Set::hashCode).
 				reversed());
 
 		log.info("Found " + connected.size() + " connected, top 5: \n" +
@@ -74,9 +74,9 @@ public class CreateLargestConnectedGeoJSONSquares {
 			return;
 		}
 
-		// build the GeoJSON features from the larges cluster
+		// build the GeoJSON features from the larges connected
 		List<Feature> features = new ArrayList<>();
-		List<UTMRefWithHash> largestConnected = connected.get(0);
+		List<UTMRefWithHash> largestConnected = new ArrayList<>(connected.get(0));
 		largestConnected.sort(Comparator.naturalOrder());
 		for (UTMRefWithHash square : largestConnected) {
 			features.add(GeoJSON.createSquare(square.getRectangle(),
@@ -98,8 +98,8 @@ public class CreateLargestConnectedGeoJSONSquares {
 		}
     }
 
-	private static List<List<UTMRefWithHash>> computeLargestConnected() throws IOException {
-		List<List<UTMRefWithHash>> connected = new ArrayList<>();
+	private static List<Set<UTMRefWithHash>> computeLargestConnected() throws IOException {
+		List<Set<UTMRefWithHash>> connected = new ArrayList<>();
 
 		Set<UTMRefWithHash> squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_TXT));
 		Preconditions.checkState(squares.size() > 0,
@@ -113,16 +113,16 @@ public class CreateLargestConnectedGeoJSONSquares {
 			UTMRefWithHash square = it.next();
 
 			// remove this entry as we either add it to a cluster or discard it
-			// if it is not connected 4 times
+			// if it is not connected
 			it.remove();
 
 			// connected on any side?
 			if (isConnected(allSquares, square)) {
 				// add to a cluster or create a new one
 				boolean found = false;
-				List<UTMRefWithHash> foundCluster = null;
-				for (List<UTMRefWithHash> cluster : connected) {
-					if (isAdjacent(cluster, square)) {
+				Set<UTMRefWithHash> foundCluster = null;
+				for (Set<UTMRefWithHash> cluster : connected) {
+					if (isConnected(cluster, square)) {
 						//log.info("Square: " + square + ": cluster: " + cluster);
 						cluster.add(square);
 						found = true;
@@ -136,7 +136,7 @@ public class CreateLargestConnectedGeoJSONSquares {
 							square.toLatLng().getLatitude(),
 							square.toLatLng().getLongitude(), 12));
 
-					List<UTMRefWithHash> cluster = new ArrayList<>();
+					Set<UTMRefWithHash> cluster = new HashSet<>();
 					cluster.add(square);
 					connected.add(cluster);
 					foundCluster = cluster;
@@ -153,7 +153,7 @@ public class CreateLargestConnectedGeoJSONSquares {
 		return connected;
 	}
 
-	private static void extendConnected(Set<UTMRefWithHash> squares, List<UTMRefWithHash> foundCluster) {
+	private static void extendConnected(Set<UTMRefWithHash> squares, Set<UTMRefWithHash> foundCluster) {
 		// extend this connected as far as possible to speed up
 		// processing and avoid disconnected clusters
 		while (true) {
@@ -164,7 +164,7 @@ public class CreateLargestConnectedGeoJSONSquares {
 
 				// if this square is adjacent to
 				// the current cluster, then add it
-				if (isAdjacent(foundCluster, square)) {
+				if (isConnected(foundCluster, square)) {
 					foundCluster.add(square);
 					it.remove();
 					count++;
@@ -177,13 +177,6 @@ public class CreateLargestConnectedGeoJSONSquares {
 
 			log.info("Added " + count + " additional squares to the cluster, now having " + foundCluster.size() + " cluster squares");
 		}
-	}
-
-	private static boolean isAdjacent(List<UTMRefWithHash> cluster, UTMRefWithHash ref) {
-		return cluster.contains(ref.up()) ||
-				cluster.contains(ref.down()) ||
-				cluster.contains(ref.right()) ||
-				cluster.contains(ref.left());
 	}
 
 	private static boolean isConnected(Set<UTMRefWithHash> squares, UTMRefWithHash ref) {
