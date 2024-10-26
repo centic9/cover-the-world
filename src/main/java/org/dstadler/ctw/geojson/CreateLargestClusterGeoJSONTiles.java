@@ -47,11 +47,11 @@ public class CreateLargestClusterGeoJSONTiles {
 
 		log.info("Computing largest cluster tiles");
 
-		List<List<OSMTile>> clusters = computeLargestCluster();
+		List<Set<OSMTile>> clusters = computeLargestCluster();
 
 		clusters.sort(Comparator.
-				comparingInt((List<OSMTile> o) -> o.size()).
-				thenComparingInt(List::hashCode));
+				comparingInt((Set<OSMTile> o) -> o.size()).
+				thenComparingInt(Set::hashCode));
 
 		log.info("Found " + clusters.size() + " cluster, top 5: \n" +
 				clusters.
@@ -72,7 +72,7 @@ public class CreateLargestClusterGeoJSONTiles {
 
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
-		List<OSMTile> largestCluster = clusters.get(clusters.size() - 1);
+		List<OSMTile> largestCluster = new ArrayList<>(clusters.get(clusters.size() - 1));
 		largestCluster.sort(Comparator.naturalOrder());
 		for (OSMTile tile : largestCluster) {
 			features.add(GeoJSON.createSquare(tile.getRectangle(),
@@ -94,8 +94,8 @@ public class CreateLargestClusterGeoJSONTiles {
 		}
     }
 
-	private static List<List<OSMTile>> computeLargestCluster() throws IOException {
-		List<List<OSMTile>> clusters = new ArrayList<>();
+	private static List<Set<OSMTile>> computeLargestCluster() throws IOException {
+		List<Set<OSMTile>> clusters = new ArrayList<>();
 
 		Set<OSMTile> tiles = OSMTile.readTiles(new File(VISITED_TILES_TXT));
 		Preconditions.checkState(tiles.size() > 0,
@@ -116,8 +116,8 @@ public class CreateLargestClusterGeoJSONTiles {
 			if (partOfCluster(allTiles, tile)) {
 				// add to a cluster or create a new one
 				boolean found = false;
-				List<OSMTile> foundCluster = null;
-				for (List<OSMTile> cluster : clusters) {
+				Set<OSMTile> foundCluster = null;
+				for (Set<OSMTile> cluster : clusters) {
 					if (isAdjacent(cluster, tile)) {
 						//log.info("Tile: " + tile + ": cluster: " + cluster);
 						cluster.add(tile);
@@ -130,7 +130,7 @@ public class CreateLargestClusterGeoJSONTiles {
 				if (!found) {
 					log.info("Found tile in new cluster: " + tile);
 
-					List<OSMTile> cluster = new ArrayList<>();
+					Set<OSMTile> cluster = new HashSet<>();
 					cluster.add(tile);
 					clusters.add(cluster);
 					foundCluster = cluster;
@@ -145,7 +145,7 @@ public class CreateLargestClusterGeoJSONTiles {
 		return clusters;
 	}
 
-	private static void extendCluster(Set<OSMTile> tiles, Set<OSMTile> allTiles, List<OSMTile> foundCluster) {
+	private static void extendCluster(Set<OSMTile> tiles, Set<OSMTile> allTiles, Set<OSMTile> foundCluster) {
 		// extend this cluster as far as possible to speed up
 		// processing and avoid disconnected clusters
 		while (true) {
@@ -171,7 +171,7 @@ public class CreateLargestClusterGeoJSONTiles {
 		}
 	}
 
-	private static boolean isAdjacent(List<OSMTile> cluster, OSMTile ref) {
+	private static boolean isAdjacent(Set<OSMTile> cluster, OSMTile ref) {
 		return cluster.contains(ref.up()) ||
 				cluster.contains(ref.down()) ||
 				cluster.contains(ref.right()) ||

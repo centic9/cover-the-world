@@ -49,11 +49,11 @@ public class CreateLargestClusterGeoJSONSquares {
 
 		log.info("Computing largest cluster squares");
 
-		List<List<UTMRefWithHash>> clusters = computeLargestCluster();
+		List<Set<UTMRefWithHash>> clusters = computeLargestCluster();
 
 		clusters.sort(Comparator.
-				comparingInt((List<UTMRefWithHash> o) -> o.size()).
-				thenComparingInt(List::hashCode).
+				comparingInt((Set<UTMRefWithHash> o) -> o.size()).
+				thenComparingInt(Set::hashCode).
 				reversed());
 
 		log.info("Found " + clusters.size() + " cluster, top 5: \n" +
@@ -76,7 +76,7 @@ public class CreateLargestClusterGeoJSONSquares {
 
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
-		List<UTMRefWithHash> largestCluster = clusters.get(0);
+		List<UTMRefWithHash> largestCluster = new ArrayList<>(clusters.get(0));
 		largestCluster.sort(Comparator.naturalOrder());
 		for (UTMRefWithHash square : largestCluster) {
 			features.add(GeoJSON.createSquare(square.getRectangle(),
@@ -98,8 +98,8 @@ public class CreateLargestClusterGeoJSONSquares {
 		}
     }
 
-	private static List<List<UTMRefWithHash>> computeLargestCluster() throws IOException {
-		List<List<UTMRefWithHash>> clusters = new ArrayList<>();
+	private static List<Set<UTMRefWithHash>> computeLargestCluster() throws IOException {
+		List<Set<UTMRefWithHash>> clusters = new ArrayList<>();
 
 		Set<UTMRefWithHash> squares = UTMRefWithHash.readSquares(new File(VISITED_SQUARES_TXT));
 		Preconditions.checkState(squares.size() > 0,
@@ -120,8 +120,8 @@ public class CreateLargestClusterGeoJSONSquares {
 			if (partOfCluster(allSquares, square)) {
 				// add to a cluster or create a new one
 				boolean found = false;
-				List<UTMRefWithHash> foundCluster = null;
-				for (List<UTMRefWithHash> cluster : clusters) {
+				Set<UTMRefWithHash> foundCluster = null;
+				for (Set<UTMRefWithHash> cluster : clusters) {
 					if (isAdjacent(cluster, square)) {
 						//log.info("Square: " + square + ": cluster: " + cluster);
 						cluster.add(square);
@@ -136,7 +136,7 @@ public class CreateLargestClusterGeoJSONSquares {
 							square.toLatLng().getLatitude(),
 							square.toLatLng().getLongitude(), 12));
 
-					List<UTMRefWithHash> cluster = new ArrayList<>();
+					Set<UTMRefWithHash> cluster = new HashSet<>();
 					cluster.add(square);
 					clusters.add(cluster);
 					foundCluster = cluster;
@@ -154,7 +154,7 @@ public class CreateLargestClusterGeoJSONSquares {
 	}
 
 	private static void extendCluster(Set<UTMRefWithHash> squares, Set<UTMRefWithHash> allSquares,
-			List<UTMRefWithHash> foundCluster) {
+			Set<UTMRefWithHash> foundCluster) {
 		// extend this cluster as far as possible to speed up
 		// processing and avoid disconnected clusters
 		while (true) {
@@ -180,7 +180,7 @@ public class CreateLargestClusterGeoJSONSquares {
 		}
 	}
 
-	private static boolean isAdjacent(List<UTMRefWithHash> cluster, UTMRefWithHash ref) {
+	private static boolean isAdjacent(Set<UTMRefWithHash> cluster, UTMRefWithHash ref) {
 		return cluster.contains(ref.up()) ||
 				cluster.contains(ref.down()) ||
 				cluster.contains(ref.right()) ||
