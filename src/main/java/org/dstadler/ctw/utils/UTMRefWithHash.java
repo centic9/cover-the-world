@@ -130,7 +130,7 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 	}
 
 	private UTMRefWithHash fixupZone() {
-		return new UTMRefWithHash(getLngZone(), toLatLng().toUTMRef().getLatZone(), getEasting(), getNorthing());
+		return new UTMRefWithHash(getLngZone(), UTMRef.getUTMLatitudeZoneLetter(toLatLng().getLatitude()), getEasting(), getNorthing());
 	}
 
 	public UTMRefWithHash up() {
