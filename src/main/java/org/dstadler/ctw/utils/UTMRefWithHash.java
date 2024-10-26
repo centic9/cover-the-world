@@ -5,6 +5,7 @@ import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -193,6 +194,16 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 						stream().
 						map(UTMRefWithHash::fromString).
 						collect(Collectors.toSet());
+	}
+
+	public String toString() {
+		// work around a bug in underlying UTMRef when Double.toString()
+		// starts to use exponential format, e.g. for "33T 100000.0 10000000.0"
+		return String.format(Locale.ROOT, "%d%s %f %f",
+				this.getLngZone(), this.getLatZone(), this.getEasting(), this.getNorthing()).
+				// cut away trailing zeros in the decimal part, couuld not find how to do this
+				// with String.format() itself
+				replaceAll("\\.(\\d)0+", ".$1");
 	}
 
 	@Override

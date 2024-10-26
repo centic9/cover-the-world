@@ -82,7 +82,8 @@ public class UTMRefWithHashTest {
 
         // ensure that we get values at km-boundary
         // https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system#Latitude_bands
-        assertTrue(UTMREF_SQUARE_PATTERN.matcher(ref.toString()).matches());
+        assertTrue(UTMREF_SQUARE_PATTERN.matcher(ref.toString()).matches(),
+				"Failed for " + ref);
     }
 
 	@Test
@@ -368,5 +369,21 @@ public class UTMRefWithHashTest {
 
 		assertEquals(ref1.up().toString(), ref2.toString());
 		assertEquals(ref2.down().toString(), ref1.toString());
+	}
+
+	@Test
+	void testDoubleFormat() {
+		String refStr = "33T 100000.0 10000000.0";
+		UTMRefWithHash ref = UTMRefWithHash.fromString(refStr);
+		assertNotNull(ref);
+		assertEquals(33, ref.getLngZone());
+		assertEquals('T', ref.getLatZone());
+		assertEquals(100000.0, ref.getEasting());
+		assertEquals(10000000.0, ref.getNorthing());
+
+		assertEquals(refStr, ref.string());
+
+		/* This fails due to invalid latitude
+		assertEquals(refStr, UTMRefWithHash.getSquareString(ref.toLatLng()));*/
 	}
 }
