@@ -73,8 +73,14 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 	public static String getSquareString(LatLng latLng) {
 		String square = getSquareStringInternal(latLng);
 
+		final LatLng latLngSquare;
+		try {
+			latLngSquare = UTMRefWithHash.fromString(square).toLatLng();
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Failed for " + latLng, e);
+		}
+
 		// don't try to normalize again if lat would be out of range
-		LatLng latLngSquare = UTMRefWithHash.fromString(square).toLatLng();
 		if (latLngSquare.getLatitude() > 80 || latLngSquare.getLatitude() < -80) {
 			return square;
 		}
