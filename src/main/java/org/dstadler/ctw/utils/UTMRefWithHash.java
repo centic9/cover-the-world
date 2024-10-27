@@ -95,11 +95,8 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 
 	private static String getSquareStringInternal(LatLng latLng) {
 		UTMRef utmRef = latLng.toUTMRef();
-		return "" +
-				utmRef.getLngZone() +
-				utmRef.getLatZone() + " " +
-				normalize(utmRef.getEasting()) + " " +
-				normalize(utmRef.getNorthing());
+		return formatUTMRef(utmRef.getLngZone(), utmRef.getLatZone(),
+				normalize(utmRef.getEasting()), normalize(utmRef.getNorthing()));
 	}
 
 	/**
@@ -197,13 +194,17 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 	}
 
 	public String toString() {
+		return formatUTMRef(this.getLngZone(), this.getLatZone(), this.getEasting(), this.getNorthing());
+	}
+
+	private static String formatUTMRef(int lngZone, char latZone, double easting, double northing) {
 		// work around a bug in underlying UTMRef when Double.toString()
 		// starts to use exponential format, e.g. for "33T 100000.0 10000000.0"
 		return String.format(Locale.ROOT, "%d%s %f %f",
-				this.getLngZone(), this.getLatZone(), this.getEasting(), this.getNorthing()).
+						lngZone, latZone, easting, northing).
 				// cut away trailing zeros in the decimal part, couuld not find how to do this
 				// with String.format() itself
-				replaceAll("\\.(\\d)0+", ".$1");
+						replaceAll("\\.(\\d)0+", ".$1");
 	}
 
 	@Override

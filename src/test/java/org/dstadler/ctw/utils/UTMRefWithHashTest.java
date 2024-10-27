@@ -93,6 +93,9 @@ public class UTMRefWithHashTest {
 		String ref1 = UTMRefWithHash.getSquareString(new LatLng(47.999573, 15.187657));
 		String ref2 = UTMRefWithHash.getSquareString(new LatLng(48.002663, 15.187625));
 
+		// first ensure we get the expected string
+		assertEquals("33T 513000.0 5316000.0", ref1);
+
 		assertEquals(ref1, ref2,
 				"Expecting to get the same square for the two coordinates, but had " + ref1 + " and " + ref2);
 	}
