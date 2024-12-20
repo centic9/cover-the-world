@@ -54,15 +54,17 @@ dependencies {
     implementation fileTree(dir: 'lib', include: ['*.jar'])
 	// https://github.com/filosganga/geogson
 	implementation 'com.github.filosganga:geogson-core:1.4.31'
-    implementation 'org.geotools:gt-main:30.0'
-    implementation 'org.geotools:gt-geojson:30.0'
-    implementation 'org.geotools:gt-render:30.0'
+    implementation 'org.geotools:gt-main:31.3'
+    implementation 'org.geotools:gt-geojson:31.3'
+    implementation 'org.geotools:gt-render:31.3'
 
     // provide a logging.properties only when running the example, but
     // don't include it in the jar-file
     runtimeOnly files('src/runtime/resources')
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
     testImplementation 'org.dstadler:commons-test:1.0.0.21'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.24.2'
 }
@@ -105,14 +107,14 @@ jacocoTestReport {
     }
 }*/
 
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allJava
+tasks.register('sourcesJar', Jar) {
+	archiveClassifier = 'sources'
+	from sourceSets.main.allJava
 }
 
-task javadocJar(type: Jar) {
-    archiveClassifier = 'javadoc'
-    from javadoc
+tasks.register('javadocJar', Jar) {
+	archiveClassifier = 'javadoc'
+	from javadoc
 }
 
 
