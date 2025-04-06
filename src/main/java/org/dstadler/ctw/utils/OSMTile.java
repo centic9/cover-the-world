@@ -12,13 +12,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Preconditions;
 
+import jakarta.annotation.Nullable;
 import uk.me.jstott.jcoord.LatLng;
 
 /**
