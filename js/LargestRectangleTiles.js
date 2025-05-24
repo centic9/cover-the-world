@@ -1,1 +1,2 @@
-var tilerectanglestates=[{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"popupContent":"5 rectangle: 1x5"},"geometry":{"type":"Polygon","coordinates":[[[14.3042,48.32704],[14.32617,48.32704],[14.32617,48.25394],[14.3042,48.25394],[14.3042,48.32704]]]}}]}];
+var tilerectanglestates=[{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"popupContent":"5 rectangle: 1x5"},"geometry":{"type":"Polygon","coordinates":[[[14.3042,48.32704],[14.32617,48.32704],[14.32617,48.25394],[14.3042,48.25394],[14.3042,48.32704]]]}
+  }]}];

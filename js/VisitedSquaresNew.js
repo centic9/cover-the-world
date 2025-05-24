@@ -1,1 +1,3 @@
-var squaresnewstates=[{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[14.27185,48.30089],[14.27159,48.31888],[14.29857,48.31905],[14.29882,48.30106],[14.27185,48.30089]]]}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[14.28546,48.30097],[14.29894,48.30097],[14.29894,48.29198],[14.28546,48.29198],[14.28546,48.30097]]]}}]}];
+var squaresnewstates=[{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[14.27185,48.30089],[14.27159,48.31888],[14.29857,48.31905],[14.29882,48.30106],[14.27185,48.30089]]]}
+  },{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[14.28546,48.30097],[14.29894,48.30097],[14.29894,48.29198],[14.28546,48.29198],[14.28546,48.30097]]]}
+  }]}];

@@ -1,1 +1,2 @@
-var rectanglestates=[{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"popupContent":"9 rectangle: 3x3"},"geometry":{"type":"Polygon","coordinates":[[[14.32649,48.24724],[14.32614,48.27423],[14.36657,48.27446],[14.3669,48.24747],[14.32649,48.24724]]]}}]}];
+var rectanglestates=[{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"popupContent":"9 rectangle: 3x3"},"geometry":{"type":"Polygon","coordinates":[[[14.32649,48.24724],[14.32614,48.27423],[14.36657,48.27446],[14.3669,48.24747],[14.32649,48.24724]]]}
+  }]}];
