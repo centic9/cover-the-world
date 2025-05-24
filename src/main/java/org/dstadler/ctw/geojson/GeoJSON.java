@@ -51,8 +51,7 @@ public class GeoJSON {
 						out.nullValue();
 					} else {
 						out.beginArray();
-						if (value instanceof SinglePosition) {
-							SinglePosition sp = (SinglePosition) value;
+						if (value instanceof SinglePosition sp) {
 							out.value(formatDecimal(sp.lon()));
 							out.value(formatDecimal(sp.lat()));
 							if (!Double.isNaN(sp.alt())) {
@@ -82,7 +81,15 @@ public class GeoJSON {
 						out.name(FeatureAdapter.TYPE_NAME).value(FeatureAdapter.FEATURE_TYPE);
 						writeProperties(out, value);
 						writeGeometry(out, value);
+
+						// make JSON output use some newlines
+						out.setIndent(" ");
+
 						out.endObject();
+
+						// back to empty to still use a mostly compact form
+						out.setIndent("");
+
 					}
 				}
 
