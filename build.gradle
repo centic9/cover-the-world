@@ -72,7 +72,7 @@ dependencies {
 }
 
 wrapper {
-    gradleVersion = '8.5'
+    gradleVersion = '8.14'
 }
 
 test {
@@ -100,14 +100,6 @@ jacocoTestReport {
         xml.required = true
     }
 }
-
-/*jacocoTestReport {
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: 'org/dstadler/audio/example/**')
-        }))
-    }
-}*/
 
 tasks.register('sourcesJar', Jar) {
 	archiveClassifier = 'sources'
