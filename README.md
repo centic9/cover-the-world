@@ -146,7 +146,7 @@ how to do a whole-world computation efficiently.
 
 ### Release it
 
-* Check version in `gradle.properties`
+* Check the version in `gradle.properties`
 
     ./gradlew --console=plain publishToMavenCentral
 

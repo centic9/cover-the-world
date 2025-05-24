@@ -33,7 +33,7 @@ base {
 
 repositories {
 	// for geotools (needs to appear before mavenCentral)
-	maven { url 'https://repo.osgeo.org/repository/release/' }
+	maven { url = 'https://repo.osgeo.org/repository/release/' }
 
     mavenCentral()
 }
@@ -129,7 +129,7 @@ java {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = archivesBaseName
+            artifactId = 'cover-the-world'
             from components.java
 
             pom {
