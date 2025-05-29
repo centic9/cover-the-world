@@ -15,6 +15,7 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@v0.79.0/dist/L.Control.Locate.min.css" />
 	<link rel="stylesheet" href="css/L.Control.MousePosition.css" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+	<link rel="stylesheet" href=" https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.src.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-loading@0.1.24/src/Control.Loading.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@3.0.2/Control.FullScreen.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-contextmenu@1.4.0/dist/leaflet.contextmenu.min.css" />
@@ -28,8 +29,8 @@
 	<script type="text/javascript" src="js/L.Control.MousePosition.js"></script>
 	<!-- https://github.com/cliffcloud/Leaflet.EasyButton -->
 	<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2.4.0/src/easy-button.js"></script>
-	<!-- https://github.com/sjaakp/leaflet-search -->
-	<script src="https://unpkg.com/@sjaakp/leaflet-search@1.0.2/dist/leaflet-search.js"></script>
+	<!-- https://github.com/stefanocudini/leaflet-search -->
+	<script src="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.src.min.js"></script>
     <!-- https://github.com/TolonUK/Leaflet.EdgeBuffer/ -->
     <script src="https://cdn.jsdelivr.net/npm/leaflet-edgebuffer@1.0.6/src/leaflet.edgebuffer.min.js"></script>
 	<!-- https://github.com/ebrelsford/Leaflet.loading -->
@@ -154,6 +155,9 @@ const map = L.map('map', {
 	}, {
 		text: 'Grid 14',
 		callback: grid14
+	}, {
+		text: 'Grid',
+		callback: grid
 	}]
 });
 
@@ -178,6 +182,14 @@ function grid14 () {
 		map.removeLayer(gridOsmFixed);
 	} else {
 		map.addLayer(gridOsmFixed);
+	}
+}
+
+function grid () {
+	if (map.hasLayer(gridOsm)) {
+		map.removeLayer(gridOsm);
+	} else {
+		map.addLayer(gridOsm);
 	}
 }
 
@@ -230,8 +242,8 @@ const cycle = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.
 	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
 });
 
+// https://www.cyclosm.org/
 // https://b.tile-cyclosm.openstreetmap.fr/cyclosm/12/2203/1412.png
-// See https://www.cyclosm.org/
 const cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	edgeBufferTiles: 1,
@@ -242,35 +254,44 @@ const cyclosm = L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{
 // https://tiles.bergfex.at/
 // https://tiles.bergfex.at/styles/bergfex-osm/12/2203/1412.png
 const bergfex = L.tileLayer('https://tiles.bergfex.at/styles/bergfex-osm/{z}/{x}/{y}.png', {
-	maxZoom: 20,
+	maxZoom: 22,
 	//edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
 });
 
-// https://tiles.bergfex.at/
-// https://tiles.bergfex.at/styles/bergfex-osm/12/2207/1415@2x.jpg
-const bergfexJpg = L.tileLayer('https://tiles.bergfex.at/styles/bergfex-osm/{z}/{x}/{y}@2x.jpg', {
-	maxZoom: 20,
-	//edgeBufferTiles: 1,
-	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
-});
-
-// https://tiles.bergfex.at/data/oek50-512/12/2207/1415.jpg70
-const bergfexOEK50 = L.tileLayer('https://tiles.bergfex.at/data/oek50-512/{z}/{x}/{y}.jpg70', {
+// https://tiles.bergfex.at/data/oek50-512/12/2207/1415.jpeg
+const bergfexOEK50 = L.tileLayer('https://tiles.bergfex.at/data/oek50-512/{z}/{x}/{y}.jpeg', {
 	maxZoom: 15,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
 });
 
-// https://tiles.bergfex.at/styles/basemap-ortho/12/2203/1412.png
-const bergfexOrtho = L.tileLayer('https://tiles.bergfex.at/styles/basemap-ortho/{z}/{x}/{y}.png', {
-	maxZoom: 20,
+// https://mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/12/1415/2207.jpeg
+const bergfexOrtho = L.tileLayer('https://mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg', {
+	maxZoom: 19,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
+});
+
+// https://a.tiles.mapbox.com/v4/mapbox.satellite/12/2207/1415.png?access_token=pk.eyJ1Ijoib3V0ZG9vcmFjdGl2ZSIsImEiOiJjank1bXFrMmQwNW1tM2NsZjVubmdwaHR1In0.MMAza_VYGelTvvhNOP4fig
+const outdoorActiveOrtho = L.tileLayer('https://{s}.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoib3V0ZG9vcmFjdGl2ZSIsImEiOiJjank1bXFrMmQwNW1tM2NsZjVubmdwaHR1In0.MMAza_VYGelTvvhNOP4fig', {
+	maxZoom: 20,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.tourenportal.at/">Bergfex</a>',
+});
+
+// https://b.tile.thunderforest.com/outdoors/12/2203/1412.png
+// http://leaflet-extras.github.io/leaflet-providers/preview/index.html
+const thunderforestOutdoors = L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
+	maxZoom: 22,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	apikey: '6170aad10dfd42a38d4d8c709a536f38'
 });
 
 // https://tileserver.memomaps.de/tilegen/12/2203/1412.png
@@ -278,31 +299,29 @@ const oepnvKarte = L.tileLayer('https://tileserver.memomaps.de/tilegen/{z}/{x}/{
 	maxZoom: 20,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-    attribution: 'Map <a href="https://memomaps.de/">memomaps.de</a> <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, map data <a href="https://openstreetmap.org/">Openstreetmap</a> <a href="https://opendatacommons.org/licenses/odbl/1.0/">ODbL</a>',
-});
-
-// https://example.com/ctw/tilesSquaresCombined/12/2203/1412.png
-const ctwSquaresCombined = L.tileLayer('tilesSquaresCombined/{z}/{x}/{y}.png', {
-	// we currently only generate up to zoom-level 18
-	maxZoom: 18,
-	edgeBufferTiles: 1,
-	errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
-});
-
-// https://example.com/ctw/tilesTilesCombined/12/2203/1412.png
-const ctwTilesCombined = L.tileLayer('tilesTilesCombined/{z}/{x}/{y}.png', {
-	// we currently only generate up to zoom-level 18
-	maxZoom: 18,
-	edgeBufferTiles: 1,
-	errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: '&copy; <a href="https://dstadler.org/">Dstadler.org</a>'
+    attribution: '<a href="https://%C3%B6pnvkarte.de/">ÖPNV Map</a> by <a href="https://memomaps.de/">MeMoMaps</a> <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, map data <a href="https://openstreetmap.org/">Openstreetmap</a> <a href="https://opendatacommons.org/licenses/odbl/1.0/">ODbL</a>',
 });
 
 // Overlay layers
 ////////////////////////////////////////
+// https://tile.waymarkedtrails.org/cycling/12/2203/1412.png
+const cycling = L.tileLayer('https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', {
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
 // https://tile.waymarkedtrails.org/mtb/12/2203/1412.png
 const mtb = L.tileLayer('https://tile.waymarkedtrails.org/mtb/{z}/{x}/{y}.png', {
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
+// https://tile.waymarkedtrails.org/skating/12/2203/1412.png
+const skating = L.tileLayer('https://tile.waymarkedtrails.org/skating/{z}/{x}/{y}.png', {
 	maxZoom: 18,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
@@ -325,7 +344,15 @@ const hiking = L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
-// https://cs37700.dogadoserver.de/ctw/tilesSquares/12/2203/1412.png
+// https://hillshading.waymarkedtrails.org/srtm/12/2203/1412.png
+const hillshading = L.tileLayer('https://hillshading.waymarkedtrails.org/srtm/{z}/{x}/{y}.png', {
+	maxZoom: 18,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
+// https://example.com/ctw/tilesSquares/12/2203/1412.png
 const ctwSquares = L.tileLayer('tilesSquares/{z}/{x}/{y}.png', {
 	// we currently only generate up to zoom-level 18
 	maxZoom: 18,
@@ -425,10 +452,10 @@ gridOsm.createTile = function (coords) {
 	const size = this.getTileSize()
 
 	// calculate projection coordinates of top left tile pixel
-	var nwPoint = coords.scaleBy(size)
+	const nwPoint = coords.scaleBy(size);
 
 	// calculate geographic coordinates of top left tile pixel
-	var nw = map.unproject(nwPoint, coords.z)
+	const nw = map.unproject(nwPoint, coords.z);
 
 	tile.style.outline = '1px solid green';
 	tile.style.fontWeight = 'bold';
@@ -449,10 +476,10 @@ gridOsmFixed.createTile = function (coords) {
 	const size = this.getTileSize()
 
 	// calculate projection coordinates of top left tile pixel
-	var nwPoint = coords.scaleBy(size)
+	const nwPoint = coords.scaleBy(size);
 
 	// calculate geographic coordinates of top left tile pixel
-	var nw = map.unproject(nwPoint, coords.z)
+	const nw = map.unproject(nwPoint, coords.z);
 
 	tile.style.outline = '1px solid green';
 	//tile.style.fontWeight = 'bold';
@@ -470,12 +497,11 @@ const baseLayers = {
 	'Cycle': cycle,
 	'CyclOSM': cyclosm,
 	'Bergfex': bergfex,
-	'Bergfex JPG': bergfexJpg,
 	'Bergfex OEK50': bergfexOEK50,
 	'Bergfex Ortho': bergfexOrtho,
+	'Outdooractive Ortho': outdoorActiveOrtho,
+	'Thunderforest Outdoors': thunderforestOutdoors,
 	'ÖPNV Karte': oepnvKarte,
-	'CTW Squares Prerender': ctwSquaresCombined,
-	'CTW Tiles Prerender': ctwTilesCombined,
 };
 
 // noinspection JSNonASCIINames
@@ -504,9 +530,12 @@ const overlays = {
 	'Rendered Tiles New': ctwTilesNew,
 	'Rendered Tiles Adjacent': ctwTilesAdjacent,
 	'-- Other --': empty,
+	'Cycling': cycling,
 	'MTB': mtb,
+	'Skating': skating,
 	'Hiking': hiking,
 	'Slopes': slopes,
+	'Hillshading': hillshading,
 	'Grid 14': gridOsmFixed,
 	'Grid': gridOsm,
 	'-- -- --': empty,
@@ -699,8 +728,22 @@ const buttonT = L.easyButton('<strong>T</strong>', function(btn, map){
 
 L.easyBar([buttonA, buttonN, buttonS, buttonT]).addTo(map);
 
-map.setGeocoder('Nominatim');
-map.addControl(L.control.search({ }));
+map.addControl( new L.Control.Search({
+	position:'topright',
+	url: 'https://nominatim.openstreetmap.org/search?format=json&accept-language=de-DE&q={s}',
+	jsonpParam: 'json_callback',
+	propertyName: 'display_name',
+	propertyLoc: ['lat','lon'],
+	markerLocation: true,
+	autoType: false,
+	autoCollapse: true,
+	minLength: 2,
+	zoom:10,
+	text: 'Suchen...',
+	textCancel: 'Abbrechen',
+	textErr: 'Kein Ergebnis gefunden'
+}) );
+
 
 map.on("overlayadd", function(e) {
 	//console.log("overlay added: " + e.name);
@@ -728,14 +771,6 @@ map.on("overlayadd", function(e) {
         buttonRe.getContainer().style.setProperty("color", "#FF0000");
 	} else if (e.name === "StatsHunter Square") {
 		buttonSq.getContainer().style.setProperty("color", "#FF0000");
-	} else if (e.name === "StatsHunter Square 27x27") {
-		button27.getContainer().style.setProperty("color", "#FF0000");
-	} else if (e.name === "StatsHunter Square 28x28") {
-		button28.getContainer().style.setProperty("color", "#FF0000");
-	} else if (e.name === "StatsHunter Square 30x30") {
-		button30.getContainer().style.setProperty("color", "#FF0000");
-	} else if (e.name === "StatsHunter Square 35x35") {
-		button35.getContainer().style.setProperty("color", "#FF0000");
 	}
 })
 
@@ -801,11 +836,6 @@ if (params.get("squares") === "1") {
 		map.addLayer(ctwTilesNew);
 	}
 	map.addLayer(ctwTilesAdjacent);
-} else if (params.get("prerenderedSquares") === "1") {
-	map.addLayer(ctwSquaresCombined);
-	isSquares = true;
-} else if (params.get("prerenderedTiles") === "1") {
-	map.addLayer(ctwTilesCombined);
 } else {
 	map.addLayer(geoTiles);
 	if (params.get("new") !== "0") {
@@ -815,14 +845,23 @@ if (params.get("squares") === "1") {
 	buttonT.getContainer().style.setProperty("color", "#FF0000");
 }
 
+if (params.get("cycling") === "1") {
+	map.addLayer(cycling);
+}
 if (params.get("mtb") === "1") {
 	map.addLayer(mtb);
+}
+if (params.get("skating") === "1") {
+	map.addLayer(skating);
 }
 if (params.get("slopes") === "1") {
 	map.addLayer(slopes);
 }
 if (params.get("hiking") === "1") {
 	map.addLayer(hiking);
+}
+if (params.get("hillshading") === "1") {
+	map.addLayer(hillshading);
 }
 
 if (params.get("adjacent") === "1") {
