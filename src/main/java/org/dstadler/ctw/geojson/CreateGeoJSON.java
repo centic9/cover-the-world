@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.utils.BaseTile;
@@ -114,6 +113,7 @@ public class CreateGeoJSON {
 		boolean found = false;
 		boolean[] isY = null;
 		if (squares.size() > 0 && squares.iterator().next() instanceof OSMTile) {
+			//noinspection unchecked
 			for (OSMTile tile : (Set<OSMTile>) squares) {
 				if (tile.getXTile() > maxX) {
 					maxX = tile.getXTile();
@@ -132,6 +132,7 @@ public class CreateGeoJSON {
 				found = true;
 			}
 
+			//noinspection unchecked
 			isY = computePopulatedRows(title, (Set<OSMTile>) squares, minX, minY, maxX, maxY);
 		}
 
@@ -169,6 +170,7 @@ public class CreateGeoJSON {
 				handleSingleAreas(toRectangle, squares, features);
 
 				// re-compute which rows are empty from time to time to speed up processing a bit
+				//noinspection unchecked
 				isY = computePopulatedRows(title, (Set<OSMTile>) squares, minX, minY, maxX, maxY);
 			}
 
@@ -198,7 +200,7 @@ public class CreateGeoJSON {
 		log.info(title + ": Wrote " + features.size() + " features with " + squares.size() + " single " + title + " from " + squaresFile + " to " + jsonOutputFile);
 	}
 
-	private static <T extends BaseTile<T>> boolean[] computePopulatedRows(String title,
+	private static boolean[] computePopulatedRows(String title,
 			Set<OSMTile> squares, int minX, int minY, int maxX, int maxY) {
 		int[][] M = MatrixUtils.populateMatrix(squares, minX, minY, maxX, maxY);
 
@@ -219,6 +221,7 @@ public class CreateGeoJSON {
 			T square = it.next();
 
 			// check if this square is single
+			//noinspection SuspiciousMethodCalls
 			if (!squares.contains(square.up()) &&
 					!squares.contains(square.down()) &&
 					!squares.contains(square.left()) &&

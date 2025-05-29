@@ -23,7 +23,7 @@ import uk.me.jstott.jcoord.LatLng;
 /**
  * Helper class to handle information about OSM-based map-tiles.
  *
- * It allows to convert from Latitude/Longitude plus Zoom-Level
+ * It allows converting from Latitude/Longitude plus Zoom-Level
  * to the OSM tile numbers which are used for naming images in the
  * file-system to use as static resources for web-pages.
  *
@@ -45,7 +45,7 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 	private final int yTile;
 
 	public OSMTile(int zoom, int xTile, int yTile) {
-		// plus one for now to allow zoom 20 in some places
+		// plus one for now to allow using zoom 20 in some places
 		Preconditions.checkArgument(zoom >= OSM_MIN_ZOOM && zoom <= OSM_MAX_ZOOM + 1,
 				"Invalid zoom %s, needs to be between %s and %s",
 				zoom, OSM_MIN_ZOOM, OSM_MAX_ZOOM + 1);
@@ -89,7 +89,7 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		}
 
 		int ytile = (int) Math.floor(computeYTile(lat, zoom));
-		// precision seems to be not high enough to properly compute this in some cases (e.g. lat = -90)
+		// precision seems not high enough to properly compute this in some cases (e.g., lat = -90)
 		if (ytile < 0) {
 			ytile = 0;
 		}
@@ -264,7 +264,7 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 	 * Returns a list of tiles which represent this tile at the given zoom
 	 * @param zoom The target zoom
 	 * @return A list of OSMTile objects. It contains one element if the given
-	 * 		zoom is equal to the zoom of this tile. Otherwise more than one OSMTile
+	 * 		zoom is equal to the zoom of this tile. Otherwise, more than one OSMTile
 	 * 		are returned.
 	 */
 	public List<OSMTile> getTilesAtZoom(int zoom) {
