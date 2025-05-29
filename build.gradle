@@ -23,7 +23,7 @@ apply plugin: 'idea'
 
 java {
   toolchain {
-	  sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
   }
 }
 group = 'org.dstadler'
@@ -35,7 +35,7 @@ repositories {
 	// for geotools (needs to appear before mavenCentral)
 	maven { url = 'https://repo.osgeo.org/repository/release/' }
 
-    mavenCentral()
+	mavenCentral()
 }
 
 forbiddenApis {
@@ -75,7 +75,7 @@ dependencies {
 }
 
 wrapper {
-    gradleVersion = '8.14'
+    gradleVersion = '8.14.1'
 }
 
 test {
@@ -96,12 +96,6 @@ test {
 
 jacoco {
     toolVersion = '0.8.12'
-}
-
-jacocoTestReport {
-    reports {
-        xml.required = true
-    }
 }
 
 tasks.register('sourcesJar', Jar) {
