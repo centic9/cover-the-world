@@ -78,9 +78,28 @@
 const params = new URLSearchParams(window.location.search);
 /* supported query params:
 Base Map: squares, bergfex, cycle, renderedSquares, renderedTiles
-Overlay: tiles, mtb, slopes, hiking
+Overlay: tiles, cycling, mtb, skating, gpx, slopes, hiking, hillshading
 Feature: new, adjacent, square, rectangle, cluster
+
+supported anchor:
+#map=<zoom>/<lat>/<lng>
 */
+
+function getAnchor() {
+	//console.log("URL: " + document.URL);
+	let anchors = document.URL.split('#');
+	if (anchors.length <= 1) {
+		return null;
+	}
+
+	//console.log("Initial: " + anchors[1]);
+
+	// cut away query params
+	anchors = anchors[1].split('?');
+
+	//console.log("Second: " + anchors[0]);
+	return anchors[0];
+}
 
 function mapstyle() {
 	return{
@@ -290,7 +309,7 @@ const thunderforestOutdoors = L.tileLayer('https://{s}.tile.thunderforest.com/ou
 	maxZoom: 22,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 	apikey: '6170aad10dfd42a38d4d8c709a536f38'
 });
 
@@ -630,23 +649,23 @@ L.easyBar([buttonCl, buttonRe, buttonSq]).addTo(map);
 const buttonA = L.easyButton('<strong>A</strong>', function (btn, map) {
 	if (map.hasLayer(geoTiles)) {
 		map.removeLayer(geoSquaresAdjacent);
-        if (map.hasLayer(geoTilesAdjacent)) {
-            map.removeLayer(geoTilesAdjacent);
+		if (map.hasLayer(geoTilesAdjacent)) {
+			map.removeLayer(geoTilesAdjacent);
 			btn.getContainer().style.removeProperty("color");
-        } else {
-            map.addLayer(geoTilesAdjacent);
+		} else {
+			map.addLayer(geoTilesAdjacent);
 			btn.getContainer().style.setProperty("color", "#FF0000");
-        }
-    } else {
+		}
+	} else {
 		map.removeLayer(geoTilesAdjacent);
-        if (map.hasLayer(geoSquaresAdjacent)) {
-            map.removeLayer(geoSquaresAdjacent);
+		if (map.hasLayer(geoSquaresAdjacent)) {
+			map.removeLayer(geoSquaresAdjacent);
 			btn.getContainer().style.removeProperty("color");
-        } else {
-            map.addLayer(geoSquaresAdjacent);
+		} else {
+			map.addLayer(geoSquaresAdjacent);
 			btn.getContainer().style.setProperty("color", "#FF0000");
-        }
-    }
+		}
+	}
 });
 
 const buttonN = L.easyButton('<strong>N</strong>', function (btn, map) {
@@ -744,6 +763,14 @@ map.addControl( new L.Control.Search({
 	textErr: 'Kein Ergebnis gefunden'
 }) );
 
+// React to map movements and update the URL anchor
+map.on('moveend', function(e) {
+	let anchor = "map=" + e.target.getZoom() + "/" + e.target.getCenter().lat.toFixed(5) + "/" + e.target.getCenter().lng.toFixed(5);
+	//console.log("Moved: " + e + ": " + e.type + ": " + e.target.getZoom() + ": " + e.target.getCenter() + ": " + anchor);
+
+	// set the anchor in the URL
+	location.href = "#" + anchor;
+});
 
 map.on("overlayadd", function(e) {
 	//console.log("overlay added: " + e.name);
@@ -880,6 +907,21 @@ if (params.get("cluster") === "1") {
 	map.addLayer(isSquares ? largestClusterSquares : largestClusterTiles);
 	buttonCl.getContainer().style.setProperty("color", "#FF0000");
 }
+
+// Allow specifying an anchor in the URL to jump to a specific location on the map.
+// e.g. #map=16/47.78276/13.39015
+let anchor = getAnchor();
+//console.log("Anchor: " + anchor);
+if (anchor != null) {
+    const obj = /map=(\d+)\/([\d.]+)\/([\d+.]+)/.exec(anchor);
+	if (obj == null) {
+		console.log("Could not parse anchor: " + anchor);
+    } else {
+		console.log("Set initial map-location: " + JSON.stringify(obj));
+		map.setView(new L.LatLng(obj[2], obj[3]), obj[1]);
+	}
+}
+
 </script>
 </body>
 </html>
