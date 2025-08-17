@@ -26,9 +26,11 @@ public class CoverTheWorld {
 		// this needs to run first to compute "Visited*.txt"
 		CreateListOfVisitedSquares.main(args);
 
+		// read "Visited*.txt"
 		// produce "Adjacent*"
 		CreateAdjacent.main(args);
 
+		// read "Visited*.txt"
 		// produce "Visited*.js"
 		CreateGeoJSON.main(args);
 

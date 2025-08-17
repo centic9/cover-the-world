@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.utils.BaseTile;
 import org.dstadler.ctw.utils.OSMTile;
@@ -70,20 +69,20 @@ public class CreateAdjacent {
 
 		log.info("Computing GeoJSON for adjacent squares and tiles with recurseLevel " + recurseLevel);
 
-		writeGeoJSON(VISITED_SQUARES_TXT, ADJACENT_SQUARES_JS, "adjacentSquares",
+		writeAdjacentGeoJSON(VISITED_SQUARES_TXT, ADJACENT_SQUARES_JS, "adjacentSquares",
 				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_TXT, null, recurseLevel);
 
-		writeGeoJSON(VISITED_SQUARES_NEW_TXT, ADJACENT_SQUARES_NEW_JS, "adjacentSquaresNew",
+		writeAdjacentGeoJSON(VISITED_SQUARES_NEW_TXT, ADJACENT_SQUARES_NEW_JS, "adjacentSquaresNew",
 				UTMRefWithHash::fromString, "squares", ADJACENT_SQUARES_NEW_TXT, VISITED_SQUARES_TXT, recurseLevel);
 
-		writeGeoJSON(VISITED_TILES_TXT, ADJACENT_TILES_JS, "adjacentTiles",
+		writeAdjacentGeoJSON(VISITED_TILES_TXT, ADJACENT_TILES_JS, "adjacentTiles",
 				OSMTile::fromString, "tiles", ADJACENT_TILES_TXT, null, recurseLevel);
 
-		writeGeoJSON(VISITED_TILES_NEW_TXT, ADJACENT_TILES_NEW_JS, "adjacentTilesNew",
+		writeAdjacentGeoJSON(VISITED_TILES_NEW_TXT, ADJACENT_TILES_NEW_JS, "adjacentTilesNew",
 				OSMTile::fromString, "tiles", ADJACENT_TILES_NEW_TXT, VISITED_TILES_TXT, recurseLevel);
 	}
 
-	private static <T extends BaseTile<T>> void writeGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
+	private static <T extends BaseTile<T>> void writeAdjacentGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
 			Function<String, T> toObject,
 			String title, String adjacentTxtFile, String fullTxtFile, int recurseLevel) throws IOException {
 		log.info("Writing from " + squaresFile + " to " + jsonOutputFile +
