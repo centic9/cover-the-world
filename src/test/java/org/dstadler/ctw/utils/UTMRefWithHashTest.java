@@ -16,9 +16,11 @@ import java.nio.file.NoSuchFileException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomUtils;
+import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.util.SuppressForbidden;
 import org.junit.jupiter.api.Disabled;
@@ -29,7 +31,9 @@ import uk.me.jstott.jcoord.NotDefinedOnUTMGridException;
 import uk.me.jstott.jcoord.UTMRef;
 
 public class UTMRefWithHashTest {
-    private static final Pattern UTMREF_SQUARE_PATTERN = Pattern.compile("\\d+[C-HJ-NP-X] \\d+000.0 (?:\\d+00)?0.0");
+	private static final Logger log = LoggerFactory.make();
+
+	private static final Pattern UTMREF_SQUARE_PATTERN = Pattern.compile("\\d+[C-HJ-NP-X] \\d+000.0 (?:\\d+00)?0.0");
 
     private final static int MIN_LATITUDE = -80;
     private final static int MAX_LATITUDE = 84;
@@ -416,7 +420,7 @@ public class UTMRefWithHashTest {
 
 				assertNotNull(UTMRefWithHash.getSquareString(new LatLng(lat, lon)));
 			}
-			System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
+			log.info("Took: " + (System.currentTimeMillis() - start) + "ms");
 		}
 	}
 
