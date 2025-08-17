@@ -1,7 +1,11 @@
 package org.dstadler.ctw;
 
-import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.io.function.IORunnable;
+import org.dstadler.commons.util.ExecutorUtil;
 import org.dstadler.ctw.geojson.CreateAdjacent;
 import org.dstadler.ctw.geojson.CreateClusterGeoJSON;
 import org.dstadler.ctw.geojson.CreateGeoJSON;
@@ -14,7 +18,6 @@ import org.dstadler.ctw.geojson.CreateLargestRectangleGeoJSONTiles;
 import org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONSquares;
 import org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONTiles;
 import org.dstadler.ctw.gpx.CreateListOfVisitedSquares;
-import org.xml.sax.SAXException;
 
 /**
  * Main application to read GPX tracks and produce the GeoJSON
@@ -22,7 +25,7 @@ import org.xml.sax.SAXException;
  */
 public class CoverTheWorld {
 
-	public static void main(String[] args) throws IOException, SAXException {
+	public static void main(String[] args) throws Throwable {
 		// this needs to run first to compute "Visited*.txt"
 		CreateListOfVisitedSquares.main(args);
 
@@ -30,27 +33,61 @@ public class CoverTheWorld {
 		// produce "Adjacent*"
 		CreateAdjacent.main(args);
 
+		ExecutorService executor = Executors.newWorkStealingPool();
+		AtomicReference<Throwable> ex = new AtomicReference<>();
+
 		// read "Visited*.txt"
 		// produce "Visited*.js"
-		CreateGeoJSON.main(args);
+		submit(executor, ex, CreateGeoJSON::computeGeoJSONSquares);
+		submit(executor, ex, CreateGeoJSON::computeGeoJSONSquaresNew);
+		submit(executor, ex, CreateGeoJSON::computeGeoJSONTiles);
+		submit(executor, ex, CreateGeoJSON::computeGeoJSONTilesNew);
 
+		// read "Visited*.txt"
 		// produce "ClusterSquares.*"
-		CreateClusterGeoJSON.main(args);
+		submit(executor, ex, () -> CreateClusterGeoJSON.main(args));
 
+		// read "Visited*.txt"
 		// produce "LargestCluster*"
-		CreateLargestClusterGeoJSONSquares.main(args);
-		CreateLargestClusterGeoJSONTiles.main(args);
+		submit(executor, ex, () -> CreateLargestClusterGeoJSONSquares.main(args));
+		submit(executor, ex, () -> CreateLargestClusterGeoJSONTiles.main(args));
 
+		// read "Visited*.txt"
 		// produce "LargestConnected*"
-		CreateLargestConnectedGeoJSONSquares.main(args);
-		CreateLargestConnectedGeoJSONTiles.main(args);
+		submit(executor, ex, () -> CreateLargestConnectedGeoJSONSquares.main(args));
+		submit(executor, ex, () -> CreateLargestConnectedGeoJSONTiles.main(args));
 
+		// read "Visited*.txt"
 		// produce "LargestRectangle*"
-		CreateLargestRectangleGeoJSONSquares.main(args);
-		CreateLargestRectangleGeoJSONTiles.main(args);
+		submit(executor, ex, () -> CreateLargestRectangleGeoJSONSquares.main(args));
+		submit(executor, ex, () -> CreateLargestRectangleGeoJSONTiles.main(args));
 
+		// read "Visited*.txt"
 		// produce "LargestSquare*"
-		CreateLargestSquareGeoJSONSquares.main(args);
-		CreateLargestSquareGeoJSONTiles.main(args);
+		submit(executor, ex, () -> CreateLargestSquareGeoJSONSquares.main(args));
+		submit(executor, ex, () -> CreateLargestSquareGeoJSONTiles.main(args));
+
+		// wait for the tasks to finish
+		ExecutorUtil.shutdownAndAwaitTermination(executor, 120_000);
+
+		if (ex.get() != null) {
+			throw ex.get();
+		}
+	}
+
+	private static void submit(ExecutorService executor, AtomicReference<Throwable> ex, IORunnable r) {
+		// stop early on exception
+		if (ex.get() != null) {
+			return;
+		}
+
+		// schedule the task, catch any exception and keep it for later reporting
+		executor.submit(() -> {
+			try {
+				r.run();
+			} catch (Throwable e) {
+				ex.set(e);
+			}
+		});
 	}
 }
