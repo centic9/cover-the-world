@@ -5,6 +5,7 @@ import static org.dstadler.ctw.utils.Constants.SQUARE_SIZE;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
@@ -175,10 +176,9 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof UTMRef)) {
+		if (!(obj instanceof UTMRef o)) {
 			return false;
 		}
-		UTMRef o = (UTMRef) obj;
 		return getLatZone() == o.getLatZone() &&
 				getLngZone() == o.getLngZone() &&
 				getEasting() == o.getEasting() &&
@@ -196,14 +196,23 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 		return formatUTMRef(this.getLngZone(), this.getLatZone(), this.getEasting(), this.getNorthing());
 	}
 
+	private static ThreadLocal<DecimalFormat> DECIMAL_FORMAT = new ThreadLocal<>();
+
 	private static String formatUTMRef(int lngZone, char latZone, double easting, double northing) {
 		// work around a bug in underlying UTMRef when Double.toString()
 		// starts to use exponential format, e.g. for "33T 100000.0 10000000.0"
-		return String.format(Locale.ROOT, "%d%s %f %f",
-						lngZone, latZone, easting, northing).
-				// cut away trailing zeros in the decimal part, couuld not find how to do this
-				// with String.format() itself
-						replaceAll("\\.(\\d)0+", ".$1");
+		//
+		// using String.format() required "post-processing" to use the exact same
+		// format, using a thread-local DecimalFormat seems to be the best
+		// performing approach
+		DecimalFormat format = DECIMAL_FORMAT.get();
+		if (format == null) {
+			format = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.ROOT);
+			format.applyPattern("0.0###############");
+			DECIMAL_FORMAT.set(format);
+		}
+
+		return "" + lngZone + latZone + " " + format.format(easting) + " " + format.format(northing);
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.RandomUtils;
 import org.dstadler.commons.testing.TestHelpers;
 import org.dstadler.commons.util.SuppressForbidden;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import uk.me.jstott.jcoord.LatLng;
@@ -389,4 +390,59 @@ public class UTMRefWithHashTest {
 		/* This fails due to invalid latitude
 		assertEquals(refStr, UTMRefWithHash.getSquareString(ref.toLatLng()));*/
 	}
+
+	@Disabled("for local micro-benchmarking only")
+	@Test
+	void microBenchmarkGetSquareString() {
+		RandomUtils rnd = RandomUtils.insecure();
+
+		// warmup
+		for (int i = 0; i < 200_000; i++) {
+			double lat = rnd.randomDouble(0, (-1) * MIN_LATITUDE + MAX_LATITUDE);
+			double lon = rnd.randomDouble(0, (-1) * MIN_LONGITUDE + MAX_LONGITUDE);
+			lat += MIN_LATITUDE;
+			lon += MIN_LONGITUDE;
+
+			assertNotNull(UTMRefWithHash.getSquareString(new LatLng(lat, lon)));
+		}
+
+		for (int j = 0; j < 10; j++) {
+			long start = System.currentTimeMillis();
+			for (int i = 0; i < 200_000; i++) {
+				double lat = rnd.randomDouble(0, (-1) * MIN_LATITUDE + MAX_LATITUDE);
+				double lon = rnd.randomDouble(0, (-1) * MIN_LONGITUDE + MAX_LONGITUDE);
+				lat += MIN_LATITUDE;
+				lon += MIN_LONGITUDE;
+
+				assertNotNull(UTMRefWithHash.getSquareString(new LatLng(lat, lon)));
+			}
+			System.out.println("Took: " + (System.currentTimeMillis() - start) + "ms");
+		}
+	}
+
+	/*
+	initial:
+Took: 1254ms
+Took: 1271ms
+Took: 1282ms
+Took: 1252ms
+Took: 1296ms
+Took: 1507ms
+Took: 1378ms
+Took: 1361ms
+Took: 1332ms
+Took: 1365ms
+
+	extract regex:
+Took: 1242ms
+Took: 1203ms
+Took: 1182ms
+Took: 1166ms
+Took: 1178ms
+Took: 1159ms
+Took: 1176ms
+Took: 1152ms
+Took: 1155ms
+Took: 1329ms
+	 */
 }
