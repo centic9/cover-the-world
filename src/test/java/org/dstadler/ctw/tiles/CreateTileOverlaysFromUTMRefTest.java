@@ -174,7 +174,7 @@ public class CreateTileOverlaysFromUTMRefTest {
 
 				try {
 					//log.info("Reading GPX trackpoints from " + gpxFile);
-					final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile);
+					final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile, false);
 
 					for (TrackPoint trackPoint : trackPoints.values()) {
 						if (points.add(Pair.of(trackPoint.getLatitude(), trackPoint.getLongitude()))) {

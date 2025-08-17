@@ -10,11 +10,18 @@ import java.io.Writer;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -24,6 +31,7 @@ import java.util.stream.Stream;
 import org.dstadler.commons.gpx.GPXTrackpointsParser;
 import org.dstadler.commons.gpx.TrackPoint;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
+import org.dstadler.commons.util.ExecutorUtil;
 import org.dstadler.ctw.utils.Constants;
 import org.dstadler.ctw.utils.OSMTile;
 import org.dstadler.ctw.utils.UTMRefWithHash;
@@ -60,6 +68,8 @@ public class CreateListOfVisitedSquares {
 	public static void main(String[] args) throws IOException, SAXException {
 		LoggerFactory.initLogging();
 
+		long start = System.currentTimeMillis();
+
 		// Use a UTMRef/OSMTile as String to avoid double-imprecision affecting the resulting output
 		Set<String> visitedSquares = ConcurrentHashMap.newKeySet();
 		Set<String> visitedTiles = ConcurrentHashMap.newKeySet();
@@ -87,6 +97,8 @@ public class CreateListOfVisitedSquares {
 
 		// Tiles
 		processVisitedArea(VISITED_TILES_TXT, VISITED_TILES_NEW_TXT, "tiles", visitedTiles);
+
+		log.info("Finished reading GPX files after " + (System.currentTimeMillis() - start) + "ms");
 	}
 
 	private static void readVisited(Consumer<TrackPoint> toStringFun) throws IOException {
@@ -97,10 +109,14 @@ public class CreateListOfVisitedSquares {
 				GPX_DIR, GPX_DIR.exists(), GPX_DIR.isDirectory());
 
 		log.info("Searching directory '" + GPX_DIR + "' for GPX tracks");
+
+		List<Future<?>> futures = new ArrayList<>();
+		ExecutorService executor = Executors.newWorkStealingPool();
+
 		try (Stream<Path> walk = Files.walk(GPX_DIR.toPath(), FileVisitOption.FOLLOW_LINKS)) {
 			walk.
 					parallel().
-					forEach(path -> {
+					forEach(path -> futures.add(executor.submit(() -> {
 						File gpxFile = path.toFile();
 
 						if(gpxFile.isDirectory() ||
@@ -110,13 +126,26 @@ public class CreateListOfVisitedSquares {
 
 						log.info("Move " + count.incrementAndGet() + ": " + gpxFile);
 						readTrackPoints(gpxFile, toStringFun);
-					});
+					})));
 		}
+
+		Iterator<Future<?>> it = futures.iterator();
+		while (it.hasNext()) {
+			Future<?> future = it.next();
+			try {
+				future.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+			it.remove();
+		}
+
+		ExecutorUtil.shutdownAndAwaitTermination(executor, 10_000);
 	}
 
 	private static void readTrackPoints(File gpxFile, Consumer<TrackPoint> toStringFun) {
 		try {
-			final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile);
+			final SortedMap<Long, TrackPoint> trackPoints = GPXTrackpointsParser.parseContent(gpxFile, false);
 
 			for (TrackPoint trackPoint : trackPoints.values()) {
 				toStringFun.accept(trackPoint);
