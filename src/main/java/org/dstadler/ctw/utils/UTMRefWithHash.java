@@ -196,7 +196,7 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 		return formatUTMRef(this.getLngZone(), this.getLatZone(), this.getEasting(), this.getNorthing());
 	}
 
-	private static ThreadLocal<DecimalFormat> DECIMAL_FORMAT = new ThreadLocal<>();
+	private static final ThreadLocal<DecimalFormat> DECIMAL_FORMAT = new ThreadLocal<>();
 
 	private static String formatUTMRef(int lngZone, char latZone, double easting, double northing) {
 		// work around a bug in underlying UTMRef when Double.toString()
@@ -212,7 +212,7 @@ public class UTMRefWithHash extends UTMRef implements BaseTile<UTMRefWithHash>, 
 			DECIMAL_FORMAT.set(format);
 		}
 
-		return "" + lngZone + latZone + " " + format.format(easting) + " " + format.format(northing);
+		return Integer.toString(lngZone) + latZone + " " + format.format(easting) + " " + format.format(northing);
 	}
 
 	@Override

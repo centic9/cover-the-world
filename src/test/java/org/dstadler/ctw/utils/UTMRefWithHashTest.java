@@ -444,5 +444,29 @@ Took: 1176ms
 Took: 1152ms
 Took: 1155ms
 Took: 1329ms
+
+	decimal format
+Took: 755ms
+Took: 699ms
+Took: 693ms
+Took: 703ms
+Took: 700ms
+Took: 713ms
+Took: 695ms
+Took: 698ms
+Took: 695ms
+Took: 697ms
+
+	decimal format + Integer.toString()
+Took: 735ms
+Took: 722ms
+Took: 683ms
+Took: 680ms
+Took: 680ms
+Took: 674ms
+Took: 676ms
+Took: 680ms
+Took: 697ms
+Took: 667ms
 	 */
 }
