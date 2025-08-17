@@ -147,13 +147,17 @@ how to do a whole-world computation efficiently.
 ### Release it
 
 * Check the version in `gradle.properties`
+* Push changes to GitHub
+* Publish the binaries to Maven Central
 
     ./gradlew --console=plain publishToMavenCentral
 
 * This should automatically release the new version on MavenCentral
-* Apply tag in Github
+* Apply tag in Github (`git tag` && `git push --tags`)
 * Increase version in `gradle.properties` afterwards
-* Afterwards go to the [Github releases page](https://github.com/centic9/cover-the-world/releases) and add release-notes
+* Then go to the [Github releases page](https://github.com/centic9/cover-the-world/releases) and 
+  create a release and add release-notes for the published version
+* The resulting binaries should appear at https://repo1.maven.org/maven2/org/dstadler/cover-the-world/
 
 ## Support this project
 
