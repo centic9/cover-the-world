@@ -29,12 +29,16 @@ public class CoverTheWorld {
 		// this needs to run first to compute "Visited*.txt"
 		CreateListOfVisitedSquares.main(args);
 
-		// read "Visited*.txt"
-		// produce "Adjacent*"
-		CreateAdjacent.main(args);
-
+		// schedule tasks for all further steps as all of them
+		// only read from "Visited*.txt" and write to their own
+		// files. So these can run in parallel and thus consume
+		// more of the available CPU resources
 		ExecutorService executor = Executors.newWorkStealingPool();
 		AtomicReference<Throwable> ex = new AtomicReference<>();
+
+		// read "Visited*.txt"
+		// produce "Adjacent*"
+		submit(executor, ex, () -> CreateAdjacent.main(args));
 
 		// read "Visited*.txt"
 		// produce "Visited*.js"
