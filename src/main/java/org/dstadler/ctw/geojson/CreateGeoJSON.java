@@ -84,6 +84,34 @@ public class CreateGeoJSON {
 				OSMTile::getRectangle, OSMTile::fromString, "new tiles");
 	}
 
+	public static void computeGeoJSONSquares() throws IOException {
+		log.info("Computing GeoJSON for visited squares");
+
+		writeGeoJSON(VISITED_SQUARES_TXT, VISITED_SQUARES_JS, "squares",
+				UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "squares");
+	}
+
+	public static void computeGeoJSONSquaresNew() throws IOException {
+		log.info("Computing GeoJSON for visited new squares");
+
+		writeGeoJSON(VISITED_SQUARES_NEW_TXT, VISITED_SQUARES_NEW_JS, "squaresnew",
+				UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "new squares");
+	}
+
+	public static void computeGeoJSONTiles() throws IOException {
+		log.info("Computing GeoJSON for visited tiles");
+
+		writeGeoJSON(VISITED_TILES_TXT, VISITED_TILES_JS, "tiles",
+				OSMTile::getRectangle, OSMTile::fromString, "tiles");
+	}
+
+	public static void computeGeoJSONTilesNew() throws IOException {
+		log.info("Computing GeoJSON for visited new tiles");
+
+		writeGeoJSON(VISITED_TILES_NEW_TXT, VISITED_TILES_NEW_JS, "tilesnew",
+				OSMTile::getRectangle, OSMTile::fromString, "new tiles");
+	}
+
 	protected static <T extends BaseTile<T>> void writeGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
 			Function<T, LatLonRectangle> toRectangle,
 			Function<String, T> toObject,
