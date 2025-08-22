@@ -125,12 +125,14 @@ public class CreateGeoJSON {
 
 		List<Feature> features = new ArrayList<>();
 
-		// add the largest rectangle
-		log.info("Computing largest rectangle");
-		if (squares.iterator().next() instanceof UTMRefWithHash) {
-			features.add(getSquareRectangle((Set<UTMRefWithHash>)squares, null, title));
-		} else {
-			features.add(getTileRectangle((Set<OSMTile>)squares, null, title));
+		if (squares.size() > 0) {
+			// add the largest rectangle as it likely covers a large area
+			log.info("Computing largest rectangle");
+			if (squares.iterator().next() instanceof UTMRefWithHash) {
+				features.add(getSquareRectangle((Set<UTMRefWithHash>) squares, null, title));
+			} else {
+				features.add(getTileRectangle((Set<OSMTile>) squares, null, title));
+			}
 		}
 
 		while (!squares.isEmpty()) {
