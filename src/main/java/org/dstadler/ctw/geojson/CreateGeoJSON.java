@@ -21,8 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,9 +62,6 @@ public class CreateGeoJSON {
 	// tiles
 	public static final String VISITED_TILES_JS = "js/VisitedTiles.js";
 	public static final String VISITED_TILES_NEW_JS = "js/VisitedTilesNew.js";
-
-	// for printing stats when writing tiles
-	private static final AtomicLong lastLog = new AtomicLong();
 
 	public static void main(String[] args) throws IOException {
 		LoggerFactory.initLogging();
@@ -112,6 +107,7 @@ public class CreateGeoJSON {
 				OSMTile::getRectangle, OSMTile::fromString, "new tiles");
 	}
 
+	@SuppressWarnings({ "unchecked", "SuspiciousMethodCalls" })
 	protected static <T extends BaseTile<T>> void writeGeoJSON(String squaresFile, String jsonOutputFile, String varPrefix,
 			Function<T, LatLonRectangle> toRectangle,
 			Function<String, T> toObject,
@@ -129,94 +125,94 @@ public class CreateGeoJSON {
 
 		List<Feature> features = new ArrayList<>();
 
-		// first look for single squares/tiles which we cannot combine anyway to
-		// make computing the largest rectangles a bit cheaper
-		handleSingleAreas(toRectangle, squares, features);
-
-		// build an optimized GeoJSON as including all squares/tiles lead to a fairly large GeoJSON
-		// which causes performance issues e.g. on Smartphone-Browsers
-		int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE,
-				minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
-
-		boolean found = false;
-		boolean[] isY = null;
-		if (squares.size() > 0 && squares.iterator().next() instanceof OSMTile) {
-			//noinspection unchecked
-			for (OSMTile tile : (Set<OSMTile>) squares) {
-				if (tile.getXTile() > maxX) {
-					maxX = tile.getXTile();
-				}
-				if (tile.getXTile() < minX) {
-					minX = tile.getXTile();
-				}
-
-				if (tile.getYTile() > maxY) {
-					maxY = tile.getYTile();
-				}
-				if (tile.getYTile() < minY) {
-					minY = tile.getYTile();
-				}
-
-				found = true;
-			}
-
-			//noinspection unchecked
-			isY = computePopulatedRows(title, (Set<OSMTile>) squares, minX, minY, maxX, maxY);
+		// add the largest rectangle
+		log.info("Computing largest rectangle");
+		if (squares.iterator().next() instanceof UTMRefWithHash) {
+			features.add(getSquareRectangle((Set<UTMRefWithHash>)squares, null, title));
+		} else {
+			features.add(getTileRectangle((Set<OSMTile>)squares, null, title));
 		}
 
-		// next create as many rectangles as possible to minimize the resulting GeoJSON
-		int iterationCount = 0;
-		while (squares.size() > 0) {
-			final Feature rectangle;
-			final BaseTile<T> next = squares.iterator().next();
-			if (next instanceof UTMRefWithHash) {
-				//noinspection unchecked
-				rectangle = getSquareRectangle((Set<UTMRefWithHash>) squares, null, "squares");
+		while (!squares.isEmpty()) {
+			Iterator<T> it = squares.iterator();
+			BaseTile<T> square = it.next();
+			it.remove();
+
+			BaseTile<T> left = square.left();
+			BaseTile<T> right = square.right();
+			if (squares.contains(left) || squares.contains(right)) {
+				// do we have another to the left or right? => combine horizontally
+
+				while (squares.contains(left)) {
+					final boolean removed = squares.remove(left);
+					Preconditions.checkState(removed,
+							"Should always remove squares, but did not for \n%s",
+							square.toString());
+
+					left = left.left();
+				}
+
+				while (squares.contains(right)) {
+					final boolean removed = squares.remove(right);
+					Preconditions.checkState(removed,
+							"Should always remove squares, but did not for \n%s",
+							square.toString());
+
+					right = right.right();
+				}
+
+				LatLonRectangle rectLeft = left.right().getRectangle();
+				LatLonRectangle rectRight = right.left().getRectangle();
+
+				features.add(Feature.builder().withGeometry(Polygon.of(LinearRing.of(
+						Point.from(rectLeft.lon1, rectLeft.lat1),
+						Point.from(rectRight.lon2, rectLeft.lat1),
+						Point.from(rectRight.lon2, rectRight.lat2),
+						Point.from(rectLeft.lon1, rectRight.lat2),
+						Point.from(rectLeft.lon1, rectLeft.lat1)
+				))).build());
 			} else {
-				// stop if all the remaining tiles are outside the default UTM-zone
-				if (!found) {
-					break;
+				BaseTile<T> up = square.up();
+				BaseTile<T> down = square.down();
+				if (squares.contains(up) || squares.contains(down)) {
+					// do we have another to up or down? => combine vertically
 
+					while (squares.contains(up)) {
+						final boolean removed = squares.remove(up);
+						Preconditions.checkState(removed,
+								"Should always remove squares, but did not for \n%s",
+								square.toString());
+
+						up = up.up();
+					}
+
+					while (squares.contains(down)) {
+						final boolean removed = squares.remove(down);
+						Preconditions.checkState(removed,
+								"Should always remove squares, but did not for \n%s",
+								square.toString());
+
+						down = down.down();
+					}
+
+					LatLonRectangle rectUp = up.down().getRectangle();
+					LatLonRectangle rectDown = down.up().getRectangle();
+
+					features.add(Feature.builder().withGeometry(Polygon.of(LinearRing.of(
+							Point.from(rectUp.lon1, rectUp.lat1),
+							Point.from(rectDown.lon2, rectUp.lat1),
+							Point.from(rectDown.lon2, rectDown.lat2),
+							Point.from(rectUp.lon1, rectDown.lat2),
+							Point.from(rectUp.lon1, rectUp.lat1)
+					))).build());
+				} else {
+					// otherwise add as "single" square
+					//noinspection CastCanBeRemovedNarrowingVariableType
+					features.add(GeoJSON.createSquare(toRectangle.apply((T)square),
+							null
+							/*square + "\n" + toRectangle.apply(square)*/));
 				}
-
-				//noinspection unchecked
-				rectangle = getTileRectangleInternal((Set<OSMTile>) squares, null, "tiles", minX, minY, maxX, maxY, isY);
-
-				//log.info(title + ": Remaining " + squares.size() + ", found: " + rectangle);
 			}
-
-			if (rectangle == null) {
-				break;
-			}
-
-			features.add(rectangle);
-
-			iterationCount++;
-			if (iterationCount % 100 == 0 && next instanceof OSMTile) {
-				// recompute optimization from time to time to skip any new single squares
-				// which are now there because of found and removed rectangles
-				handleSingleAreas(toRectangle, squares, features);
-
-				// re-compute which rows are empty from time to time to speed up processing a bit
-				//noinspection unchecked
-				isY = computePopulatedRows(title, (Set<OSMTile>) squares, minX, minY, maxX, maxY);
-			}
-
-			if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-				log.info(title + ": Found " + features.size() + " features, having " + squares.size() + " " +
-						title + " remaining, details: " + rectangle);
-
-				lastLog.set(System.currentTimeMillis());
-			}
-		}
-
-		log.info(title + ": Found " + features.size() + " rectangles, having " + squares.size() + " single squares remaining");
-
-		// then add all remaining single-squares
-		for (T square : squares) {
-			features.add(GeoJSON.createSquare(toRectangle.apply(square),
-					null
-					/*square + "\n" + toRectangle.apply(square)*/));
 		}
 
 		// finally write out JavaScript code with embedded GeoJSON
@@ -226,44 +222,6 @@ public class CreateGeoJSON {
 		GeoJSON.writeGeoJSON(GeoJSON.getJSONFileName(jsonOutputFile), features);
 
 		log.info(title + ": Wrote " + features.size() + " features with " + squares.size() + " single " + title + " from " + squaresFile + " to " + jsonOutputFile);
-	}
-
-	private static boolean[] computePopulatedRows(String title,
-			Set<OSMTile> squares, int minX, int minY, int maxX, int maxY) {
-		int[][] M = MatrixUtils.populateMatrix(squares, minX, minY, maxX, maxY);
-
-		boolean[] isY = new boolean[M.length];
-		int count = MatrixUtils.findPopulatedRows(M, isY);
-
-		log.info(title + ": Found " + count + " populated rows of " + isY.length + " overall");
-
-		return isY;
-	}
-
-	private static <T extends BaseTile<T>> void handleSingleAreas(Function<T, LatLonRectangle> toRectangle,
-			Set<T> squares,
-			List<Feature> features) {
-		int count = 0;
-		Iterator<T> it = squares.iterator();
-		while (it.hasNext()) {
-			T square = it.next();
-
-			// check if this square is single
-			//noinspection SuspiciousMethodCalls
-			if (!squares.contains(square.up()) &&
-					!squares.contains(square.down()) &&
-					!squares.contains(square.left()) &&
-					!squares.contains(square.right())
-			) {
-				features.add(GeoJSON.createSquare(toRectangle.apply(square),
-						null
-						/*square + "\n" + toRectangle.apply(square)*/));
-				it.remove();
-				count++;
-			}
-		}
-
-		log.info("Found " + count + " single areas");
 	}
 
 	protected static Set<String> readSquares(File file) throws IOException {
@@ -300,18 +258,15 @@ public class CreateGeoJSON {
 			return null;
 		}
 
-		return getTileRectangleInternal(tiles, textFile, title, minX, minY, maxX, maxY, null);
+		return getTileRectangleInternal(tiles, textFile, title, minX, minY, maxX, maxY);
 	}
 
-	private static Feature getTileRectangleInternal(Set<OSMTile> tiles, String textFile, String title, int minX, int minY, int maxX, int maxY,
-			boolean[] isY)
+	private static Feature getTileRectangleInternal(Set<OSMTile> tiles, String textFile, String title, int minX, int minY, int maxX, int maxY)
 			throws IOException {
 		int[][] M = MatrixUtils.populateMatrix(tiles, minX, minY, maxX, maxY);
 
-		if (isY == null) {
-			isY = new boolean[M.length];
-			MatrixUtils.findPopulatedRows(M, isY);
-		}
+		boolean[] isY = new boolean[M.length];
+		MatrixUtils.findPopulatedRows(M, isY);
 
 		Pair<Rectangle,Integer> result = MatrixUtils.maxRectangle(M, isY);
 		Rectangle rect = result.getKey();
