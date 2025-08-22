@@ -193,7 +193,7 @@ tasks.register('updateFiles', JavaExec) {
 
 	mainClass = 'org.dstadler.ctw.CoverTheWorld'
 	classpath = sourceSets.main.runtimeClasspath
-	jvmArgs = ['-Xmx512m']
+	jvmArgs = ['-Xmx768m']
 }
 
 
