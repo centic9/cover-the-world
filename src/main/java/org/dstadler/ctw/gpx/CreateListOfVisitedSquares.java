@@ -124,7 +124,10 @@ public class CreateListOfVisitedSquares {
 							return;
 						}
 
-						log.info("Move " + count.incrementAndGet() + ": " + gpxFile);
+						// only log sometimes to not spam the output
+						if (count.incrementAndGet() % 20 == 0) {
+							log.info("Move " + count.incrementAndGet() + ": " + gpxFile);
+						}
 						readTrackPoints(gpxFile, toStringFun);
 					})));
 		}
