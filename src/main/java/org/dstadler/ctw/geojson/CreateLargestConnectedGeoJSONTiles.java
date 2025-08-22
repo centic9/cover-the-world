@@ -167,7 +167,7 @@ public class CreateLargestConnectedGeoJSONTiles {
 				break;
 			}
 
-			log.info("Added " + count + " additional tiles to the cluster, now having " + foundCluster.size() + " cluster tiles");
+			log.info("Added " + count + " additional tiles to the connected set, now having " + foundCluster.size() + " connected tiles");
 		}
 	}
 

@@ -175,7 +175,7 @@ public class CreateLargestConnectedGeoJSONSquares {
 				break;
 			}
 
-			log.info("Added " + count + " additional squares to the cluster, now having " + foundCluster.size() + " cluster squares");
+			log.info("Added " + count + " additional squares to the connected set, now having " + foundCluster.size() + " connected squares");
 		}
 	}
 
