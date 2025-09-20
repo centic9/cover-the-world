@@ -68,15 +68,10 @@ public class CreateGeoJSON {
 
 		log.info("Computing GeoJSON for visited squares and tiles");
 
-		writeGeoJSON(VISITED_SQUARES_TXT, VISITED_SQUARES_JS, "squares",
-				UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "squares");
-		writeGeoJSON(VISITED_SQUARES_NEW_TXT, VISITED_SQUARES_NEW_JS, "squaresnew",
-				UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "new squares");
-
-		writeGeoJSON(VISITED_TILES_TXT, VISITED_TILES_JS, "tiles",
-				OSMTile::getRectangle, OSMTile::fromString, "tiles");
-		writeGeoJSON(VISITED_TILES_NEW_TXT, VISITED_TILES_NEW_JS, "tilesnew",
-				OSMTile::getRectangle, OSMTile::fromString, "new tiles");
+		computeGeoJSONSquares();
+		computeGeoJSONSquaresNew();
+		computeGeoJSONTiles();
+		computeGeoJSONTilesNew();
 	}
 
 	public static void computeGeoJSONSquares() throws IOException {
@@ -168,9 +163,9 @@ public class CreateGeoJSON {
 
 				features.add(Feature.builder().withGeometry(Polygon.of(LinearRing.of(
 						Point.from(rectLeft.lon1, rectLeft.lat1),
-						Point.from(rectRight.lon2, rectLeft.lat1),
+						Point.from(rectRight.lon2, rectRight.lat1),
 						Point.from(rectRight.lon2, rectRight.lat2),
-						Point.from(rectLeft.lon1, rectRight.lat2),
+						Point.from(rectLeft.lon1, rectLeft.lat2),
 						Point.from(rectLeft.lon1, rectLeft.lat1)
 				))).build());
 			} else {
@@ -202,9 +197,9 @@ public class CreateGeoJSON {
 
 					features.add(Feature.builder().withGeometry(Polygon.of(LinearRing.of(
 							Point.from(rectUp.lon1, rectUp.lat1),
-							Point.from(rectDown.lon2, rectUp.lat1),
+							Point.from(rectUp.lon2, rectUp.lat1),
 							Point.from(rectDown.lon2, rectDown.lat2),
-							Point.from(rectUp.lon1, rectDown.lat2),
+							Point.from(rectDown.lon1, rectDown.lat2),
 							Point.from(rectUp.lon1, rectUp.lat1)
 					))).build());
 				} else {
