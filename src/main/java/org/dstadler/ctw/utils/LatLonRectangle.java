@@ -20,6 +20,14 @@ public class LatLonRectangle {
 	// (lat1,lon1) is upper-left, (lat2,lon2) is lower-right
 	public double lat1, lon1, lat2, lon2;
 
+	/**
+	 * Construct a rectangle
+	 *
+	 * @param lat1 up
+	 * @param lon1 left
+	 * @param lat2 down
+	 * @param lon2 right
+	 */
 	public LatLonRectangle(double lat1, double lon1, double lat2, double lon2) {
 		Preconditions.checkArgument(lat1 >= lat2,
 				"Should have a normalized Rectangle, but had latitudes %s and %s", lat1, lat2);

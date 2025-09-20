@@ -49,7 +49,11 @@ import org.geotools.styling.SLD;
  * environments and thus may not be thread-safe.
  */
 public class GeoTools {
-	// opacity and alpha of the color are combined
+	/**
+	 * Semi-transparent color for marking visited tiles.
+	 *
+	 * Opacity and alpha of the color are combined
+	 */
 	public static final Color RED = new Color(255, 0, 0, 80);
 	private static final float OPACITY = 0.6f;
 
