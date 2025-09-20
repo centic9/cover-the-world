@@ -155,7 +155,7 @@ how to do a whole-world computation efficiently.
 * This should automatically release the new version on MavenCentral
 * Apply tag in Github (`git tag` && `git push --tags`)
 * Increase version in `gradle.properties` afterwards
-* Then go to the [Github releases page](https://github.com/centic9/cover-the-world/releases) and 
+* Then go to the [Github releases page](https://github.com/centic9/cover-the-world/tags) and 
   create a release and add release-notes for the published version
 * The resulting binaries should appear at https://repo1.maven.org/maven2/org/dstadler/cover-the-world/
 
