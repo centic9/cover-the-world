@@ -11,6 +11,7 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dstadler.ctw.utils.LatLonRectangle;
@@ -26,6 +27,7 @@ import com.github.filosganga.geogson.model.Point;
 import com.github.filosganga.geogson.model.Polygon;
 import com.github.filosganga.geogson.model.positions.Positions;
 import com.github.filosganga.geogson.model.positions.SinglePosition;
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -164,6 +166,9 @@ public class GeoJSON {
 
 	public static void writeGeoJavaScript(String jsOutputFile, String varPrefix, List<Feature> features) throws
 			IOException {
+		Preconditions.checkArgument(features.stream().noneMatch(Objects::isNull),
+				"Had invalid null-feature in list of %s features", features.size());
+
 		FeatureCollection collection = new FeatureCollection(features);
 		try (Writer writer = new BufferedWriter(new FileWriter(jsOutputFile))) {
 			writer.write("var " + varPrefix + "states=[");
@@ -174,6 +179,9 @@ public class GeoJSON {
 
 	public static void writeGeoJSON(String jsonOutputFile, List<Feature> features) throws
 			IOException {
+		Preconditions.checkArgument(features.stream().noneMatch(Objects::isNull),
+				"Had invalid null-feature in list of %s features", features.size());
+
 		FeatureCollection collection = new FeatureCollection(features);
 		try (Writer writer = new BufferedWriter(new FileWriter(jsonOutputFile))) {
 			gson.toJson(collection, writer);
@@ -181,6 +189,9 @@ public class GeoJSON {
 	}
 
 	public static InputStream getGeoJSON(List<Feature> features) throws IOException {
+		Preconditions.checkArgument(features.stream().noneMatch(Objects::isNull),
+				"Had invalid null-feature in list of %s features", features.size());
+
 		FeatureCollection collection = new FeatureCollection(features);
 		try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			Writer writer = new BufferedWriter(new OutputStreamWriter(stream))) {

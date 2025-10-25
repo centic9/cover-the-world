@@ -44,7 +44,7 @@ class CreateGeoJSONTest {
 	}
 
 	@Test
-	void testEmptyFile() throws IOException {
+	void testEmptyFileTile() throws IOException {
 		File tempTxt = File.createTempFile("CreateGeoJSONTest", ".txt");
 		File tempJs = File.createTempFile("CreateGeoJSONTest", ".js");
 		try {
@@ -72,6 +72,47 @@ class CreateGeoJSONTest {
 
 			CreateGeoJSON.writeGeoJSON(tempTxt.getAbsolutePath(), tempJs.getAbsolutePath(), "tiles",
 					OSMTile::getRectangle, OSMTile::fromString, "tiles");
+
+			assertTrue(tempJs.exists());
+			assertTrue(tempJs.length() > 0);
+		} finally {
+			assertTrue(!tempTxt.exists() || tempTxt.delete());
+			assertTrue(!tempJs.exists() || tempJs.delete());
+
+			File tempJson = new File(GeoJSON.getJSONFileName(tempJs.getAbsolutePath()));
+			assertTrue(!tempJson.exists() || tempJson.delete());
+		}
+	}
+
+	@Test
+	void testEmptyFileSquare() throws IOException {
+		File tempTxt = File.createTempFile("CreateGeoJSONTest", ".txt");
+		File tempJs = File.createTempFile("CreateGeoJSONTest", ".js");
+		try {
+			CreateGeoJSON.writeGeoJSON(tempTxt.getAbsolutePath(), tempJs.getAbsolutePath(), "tiles",
+					UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "tiles");
+
+			assertTrue(tempJs.exists());
+			assertTrue(tempJs.length() > 0);
+		} finally {
+			assertTrue(!tempTxt.exists() || tempTxt.delete());
+			assertTrue(!tempJs.exists() || tempJs.delete());
+
+			File tempJson = new File(GeoJSON.getJSONFileName(tempJs.getAbsolutePath()));
+			assertTrue(!tempJson.exists() || tempJson.delete());
+		}
+	}
+
+	@Test
+	void testOneSquare() throws IOException {
+		File tempTxt = File.createTempFile("CreateGeoJSONTest", ".txt");
+		File tempJs = File.createTempFile("CreateGeoJSONTest", ".js");
+		try {
+			FileUtils.writeStringToFile(tempTxt, "33U 446000.0 5350000.0", "UTF-8");
+			assertTrue(tempJs.delete());
+
+			CreateGeoJSON.writeGeoJSON(tempTxt.getAbsolutePath(), tempJs.getAbsolutePath(), "tiles",
+					UTMRefWithHash::getRectangle, UTMRefWithHash::fromString, "tiles");
 
 			assertTrue(tempJs.exists());
 			assertTrue(tempJs.length() > 0);

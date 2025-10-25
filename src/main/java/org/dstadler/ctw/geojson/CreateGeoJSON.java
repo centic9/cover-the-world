@@ -123,10 +123,16 @@ public class CreateGeoJSON {
 		if (squares.size() > 0) {
 			// add the largest rectangle as it likely covers a large area
 			log.info("Computing largest rectangle");
+			Feature feature;
 			if (squares.iterator().next() instanceof UTMRefWithHash) {
-				features.add(getSquareRectangle((Set<UTMRefWithHash>) squares, null, title));
+				feature = getSquareRectangle((Set<UTMRefWithHash>) squares, null, title);
 			} else {
-				features.add(getTileRectangle((Set<OSMTile>) squares, null, title));
+				feature = getTileRectangle((Set<OSMTile>) squares, null, title);
+			}
+
+			// computing rectangles can return null if no rectangle can be computed for some reason
+			if (feature != null) {
+				features.add(feature);
 			}
 		}
 
