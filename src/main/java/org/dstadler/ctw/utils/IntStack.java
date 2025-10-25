@@ -154,10 +154,9 @@ public class IntStack {
 	}
 
 	/**
-	 * Push a new item onto this stack.  If the addition
-	 * would take this stack beyond its current capacity, then the capacity is
-	 * increased before adding the new item. The new item may be the null
-	 * reference.
+	 * Push a new item onto this stack.  If the addition takes this stack
+	 * beyond its current capacity, the capacity is increased before adding
+	 * the new item. The new item may be the null reference.
 	 *
 	 * @param item the item to be pushed onto this stack
 	 *             <b>Postcondition:</b>

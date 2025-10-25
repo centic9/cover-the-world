@@ -1,10 +1,7 @@
 package org.dstadler.ctw;
 
-import java.io.IOException;
-
 import org.dstadler.commons.testing.PrivateConstructorCoverage;
 import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
 
 class CoverTheWorldTest {
 	@Test

@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.io.FileUtils;
@@ -81,8 +80,7 @@ public class CreateTileOverlaysHelper {
 					ACTUAL.add(zoom, -1);
 				});
 
-		List<Integer> aList = IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).boxed()
-				.collect(Collectors.toList());
+		List<Integer> aList = IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).boxed().toList();
 
 		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
 		aList.forEach(
@@ -105,7 +103,7 @@ public class CreateTileOverlaysHelper {
 		tilesOut.stream().parallel().forEach(
 				tile -> {
 					try {
-						writeTileToFile(combinedDir, tilesOut, tileDir, features, tile, tilesNr.getValue(), borderOnly);
+						writeTileToFile(combinedDir, tilesOut, tileDir, features, tile, tilesNr.get().intValue(), borderOnly);
 					} catch (IOException e) {
 						throw new RuntimeException(e);
 					}

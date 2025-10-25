@@ -149,12 +149,12 @@ public class LatLonRectangle {
                 [13.77686, 48.25394],
                 [13.77686, 48.61839]
 		 */
-		return String.format(Locale.ROOT,
-				"[%.5f, %.5f],\n" +
-				"[%.5f, %.5f],\n" +
-				"[%.5f, %.5f],\n" +
-				"[%.5f, %.5f],\n" +
-				"[%.5f, %.5f]",
+		return String.format(Locale.ROOT,"""
+						[%.5f, %.5f],
+						[%.5f, %.5f],
+						[%.5f, %.5f],
+						[%.5f, %.5f],
+						[%.5f, %.5f]""",
 				lon1, lat1,
 				lon2, lat1,
 				lon2, lat2,

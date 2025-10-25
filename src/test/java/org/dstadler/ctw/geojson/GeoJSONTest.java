@@ -253,10 +253,10 @@ public class GeoJSONTest {
 
 		try (InputStream input = GeoJSON.getGeoJSON(features)) {
 			String json = IOUtils.toString(input, StandardCharsets.UTF_8);
-			assertEquals(
-					"{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]}\n"
-							+ "  },{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]}\n"
-							+ "  }]}",
+			assertEquals("""
+							{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]}
+							  },{"type":"Feature","geometry":{"type":"LineString","coordinates":[[6.61158,3.1307],[6.62057,3.1307],[6.62057,3.12166],[6.61158,3.12166],[6.61158,3.1307]]}
+							  }]}""",
 					json);
 		}
 	}

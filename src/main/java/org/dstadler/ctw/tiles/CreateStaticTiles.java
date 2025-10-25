@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.net.UrlUtils;
 
@@ -112,7 +112,7 @@ public class CreateStaticTiles {
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 				fileCount++;
 
-				files.add(StringUtils.removeStart(file.toString(), tileDir.getName()));
+				files.add(Strings.CS.removeStart(file.toString(), tileDir.getName()));
 
 				return FileVisitResult.CONTINUE;
 			}
@@ -129,7 +129,7 @@ public class CreateStaticTiles {
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 					adjacentCount++;
 
-					files.add(StringUtils.removeStart(file.toString(), adjacentTilesDir.getName()));
+					files.add(Strings.CS.removeStart(file.toString(), adjacentTilesDir.getName()));
 
 					return FileVisitResult.CONTINUE;
 				}
@@ -150,8 +150,8 @@ public class CreateStaticTiles {
 			}
 
 			// compute the OSM tile-coords of this file
-			String coords = StringUtils.removeEnd(
-					StringUtils.removeStart(
+			String coords = Strings.CS.removeEnd(
+					Strings.CS.removeStart(
 							file.replace("\\", "/"),
 							"/"),
 					".png");

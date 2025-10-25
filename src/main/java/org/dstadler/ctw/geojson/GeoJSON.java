@@ -13,7 +13,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.dstadler.ctw.utils.LatLonRectangle;
 
 import com.github.filosganga.geogson.gson.FeatureAdapter;
@@ -124,6 +124,7 @@ public class GeoJSON {
 			.create();
 
 	private static final FeatureAdapter adapter = new FeatureAdapter(gson);
+	@SuppressWarnings("rawtypes")
 	private static final TypeAdapter<Geometry> geometryAdapter = gson.getAdapter(Geometry.class);
 
 
@@ -205,6 +206,6 @@ public class GeoJSON {
 	}
 
 	public static String getJSONFileName(String jsFileName) {
-		return StringUtils.removeEnd(jsFileName, ".js") + ".json";
+		return Strings.CS.removeEnd(jsFileName, ".js") + ".json";
 	}
 }
