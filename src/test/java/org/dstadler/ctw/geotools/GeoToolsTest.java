@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.geotools.feature.FeatureCollection;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class GeoToolsTest {
@@ -72,5 +73,39 @@ class GeoToolsTest {
 		} finally {
 			assertTrue(!temp.exists() || temp.delete());
 		}
+	}
+
+	@Disabled("Local micro-benchmark test")
+	@Test
+	void microBenchmarkImageWrite() throws IOException {
+		final FeatureCollection<?, ?> features = GeoTools.parseFeatureCollection(ADJACENT_TILES_JSON);
+		assertNotNull(features);
+
+		File temp = File.createTempFile("GeoToolsTest", ".png");
+
+		for (int j = 0; j < 10; j++) {
+			long start = System.currentTimeMillis();
+			for (int i = 0; i < 300; i++) {
+				assertTrue(temp.delete());
+
+				GeoTools.writeBorder(features, new LatLonRectangle(48.30055, 14.25588, 48.28085, 14.28609), temp);
+
+				assertTrue(temp.exists());
+			}
+
+			System.out.println("Took " + (System.currentTimeMillis() - start) + "ms");
+		}
+		/*
+		Took 6012ms
+Took 3532ms
+Took 3120ms
+Took 3029ms
+Took 2992ms
+Took 3038ms
+Took 2915ms
+Took 2851ms
+Took 2779ms
+Took 2721ms
+		 */
 	}
 }
