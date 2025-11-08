@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
@@ -72,7 +71,7 @@ public class CreateTileOverlaysHelper {
 	}
 
 	public static void forEachZoom(Consumer<Integer> task) throws InterruptedException {
-		// prepare counters
+		// prepare counters before starting any work
 		IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).
 				forEach(zoom -> {
 					// indicate that this zoom is started
@@ -80,12 +79,13 @@ public class CreateTileOverlaysHelper {
 					ACTUAL.add(zoom, -1);
 				});
 
-		List<Integer> aList = IntStream.rangeClosed(Constants.MIN_ZOOM, Constants.MAX_ZOOM).boxed().toList();
-
 		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
-		aList.forEach(
-				zoom -> customThreadPool.submit(
-					() -> task.accept(zoom)));
+
+		// submit a task for each zoom-level
+		for (int z = Constants.MIN_ZOOM; z <= Constants.MAX_ZOOM; z++) {
+			final int zoom = z;
+			customThreadPool.submit(() -> task.accept(zoom));
+		}
 
 		customThreadPool.shutdown();
 		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
@@ -146,8 +146,9 @@ public class CreateTileOverlaysHelper {
 		}
 
 		if (lastLog.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
-			log.info(String.format(Locale.US, "%s -> png: overall %d of %d, zoom %d: %,d of %,d: %s%s",
-					tileDir, actual(), expected(), tile.getZoom(), tilesNr, tilesOut.size(), tile.toCoords(), concatProgress()));
+			log.info(String.format(Locale.US, "%s -> png: overall %d of %d (%.2f%%), zoom %d: %,d of %,d: %s%s",
+					tileDir, actual(), expected(), ((double)actual())/expected()*100, tile.getZoom(), tilesNr, tilesOut.size(),
+					tile.toCoords(), concatProgress()));
 
 			lastLog.set(System.currentTimeMillis());
 		}
