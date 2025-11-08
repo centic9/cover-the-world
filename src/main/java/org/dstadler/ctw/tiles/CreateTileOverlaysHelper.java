@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
@@ -79,17 +80,32 @@ public class CreateTileOverlaysHelper {
 					ACTUAL.add(zoom, -1);
 				});
 
-		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM);
+		ForkJoinPool customThreadPool = new ForkJoinPool(Constants.MAX_ZOOM - Constants.MIN_ZOOM + 1);
+
+		AtomicReference<Throwable> throwable = new AtomicReference<>();
 
 		// submit a task for each zoom-level
 		for (int z = Constants.MIN_ZOOM; z <= Constants.MAX_ZOOM; z++) {
 			final int zoom = z;
-			customThreadPool.submit(() -> task.accept(zoom));
+			customThreadPool.submit(() -> {
+				String threadName = Thread.currentThread().getName();
+				Thread.currentThread().setName(threadName + " zoom: " + zoom);
+				try {
+					task.accept(zoom);
+				} catch (Throwable e) {
+					throwable.set(e);
+				} finally {
+					Thread.currentThread().setName(threadName);
+				}
+			});
 		}
 
 		customThreadPool.shutdown();
-		if (!customThreadPool.awaitTermination(4,TimeUnit.HOURS)) {
-			throw new IllegalStateException("Timed out while waiting for all tasks to finish");
+
+		while(!customThreadPool.awaitTermination(1, TimeUnit.MINUTES)) {
+			if (throwable.get() != null) {
+				throw new IllegalStateException("Unexpected exception while executing tasks", throwable.get());
+			}
 		}
 	}
 
@@ -102,10 +118,14 @@ public class CreateTileOverlaysHelper {
 		// for scheduling the new tasks as well!
 		tilesOut.stream().parallel().forEach(
 				tile -> {
+					String threadName = Thread.currentThread().getName();
+					Thread.currentThread().setName(threadName + " tile: " + tile);
 					try {
 						writeTileToFile(combinedDir, tilesOut, tileDir, features, tile, tilesNr.get().intValue(), borderOnly);
 					} catch (IOException e) {
 						throw new RuntimeException(e);
+					} finally {
+						Thread.currentThread().setName(threadName);
 					}
 
 					tilesNr.increment();
@@ -170,9 +190,11 @@ public class CreateTileOverlaysHelper {
 				progress.append(", ").append(zoom).append(":0%");
 			} else if (actual != expected) {
 				// otherwise include if not completed yet
+				double percent = ((double) actual) / expected * 100;
 				progress.append(
-						String.format(", %d:%.0f%%",
-								zoom, ((double) actual) / expected * 100));
+						// use more decimal places for small percentage values
+						String.format(percent < 3 ? ", %d:%.2f%%" : percent < 10 ? ", %d:%.1f%%" : ", %d:%.0f%%",
+								zoom, percent));
 			}
 		}
 
