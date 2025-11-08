@@ -9,15 +9,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.geotools.feature.FeatureCollection;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class GeoToolsTest {
+	private static final Logger log = LoggerFactory.make();
+
 	@Test
 	void testParse() throws IOException {
 		final FeatureCollection<?, ?> features = GeoTools.parseFeatureCollection(VISITED_TILES_JSON);
@@ -93,7 +97,7 @@ class GeoToolsTest {
 				assertTrue(temp.exists());
 			}
 
-			System.out.println("Took " + (System.currentTimeMillis() - start) + "ms");
+			log.info("Took " + (System.currentTimeMillis() - start) + "ms");
 		}
 		/*
 		Took 6012ms
