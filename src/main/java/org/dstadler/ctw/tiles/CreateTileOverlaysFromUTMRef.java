@@ -16,8 +16,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
-
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.geotools.GeoTools;
 import org.dstadler.ctw.utils.LatLonRectangle;
@@ -52,12 +50,7 @@ public class CreateTileOverlaysFromUTMRef {
 	private static final AtomicLong lastLogSquare = new AtomicLong();
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		LoggerFactory.initLogging();
-
-		// as we write many small files, we do not want to use disk-based caching
-		ImageIO.setUseCache(false);
-
-		boolean onlyNewTiles = !(args.length > 0 && "all".equals(args[0]));
+		boolean onlyNewTiles = CreateTileOverlaysHelper.init(args);
 
 		File tileDir = onlyNewTiles ? TILES_SQUARES_DIR_NEW : TILES_SQUARES_DIR;
 		String squaresFile = onlyNewTiles ? VISITED_SQUARES_NEW_TXT : VISITED_SQUARES_TXT;

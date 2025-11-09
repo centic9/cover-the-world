@@ -1,21 +1,29 @@
 package org.dstadler.ctw.tiles;
 
+import static org.dstadler.ctw.tiles.CreateStaticTiles.TILE_DIR_COMBINED_TILES;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -38,6 +46,18 @@ public class CreateTileOverlaysHelper {
 
 	protected static final ConcurrentMappedCounter<Integer> EXPECTED = new ConcurrentMappedCounter<>();
 	protected static final ConcurrentMappedCounter<Integer> ACTUAL = new ConcurrentMappedCounter<>();
+
+	// for printing stats when writing tiles
+	private static final AtomicLong lastLogTile = new AtomicLong();
+
+	protected static boolean init(String[] args) throws IOException {
+		LoggerFactory.initLogging();
+
+		// as we write many small files, we do not want to use disk-based caching
+		ImageIO.setUseCache(false);
+
+		return !(args.length > 0 && "all".equals(args[0]));
+	}
 
 	protected static Set<String> read(String file, String logName) throws IOException {
 		Set<String> lines = new TreeSet<>();
@@ -68,6 +88,77 @@ public class CreateTileOverlaysHelper {
 					throw new RuntimeException(e);
 				}
 			});
+		}
+	}
+
+
+	protected static Set<OSMTile> generateTiles(Set<String> tilesIn, AtomicInteger tilesOverall, File tileDir,
+			File jsonFile, Predicate<OSMTile> filter, boolean borderOnly) throws InterruptedException, IOException {
+		// read GeoJSON from file to use it for rendering overlay images
+		final FeatureCollection<?, ?> features = GeoTools.parseFeatureCollection(jsonFile);
+
+		Set<OSMTile> allTiles = ConcurrentHashMap.newKeySet();
+
+		CreateTileOverlaysHelper.forEachZoom(
+				zoom -> generateTilesForOneZoom(zoom, tilesIn, tilesOverall, tileDir, filter, features, allTiles, borderOnly));
+
+		return allTiles;
+	}
+
+	private static void generateTilesForOneZoom(int zoom, Set<String> tilesIn,
+			AtomicInteger tilesOverall,
+			File tileDir,
+			Predicate<OSMTile> filter,
+			FeatureCollection<?, ?> features, Set<OSMTile> allTiles, boolean borderOnly) {
+		CreateTileOverlaysHelper.ACTUAL.add(zoom, 1);
+
+		log.info(String.format("%s: Start processing of %d tiles at zoom %d%s",
+				tileDir, tilesIn.size(), zoom, CreateTileOverlaysHelper.concatProgress()));
+
+		Set<OSMTile> tilesOut = new HashSet<>();
+
+		int tilesCount = tilesIn.size();
+		int tilesNr = 1;
+		for (String tileIn : tilesIn) {
+			handleTile(tileIn, zoom, tilesOut, filter);
+
+			if (lastLogTile.get() + TimeUnit.SECONDS.toMillis(5) < System.currentTimeMillis()) {
+				log.info(String.format(Locale.US, "%s: Zoom %d: %,d of %,d: %s - %,d",
+						tileDir, zoom, tilesNr, tilesCount, tileIn, tilesOut.size()));
+
+				lastLogTile.set(System.currentTimeMillis());
+			}
+
+			tilesNr++;
+		}
+
+		log.info(String.format("%s: Having %d touched tiles for zoom %d%s",
+				tileDir, tilesOut.size(), zoom, CreateTileOverlaysHelper.concatProgress()));
+		CreateTileOverlaysHelper.EXPECTED.add(zoom, tilesOut.size());
+
+		allTiles.addAll(tilesOut);
+		int tilesOutSize = tilesOut.size();
+		tilesOverall.addAndGet(tilesOutSize);
+
+		CreateTileOverlaysHelper.writeTilesToFiles(TILE_DIR_COMBINED_TILES, tilesOut, tileDir, features, borderOnly);
+
+		log.info(String.format("%s: Wrote %d files for zoom %d%s",
+				tileDir, tilesOutSize, zoom, CreateTileOverlaysHelper.concatProgress()));
+	}
+
+	private static void handleTile(String tileIn, int zoom, Set<OSMTile> tiles, Predicate<OSMTile> filter) {
+		// select starting and ending tile
+		OSMTile ref = OSMTile.fromString(tileIn);
+
+		// iterate over all "bounding" tiles at the given zoom
+		// for zoom less or equal to TILE_ZOOM, this will be a single tile
+		for (OSMTile tile : ref.getTilesAtZoom(zoom)) {
+			// check if this tile should be included
+			if (!filter.test(tile)) {
+				continue;
+			}
+
+			tiles.add(tile);
 		}
 	}
 

@@ -10,8 +10,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
-
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 
 /**
@@ -38,12 +36,7 @@ public class CreateAdjacentTileOverlaysFromTiles {
 	public static final File ADJACENT_TILES_JSON = new File("js/AdjacentTiles.json");
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		LoggerFactory.initLogging();
-
-		// as we write many small files, we do not want to use disk-based caching
-		ImageIO.setUseCache(false);
-
-		boolean onlyNewTiles = !(args.length > 0 && "all".equals(args[0]));
+		boolean onlyNewTiles = CreateTileOverlaysHelper.init(args);
 
 		File tileDir = ADJACENT_TILES_DIR;
 		String tilesFile = onlyNewTiles ? ADJACENT_TILES_NEW_TXT: ADJACENT_TILES_TXT;
@@ -69,7 +62,7 @@ public class CreateAdjacentTileOverlaysFromTiles {
 
 		AtomicInteger tilesOverall = new AtomicInteger();
 		// t.toCoords().equals("17/70647/45300")
-		CreateTileOverlaysFromTiles.generateTiles(tiles, tilesOverall,
+		CreateTileOverlaysHelper.generateTiles(tiles, tilesOverall,
 				tileDir, ADJACENT_TILES_JSON, t -> true, true);
 
 		log.info(String.format(Locale.US, "Wrote %,d files overall in %,dms",
