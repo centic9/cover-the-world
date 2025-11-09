@@ -155,13 +155,10 @@ public class CreateTileOverlaysHelper {
 		}
 
 		// whenever writing a tile, remove the combined overlay to re-create it in a follow-up step
-		/*if (written)*/
-		{
-			File combinedTile = new File(combinedDir, tile.toCoords() + ".png");
-			if (combinedTile.exists()) {
-				if (!combinedTile.delete()) {
-					throw new IOException("Could not delete file " + combinedTile);
-				}
+		File combinedTile = new File(combinedDir, tile.toCoords() + ".png");
+		if (combinedTile.exists()) {
+			if (!combinedTile.delete()) {
+				throw new IOException("Could not delete file " + combinedTile);
 			}
 		}
 
