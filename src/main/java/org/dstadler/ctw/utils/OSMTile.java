@@ -101,6 +101,14 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return new OSMTile(zoom, xtile, ytile);
 	}
 
+	/**
+	 * Compute the pixel-position of the given lat and lno values.
+	 * The number of pixels per tile is defined in the constant PIXELS
+	 *
+	 * @param lat The latitude to check
+	 * @param lon The longitute to check
+	 * @return A pair of pixel in x- and y-direction
+	 */
 	public Pair<Integer, Integer> getPixelInTile(final double lat, final double lon) {
 		checkParameters(lat, lon, zoom);
 
@@ -140,6 +148,12 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return new LatLng(computeLat(yTile, zoom), computeLon(xTile, zoom));
 	}
 
+	/**
+	 * Return the rectangle which represents this tile.
+	 *
+	 * @return A LatLonRectangle which holds coordinates to represent this
+	 * 		   tile on a world-map
+	 */
 	public LatLonRectangle getRectangle() {
 		return new LatLonRectangle(
 				computeLat(yTile, zoom), computeLon(xTile, zoom),
@@ -155,42 +169,80 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return Math.toDegrees(Math.atan(Math.sinh(n)));
 	}
 
+	@Override
 	public OSMTile up() {
 		return new OSMTile(zoom, xTile, yTile - 1);
 	}
 
+	@Override
 	public OSMTile down() {
 		return new OSMTile(zoom, xTile, yTile + 1);
 	}
 
+	@Override
 	public OSMTile right() {
 		return new OSMTile(zoom, xTile + 1, yTile);
 	}
 
+	@Override
 	public OSMTile left() {
 		return new OSMTile(zoom, xTile - 1, yTile);
 	}
 
+	/**
+	 * Return the zoom-level of this tile.
+	 *
+	 * @return A zoom-level, usually between 0 and 18
+	 */
 	public int getZoom() {
 		return zoom;
 	}
 
+	/**
+	 * Returns the x-coordinate of the tile.
+	 *
+	 * @return A tile-number, higher or equal to zero
+	 */
 	public int getXTile() {
 		return xTile;
 	}
 
+	/**
+	 * Returns the y-coordinate of the tile.
+	 *
+	 * @return A tile-number, higher or equal to zero
+	 */
 	public int getYTile() {
 		return yTile;
 	}
 
+	/**
+	 * Produce the name of the directory for storing this tile,
+	 * usually in the form of _zoom_/_xtile_
+	 *
+	 * @return A string which can be used as directory for storing this tile
+	 */
 	public String toDirName() {
 		return zoom + "/" + xTile;
 	}
 
+	/**
+	 * Product the full path-name of the file for storing this tile,
+	 * usually in the form of _dirname_/_ytile_
+	 *
+	 * @return A string which can be used as pathname for storing this tile
+	 */
 	public String toCoords() {
 		return toDirName() + "/" + yTile;
 	}
 
+	/**
+	 * Return the complete name of the .png-file when storing
+	 * this tile based on the given tile-dir.
+	 *
+	 * @param tileDir The base-dir for storing this tile.
+	 * @return The full path-name based on toCoords() with ".png" appended
+	 */
 	public File toFile(File tileDir) {
 		return new File(tileDir, toCoords() + ".png");
 	}
@@ -253,6 +305,16 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 				'}';
 	}
 
+	/**
+	 * Read tiles from the given text-file.
+	 *
+	 * The file should have one string-representation as produced by
+	 * string() per line.
+	 *
+	 * @param file The file to read lines of tile-strings
+	 * @return All found tiles in sorted order.
+	 * @throws IOException If reading from the file fails.
+	 */
 	public static Set<OSMTile> readTiles(File file) throws IOException {
 		return new TreeSet<>(FileUtils.readLines(file, StandardCharsets.UTF_8)).
 				stream().

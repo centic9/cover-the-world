@@ -243,6 +243,15 @@ public class MatrixUtils {
 		return max_area;
 	}
 
+	/**
+	 * Determine which rows are filled and thus relevant for processing.
+	 *
+	 * @param A The matrix of set or not set places
+	 * @param isRowValue A boolean array which must have the same size as the number of rows in the matrix.
+	 *                   Each item will be populated with true or false depending if there is any element
+	 *                   in the row in the matrix.
+	 * @return The number of rows which have values.
+	 */
 	public static int findPopulatedRows(int[][] A, boolean[] isRowValue) {
 		int count = 0;
 		for (int i = 0; i < A.length; i++) {
