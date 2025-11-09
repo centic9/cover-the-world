@@ -40,6 +40,15 @@ public class LatLonRectangle {
 		this.lon2 = lon2;
 	}
 
+	/**
+	 * Compute the rectangle where the rectangle intersects with the
+	 * given second rectangle, i.e. the area where the two rectangles
+	 * overlap.
+	 *
+	 * @param r2 The rectangle to intersect with
+	 * @return A rectangle with the area where the two rectangle overlap
+	 *  	or null if there is no overlap
+	 */
 	public LatLonRectangle intersect(LatLonRectangle r2) {
 		// inspired by https://stackoverflow.com/a/19571902/411846
 		// but adjusted to how lat/lon are stored in the rect here
@@ -58,6 +67,15 @@ public class LatLonRectangle {
 		return null;
 	}
 
+	/**
+	 * Compute borders of a given rectangle which lie
+	 * inside this rectangle.
+	 *
+	 * @param other The rectangle for which to compute borders
+	 * 		which lie inside the current rectangle
+	 * @return A list with between 0 and 4 rectangles depicting borders
+	 * 		of the given other rectangle which lie inside this rectangle.
+	 */
 	public List<LatLonRectangle> borderInside(LatLonRectangle other) {
 		if (intersect(other) == null) {
 			return Collections.emptyList();
@@ -91,10 +109,20 @@ public class LatLonRectangle {
 		return borders;
 	}
 
+	/**
+	 * Returns the width of the current rectangle
+	 *
+	 * @return The width of the current rectangle in decimal degree
+	 */
 	public double width() {
 		return lon2 - lon1;
 	}
 
+	/**
+	 * Returns the height of the current rectangle
+	 *
+	 * @return The height of the current rectangle in decimal degree
+	 */
 	public double height() {
 		return lat1 - lat2;
 	}
@@ -141,6 +169,11 @@ public class LatLonRectangle {
 		return result;
 	}
 
+	/**
+	 * Convert the rectancle to a GeoJSON array.
+	 *
+	 * @return A string-representation of the GeoJSON array
+	 */
 	public String toGeoJSONArray() {
 		/*
                 [13.77686, 48.61839],
