@@ -16,11 +16,17 @@ import javax.imageio.ImageIO;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.ctw.utils.LatLonRectangle;
 import org.geotools.feature.FeatureCollection;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class GeoToolsTest {
 	private static final Logger log = LoggerFactory.make();
+
+	@BeforeAll
+	static void init() throws IOException {
+		LoggerFactory.initLogging();
+	}
 
 	@Test
 	void testParse() throws IOException {
@@ -87,7 +93,7 @@ class GeoToolsTest {
 
 		File temp = File.createTempFile("GeoToolsTest", ".png");
 
-		for (int j = 0; j < 10; j++) {
+		for (int j = 0; j < 20; j++) {
 			long start = System.currentTimeMillis();
 			for (int i = 0; i < 300; i++) {
 				assertTrue(temp.delete());
