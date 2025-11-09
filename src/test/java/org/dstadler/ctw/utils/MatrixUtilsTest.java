@@ -7,6 +7,7 @@ import static org.dstadler.ctw.geojson.CreateLargestSquareGeoJSONTiles.LARGEST_S
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_SQUARES_TXT;
 import static org.dstadler.ctw.gpx.CreateListOfVisitedSquares.VISITED_TILES_TXT;
 import static org.dstadler.ctw.utils.Constants.ZONE;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -386,5 +387,28 @@ public class MatrixUtilsTest {
 		} finally {
 			log.setLevel(prev);
 		}
+	}
+
+	@Test
+	void testFindPopulatedRopws() {
+		assertEquals(0, MatrixUtils.findPopulatedRows(new int[0][], new boolean[0]));
+
+		boolean[] isRowValue = new boolean[1];
+		assertEquals(0, MatrixUtils.findPopulatedRows(new int[][] {
+				new int[] { 0 }
+		}, isRowValue));
+		assertArrayEquals(new boolean[] { false }, isRowValue);
+
+		assertEquals(1, MatrixUtils.findPopulatedRows(new int[][] {
+				new int[] { 1 }
+		}, isRowValue));
+		assertArrayEquals(new boolean[] { true }, isRowValue);
+
+		isRowValue = new boolean[2];
+		assertEquals(1, MatrixUtils.findPopulatedRows(new int[][] {
+				new int[] { 0, 0 },
+				new int[] { 0, 1 }
+		}, isRowValue));
+		assertArrayEquals(new boolean[] { false, true }, isRowValue);
 	}
 }

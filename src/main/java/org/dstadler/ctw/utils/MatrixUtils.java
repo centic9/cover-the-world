@@ -245,7 +245,7 @@ public class MatrixUtils {
 
 	public static int findPopulatedRows(int[][] A, boolean[] isRowValue) {
 		int count = 0;
-		for (int i = 1; i < A.length; i++) {
+		for (int i = 0; i < A.length; i++) {
 			for (int j = 0; j < A[0].length; j++) {
 				if (A[i][j] == 1) {
 					isRowValue[i] = true;
