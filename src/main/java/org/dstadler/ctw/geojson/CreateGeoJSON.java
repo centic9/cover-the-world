@@ -267,11 +267,7 @@ public class CreateGeoJSON {
 	private static Feature getTileRectangleInternal(Set<OSMTile> tiles, String textFile, String title, int minX, int minY, int maxX, int maxY)
 			throws IOException {
 		int[][] M = MatrixUtils.populateMatrix(tiles, minX, minY, maxX, maxY);
-
-		boolean[] isY = new boolean[M.length];
-		MatrixUtils.findPopulatedRows(M, isY);
-
-		Pair<Rectangle,Integer> result = MatrixUtils.maxRectangle(M, isY);
+		Pair<Rectangle,Integer> result = MatrixUtils.maxRectangle(M);
 		Rectangle rect = result.getKey();
 
 		// stop when we do not find any real rectangles any more
