@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -31,6 +32,8 @@ import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.net.UrlUtils;
 
 import com.google.common.base.Preconditions;
+
+import jakarta.annotation.Nonnull;
 
 /**
  * Combine the overlay tiles for Cover the World with
@@ -108,8 +111,9 @@ public class CreateStaticTiles {
 
 		// look for tiles with covered area
 		Files.walkFileTree(tileDir.toPath(), new SimpleFileVisitor<>() {
+			@Nonnull
 			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+			public FileVisitResult visitFile(@Nonnull Path file, @Nonnull BasicFileAttributes attrs) {
 				fileCount++;
 
 				files.add(Strings.CS.removeStart(file.toString(), tileDir.getName()));
@@ -125,8 +129,9 @@ public class CreateStaticTiles {
 		// once and combine them
 		if (adjacentTilesDir != null) {
 			Files.walkFileTree(adjacentTilesDir.toPath(), new SimpleFileVisitor<>() {
+				@Nonnull
 				@Override
-				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+				public FileVisitResult visitFile(@Nonnull Path file, @Nonnull BasicFileAttributes attrs) {
 					adjacentCount++;
 
 					files.add(Strings.CS.removeStart(file.toString(), adjacentTilesDir.getName()));
@@ -311,7 +316,7 @@ public class CreateStaticTiles {
 
 	private static BufferedImage fetchOSMTileInternal(String coords) throws IOException {
 		String url = TILE_SERVER_URL + coords + ".png";
-		URL cUrl = new URL(url);
+		URL cUrl = URI.create(url).toURL();
 
 		HttpURLConnection conn = (HttpURLConnection) cUrl.openConnection();
 
