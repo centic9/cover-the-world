@@ -10,14 +10,14 @@ import java.io.Writer;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -110,7 +110,7 @@ public class CreateListOfVisitedSquares {
 
 		log.info("Searching directory '" + GPX_DIR + "' for GPX tracks");
 
-		List<Future<?>> futures = new ArrayList<>();
+		Collection<Future<?>> futures = new ConcurrentLinkedDeque<>();
 		ExecutorService executor = Executors.newWorkStealingPool();
 
 		try (Stream<Path> walk = Files.walk(GPX_DIR.toPath(), FileVisitOption.FOLLOW_LINKS)) {
