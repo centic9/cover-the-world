@@ -79,7 +79,7 @@ const params = new URLSearchParams(window.location.search);
 /* supported query params:
 Base Map: squares, bergfex, cycle, renderedSquares, renderedTiles
 Overlay: tiles, cycling, mtb, skating, gpx, slopes, hiking, hillshading
-Feature: new, adjacent, square, rectangle, cluster
+Feature: new, adjacent, squares, tiles, rectangle, cluster
 
 supported anchor:
 #map=<zoom>/<lat>/<lng>
@@ -897,12 +897,14 @@ if (params.get("squares") === "1") {
 	}
 	map.addLayer(ctwTilesAdjacent);
 } else {
-	map.addLayer(geoTiles);
+	if (params.get("tiles") !== "0") {
+		map.addLayer(geoTiles);
+		buttonT.getContainer().style.setProperty("color", "#FF0000");
+    }
 	if (params.get("new") !== "0") {
 		map.addLayer(geoTilesNew);
 	}
 //	map.addLayer(geoTilesAdjacent);
-	buttonT.getContainer().style.setProperty("color", "#FF0000");
 }
 
 if (params.get("cycling") === "1") {
