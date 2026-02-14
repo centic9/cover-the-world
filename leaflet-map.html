@@ -948,7 +948,8 @@ if (params.get("cluster") === "1") {
 let anchor = getAnchor();
 //console.log("Anchor: " + anchor);
 if (anchor != null) {
-    const obj = /map=(\d+)\/([\d.]+)\/([\d+.]+)/.exec(anchor);
+    // sample values: 10/36.16743/-115.14841, 10/48.52206/13.91762, 2/55.17887/59.23828, 9/35.77549/138.76144, 11/-43.12655/146.75640
+    const obj = /map=(\d+)\/(-?[\d.]+)\/(-?[\d+.]+)/.exec(anchor);
 	if (obj == null) {
 		console.log("Could not parse anchor: " + anchor);
     } else {
