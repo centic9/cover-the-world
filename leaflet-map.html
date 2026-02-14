@@ -229,8 +229,8 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 });
 
-// https://ptolemy.openstreetmap.de/12/2203/1412.png
-const osmDE = L.tileLayer('https://ptolemy.openstreetmap.de/{z}/{x}/{y}.png', {
+// https://tile.openstreetmap.de/12/2203/1412.png
+const osmDE = L.tileLayer('https://tile.openstreetmap.de/{z}/{x}/{y}.png', {
 	maxZoom: 20,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
@@ -254,11 +254,39 @@ const openTopo = L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png', {
 });
 
 // https://c.tile.thunderforest.com/cycle/12/2203/1412.png
-const cycle = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
+const thunderforestCycle = L.tileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=6a53e8b25d114a5e9216df5bf9b5e9c8', {
 	maxZoom: 20,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: 'Map data &copy; OpenStreetMap under ODbLBase map: OpenStreetMap'
+	attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
+
+// https://b.tile.thunderforest.com/outdoors/12/2203/1412.png
+// http://leaflet-extras.github.io/leaflet-providers/preview/index.html
+const thunderforestOutdoors = L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=6a53e8b25d114a5e9216df5bf9b5e9c8', {
+	maxZoom: 22,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
+
+// https://a.tile.thunderforest.com/transport/12/2133/1449.png?apikey=6a53e8b25d114a5e9216df5bf9b5e9c8
+// http://leaflet-extras.github.io/leaflet-providers/preview/index.html
+const thunderforestTransport = L.tileLayer('https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=6a53e8b25d114a5e9216df5bf9b5e9c8', {
+	maxZoom: 22,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
+
+// https://b.tile.thunderforest.com/mobile-atlas/11/1087/711.png
+// http://leaflet-extras.github.io/leaflet-providers/preview/index.html
+const thunderforestAtlas = L.tileLayer('https://{s}.tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey=6a53e8b25d114a5e9216df5bf9b5e9c8', {
+	maxZoom: 22,
+    opacity: 0.4,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
 
 // https://www.cyclosm.org/
@@ -287,6 +315,14 @@ const bergfexOEK50 = L.tileLayer('https://tiles.bergfex.at/data/oek50-512/{z}/{x
 	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
 });
 
+// https://tiles.bergfex.at/data/swiss-topo-512/13/4276/2900.jpeg
+const bergfexSwiss = L.tileLayer('https://tiles.bergfex.at/data/swiss-topo-512/{z}/{x}/{y}.jpeg', {
+	maxZoom: 17,
+	edgeBufferTiles: 1,
+	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
+	attribution: '&copy; <a href="https://www.bergfex.at/">Bergfex</a>',
+});
+
 // https://mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/12/1415/2207.jpeg
 const bergfexOrtho = L.tileLayer('https://mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg', {
 	maxZoom: 19,
@@ -303,19 +339,9 @@ const outdoorActiveOrtho = L.tileLayer('https://{s}.tiles.mapbox.com/v4/mapbox.s
 	attribution: '&copy; <a href="https://www.tourenportal.at/">Bergfex</a>',
 });
 
-// https://b.tile.thunderforest.com/outdoors/12/2203/1412.png
-// http://leaflet-extras.github.io/leaflet-providers/preview/index.html
-const thunderforestOutdoors = L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=6170aad10dfd42a38d4d8c709a536f38', {
-	maxZoom: 22,
-	edgeBufferTiles: 1,
-	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
-	attribution: '&copy; <a href="https://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-	apikey: '6170aad10dfd42a38d4d8c709a536f38'
-});
-
 // https://tileserver.memomaps.de/tilegen/12/2203/1412.png
 const oepnvKarte = L.tileLayer('https://tileserver.memomaps.de/tilegen/{z}/{x}/{y}.png', {
-	maxZoom: 20,
+	maxZoom: 18,
 	edgeBufferTiles: 1,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
     attribution: '<a href="https://%C3%B6pnvkarte.de/">ÖPNV Map</a> by <a href="https://memomaps.de/">MeMoMaps</a> <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, map data <a href="https://openstreetmap.org/">Openstreetmap</a> <a href="https://opendatacommons.org/licenses/odbl/1.0/">ODbL</a>',
@@ -364,9 +390,11 @@ const hiking = L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.
 });
 
 // https://hillshading.waymarkedtrails.org/srtm/12/2203/1412.png
-const hillshading = L.tileLayer('https://hillshading.waymarkedtrails.org/srtm/{z}/{x}/{y}.png', {
+// hillshading uses "{-y}" for some reason
+const hillshading = L.tileLayer('https://hillshading.waymarkedtrails.org/srtm/{z}/{x}/{-y}.png', {
 	maxZoom: 18,
 	edgeBufferTiles: 1,
+    opacity: 0.5,
 	// errorTileUrl: 'https://example.com/ctw/ctw-404.png',
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://waymarkedtrails.org">waymarkedtrails.org</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
@@ -512,14 +540,16 @@ const baseLayers = {
 	'OpenStreetMap': osm,
 	'OpenStreetMap DE': osmDE,
 	'OpenStreetMap.HOT': osmHOT,
-	'OpenTopo': openTopo,
-	'Cycle': cycle,
-	'CyclOSM': cyclosm,
 	'Bergfex': bergfex,
 	'Bergfex OEK50': bergfexOEK50,
-	'Bergfex Ortho': bergfexOrtho,
+	'Bergfex Swiss': bergfexSwiss,
+	'Bergfex Ortho (Ö)': bergfexOrtho,
 	'Outdooractive Ortho': outdoorActiveOrtho,
+	'OpenTopo': openTopo,
+	'CyclOSM': cyclosm,
+	'Thunderforest Cycle': thunderforestCycle,
 	'Thunderforest Outdoors': thunderforestOutdoors,
+	'Thunderforest Transport': thunderforestTransport,
 	'ÖPNV Karte': oepnvKarte,
 };
 
@@ -555,6 +585,7 @@ const overlays = {
 	'Hiking': hiking,
 	'Slopes': slopes,
 	'Hillshading': hillshading,
+	'Atlas Overlay': thunderforestAtlas,
 	'Grid 14': gridOsmFixed,
 	'Grid': gridOsm,
 	'-- -- --': empty,
@@ -838,7 +869,9 @@ map.on("overlayremove", function(e) {
 if (params.get("bergfex") === "1") {
 	map.addLayer(bergfex);
 } else if (params.get("cycle") === "1") {
-	map.addLayer(cycle);
+	map.addLayer(thunderforestCycle);
+} else if (params.get("osmde") === "1") {
+	map.addLayer(osmDE);
 } else {
 	map.addLayer(osm);
 }
