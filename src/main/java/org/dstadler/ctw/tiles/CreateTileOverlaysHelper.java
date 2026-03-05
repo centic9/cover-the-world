@@ -236,7 +236,11 @@ public class CreateTileOverlaysHelper {
 
 		// Save the image in PNG format using the javax.imageio API
 		if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-			throw new IOException("Could not create directory at " + file.getParentFile());
+			// try a second time because things may be executed in parallel and thus the directory
+			// may have been created in the meantime by another thread
+			if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+				throw new IOException("Could not create directory at " + file.getParentFile());
+			}
 		}
 
 		if (borderOnly) {
