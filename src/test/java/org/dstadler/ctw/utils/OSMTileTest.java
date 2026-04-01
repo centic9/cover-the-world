@@ -24,6 +24,7 @@ import org.dstadler.commons.collections.MappedCounter;
 import org.dstadler.commons.collections.MappedCounterImpl;
 import org.dstadler.commons.logging.jdk.LoggerFactory;
 import org.dstadler.commons.testing.TestHelpers;
+import org.dstadler.commons.util.SuppressForbidden;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -385,6 +386,7 @@ public class OSMTileTest {
 		assertNotEquals(tile.toString(), tile.string());
 	}
 
+	@SuppressForbidden(reason = "Uses System.out.println")
 	@Test
 	void printSquare() {
 		// this shows how you can compute the border-coordinates
@@ -405,6 +407,7 @@ public class OSMTileTest {
 		System.out.println(lowerRight.toCoords());
 	}
 
+	@SuppressForbidden(reason = "Uses System.out.println")
 	@Test
 	void printTilePixel() {
 		final OSMTile tile = OSMTile.fromLatLngZoom(48.31515, 14.30559, 14);
