@@ -63,10 +63,10 @@ public class MatrixUtils {
 			int x = (int) ((square.getEasting() - minEast) / SQUARE_SIZE);
 			int y = (int) ((square.getNorthing() - minNorth) / SQUARE_SIZE);
 
-			Preconditions.checkState(x >= 0 && x <= xSquares,
+			Preconditions.checkState(x >= 0 && x < xSquares,
 					"Expect x to be positive and at max %s, failed with %s for %s and %s",
 					xSquares, x, square, minEast);
-			Preconditions.checkState(y >= 0 && y <= ySquares,
+			Preconditions.checkState(y >= 0 && y < ySquares,
 					"Expect y to be positive and at max %s, failed with %s for %s and %s",
 					ySquares, y, square, minNorth);
 			Preconditions.checkState(M[y][x] == 0,
@@ -105,13 +105,13 @@ public class MatrixUtils {
 
 		int[][] M = new int[ySquares][xSquares];
 		for (OSMTile square : squares) {
-			int x = (square.getXTile() - minX);
-			int y = (square.getYTile() - minY);
+			int x = square.getXTile() - minX;
+			int y = square.getYTile() - minY;
 
-			Preconditions.checkState(x >= 0 && x <= xSquares,
+			Preconditions.checkState(x >= 0 && x < xSquares,
 					"Expect x to be positive and at max %s, failed with %s for %s and %s",
 					xSquares, x, square, minX);
-			Preconditions.checkState(y >= 0 && y <= ySquares,
+			Preconditions.checkState(y >= 0 && y < ySquares,
 					"Expect y to be positive and at max %s, failed with %s for %s and %s",
 					ySquares, y, square, minY);
 			Preconditions.checkState(M[y][x] == 0,

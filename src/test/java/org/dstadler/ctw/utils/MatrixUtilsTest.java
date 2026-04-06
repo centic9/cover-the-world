@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -201,6 +202,22 @@ class MatrixUtilsTest {
 	}
 
 	@Test
+	void testMaxSubSquareSquaresOutOfBounds() {
+		assertThrows(IllegalStateException.class,
+				() -> MatrixUtils.populateMatrix(Collections.singleton(UTMRefWithHash.fromString("33U 445000.0 5350000.0")),
+						0, 0, 0, 0, ZONE));
+		assertThrows(IllegalStateException.class,
+				() -> MatrixUtils.populateMatrix(Collections.singleton(UTMRefWithHash.fromString("33U 45.0 55.0")),
+						2000, 2000, 5350000, 5350000, ZONE));
+		assertThrows(IllegalStateException.class,
+				() -> MatrixUtils.populateMatrix(Collections.singleton(UTMRefWithHash.fromString("33U 445000.0 535.0")),
+						0, 0, 53500, 53500, ZONE));
+		assertThrows(IllegalStateException.class,
+				() -> MatrixUtils.populateMatrix(Collections.singleton(UTMRefWithHash.fromString("33U 445.0 535000.0")),
+						0, 0, 53500, 53500, ZONE));
+	}
+
+	@Test
 	void testMaxSubSquareTiles() throws IOException {
 		int[][] matrix = MatrixUtils.populateMatrix(tiles,
 				minX, minY, maxX, maxY);
@@ -219,6 +236,22 @@ class MatrixUtilsTest {
 				new Rectangle(3, 5, 2, 2));
 		assertEquals(expected, result.getLeft());
 		assertEquals((Integer)(expected.width * expected.height), result.getRight());
+	}
+
+	@Test
+	void testMaxSubSquareTilesOutOfBounds() throws IOException {
+		assertThrows(IllegalStateException.class,
+				() -> MatrixUtils.populateMatrix(Collections.singleton(OSMTile.fromString("17/1/1")),
+				12, 13, 14, 15));
+		assertThrows(IllegalStateException.class,
+				() -> MatrixUtils.populateMatrix(Collections.singleton(OSMTile.fromString("17/1/1")),
+				1, 13, 14, 15));
+		assertThrows(IllegalStateException.class,
+				() -> MatrixUtils.populateMatrix(Collections.singleton(OSMTile.fromString("17/51/1")),
+				1, 1, 14, 15));
+		assertThrows(IllegalStateException.class,
+				() -> MatrixUtils.populateMatrix(Collections.singleton(OSMTile.fromString("17/1/51")),
+				1, 1, 14, 15));
 	}
 
 	@Test
