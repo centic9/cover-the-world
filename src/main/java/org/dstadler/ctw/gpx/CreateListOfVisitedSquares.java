@@ -126,7 +126,7 @@ public class CreateListOfVisitedSquares {
 
 						// only log sometimes to not spam the output
 						if (count.incrementAndGet() % 20 == 0) {
-							log.info("Move " + count.incrementAndGet() + ": " + gpxFile);
+							log.info("Move " + count.get() + ": " + gpxFile);
 						}
 						readTrackPoints(gpxFile, toStringFun);
 					})));
