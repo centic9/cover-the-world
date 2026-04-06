@@ -51,12 +51,13 @@ public class CreateLargestConnectedGeoJSONTiles {
 
 		connected.sort(Comparator.
 				comparingInt((Set<OSMTile> o) -> o.size()).
-				thenComparingInt(Set::hashCode));
+				thenComparingInt(Set::hashCode).
+				reversed());
 
 		log.info("Found " + connected.size() + " connected, top 5: \n" +
 				connected.
 						// print the top 5
-						subList(connected.size() < 6 ? 0 : connected.size() - 6, connected.size() < 1 ? 0 : connected.size() - 1).
+						subList(0, Math.min(connected.size(), 5)).
 						stream().
 						// convert to string
 						map(r -> r.size() + ": " + r).
@@ -72,7 +73,7 @@ public class CreateLargestConnectedGeoJSONTiles {
 
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
-		List<OSMTile> largestConnected = new ArrayList<>(connected.get(connected.size() - 1));
+		List<OSMTile> largestConnected = new ArrayList<>(connected.get(0));
 		largestConnected.sort(Comparator.naturalOrder());
 		for (OSMTile tile : largestConnected) {
 			features.add(GeoJSON.createSquare(tile.getRectangle(),

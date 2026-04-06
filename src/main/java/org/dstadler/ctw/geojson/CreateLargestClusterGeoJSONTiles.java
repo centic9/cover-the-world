@@ -51,12 +51,13 @@ public class CreateLargestClusterGeoJSONTiles {
 
 		clusters.sort(Comparator.
 				comparingInt((Set<OSMTile> o) -> o.size()).
-				thenComparingInt(Set::hashCode));
+				thenComparingInt(Set::hashCode).
+				reversed());
 
 		log.info("Found " + clusters.size() + " cluster, top 5: \n" +
 				clusters.
 						// print the top 5
-						subList(clusters.size() < 6 ? 0 : clusters.size() - 6, clusters.size() < 1 ? 0 : clusters.size() - 1).
+						subList(0, Math.min(clusters.size(), 5)).
 						stream().
 						// convert to string
 						map(r -> r.size() + ": " + r).
@@ -72,7 +73,7 @@ public class CreateLargestClusterGeoJSONTiles {
 
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
-		List<OSMTile> largestCluster = new ArrayList<>(clusters.get(clusters.size() - 1));
+		List<OSMTile> largestCluster = new ArrayList<>(clusters.get(0));
 		largestCluster.sort(Comparator.naturalOrder());
 		for (OSMTile tile : largestCluster) {
 			features.add(GeoJSON.createSquare(tile.getRectangle(),
