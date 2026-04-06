@@ -126,7 +126,7 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 	}
 
 	/**
-	 * Compute the pixel-position of the given lat and lno values.
+	 * Compute the pixel-position of the given lat and lon values.
 	 * The number of pixels per tile is defined in the constant PIXELS
 	 *
 	 * @param lat The latitude to check
