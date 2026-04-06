@@ -76,7 +76,7 @@ public class CreateLargestClusterGeoJSONSquares {
 
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
-		List<UTMRefWithHash> largestCluster = new ArrayList<>(clusters.get(0));
+		List<UTMRefWithHash> largestCluster = new ArrayList<>(clusters.getFirst());
 		largestCluster.sort(Comparator.naturalOrder());
 		for (UTMRefWithHash square : largestCluster) {
 			features.add(GeoJSON.createSquare(square.getRectangle(),

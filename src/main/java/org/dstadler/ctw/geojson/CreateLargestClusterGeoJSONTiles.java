@@ -73,7 +73,7 @@ public class CreateLargestClusterGeoJSONTiles {
 
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
-		List<OSMTile> largestCluster = new ArrayList<>(clusters.get(0));
+		List<OSMTile> largestCluster = new ArrayList<>(clusters.getFirst());
 		largestCluster.sort(Comparator.naturalOrder());
 		for (OSMTile tile : largestCluster) {
 			features.add(GeoJSON.createSquare(tile.getRectangle(),

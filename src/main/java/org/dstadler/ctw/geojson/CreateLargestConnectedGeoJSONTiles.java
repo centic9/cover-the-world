@@ -73,7 +73,7 @@ public class CreateLargestConnectedGeoJSONTiles {
 
 		// build the GeoJSON features from the larges cluster
 		List<Feature> features = new ArrayList<>();
-		List<OSMTile> largestConnected = new ArrayList<>(connected.get(0));
+		List<OSMTile> largestConnected = new ArrayList<>(connected.getFirst());
 		largestConnected.sort(Comparator.naturalOrder());
 		for (OSMTile tile : largestConnected) {
 			features.add(GeoJSON.createSquare(tile.getRectangle(),

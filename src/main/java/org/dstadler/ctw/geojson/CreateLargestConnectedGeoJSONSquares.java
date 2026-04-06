@@ -76,7 +76,7 @@ public class CreateLargestConnectedGeoJSONSquares {
 
 		// build the GeoJSON features from the larges connected
 		List<Feature> features = new ArrayList<>();
-		List<UTMRefWithHash> largestConnected = new ArrayList<>(connected.get(0));
+		List<UTMRefWithHash> largestConnected = new ArrayList<>(connected.getFirst());
 		largestConnected.sort(Comparator.naturalOrder());
 		for (UTMRefWithHash square : largestConnected) {
 			features.add(GeoJSON.createSquare(square.getRectangle(),
