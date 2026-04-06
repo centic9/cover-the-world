@@ -44,6 +44,14 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 	private final int xTile;
 	private final int yTile;
 
+	/**
+	 * Create a new OSMTile with the given zoom level and tile coordinates.
+	 *
+	 * @param zoom  The zoom level, between {@value #OSM_MIN_ZOOM} and {@value #OSM_MAX_ZOOM}
+	 * @param xTile The x-coordinate of the tile, must be non-negative and less than 2^zoom
+	 * @param yTile The y-coordinate of the tile, must be non-negative and less than 2^zoom
+	 * @throws IllegalArgumentException if any of the parameters are out of range
+	 */
 	public OSMTile(int zoom, int xTile, int yTile) {
 		// plus one for now to allow using zoom 20 in some places
 		Preconditions.checkArgument(zoom >= OSM_MIN_ZOOM && zoom <= OSM_MAX_ZOOM + 1,
@@ -67,6 +75,13 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		this.yTile = yTile;
 	}
 
+	/**
+	 * Parse an OSMTile from a string in the format {@code zoom/xTile/yTile}.
+	 *
+	 * @param str The string to parse, must match the pattern {@code \d+/\d+/\d+}
+	 * @return A new OSMTile parsed from the given string
+	 * @throws IllegalArgumentException if the string does not match the expected pattern
+	 */
 	public static OSMTile fromString(String str) {
 		Matcher matcher = STRING_COORDS.matcher(str);
 
@@ -77,6 +92,15 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 				Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)));
 	}
 
+	/**
+	 * Create an OSMTile from the given latitude, longitude and zoom level.
+	 *
+	 * @param lat  The latitude in degrees, must be in range [-90, 90]
+	 * @param lon  The longitude in degrees, must be in range [-180, 180]
+	 * @param zoom The zoom level, must be in range [{@value #OSM_MIN_ZOOM}, {@value #OSM_MAX_ZOOM}]
+	 * @return A new OSMTile covering the given coordinates at the given zoom level
+	 * @throws IllegalArgumentException if any of the parameters are out of range
+	 */
 	public static OSMTile fromLatLngZoom(final double lat, final double lon, final int zoom) {
 		checkParameters(lat, lon, zoom);
 
@@ -143,6 +167,11 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return (1.0 - Math.log(Math.tan(Math.toRadians(lat)) + 1.0 / Math.cos(Math.toRadians(lat))) / Math.PI) / 2 * (1 << zoom);
 	}
 
+	/**
+	 * Return the top-left corner of this tile as a latitude/longitude coordinate.
+	 *
+	 * @return A {@link LatLng} representing the top-left corner of this tile
+	 */
 	@Override
 	public LatLng toLatLng() {
 		return new LatLng(computeLat(yTile, zoom), computeLon(xTile, zoom));
@@ -169,21 +198,45 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return Math.toDegrees(Math.atan(Math.sinh(n)));
 	}
 
+	/**
+	 * Return the tile directly above this one (lower y-coordinate) at the same zoom level.
+	 *
+	 * @return A new OSMTile with y-coordinate decremented by one
+	 * @throws IllegalArgumentException if the new coordinates would be invalid
+	 */
 	@Override
 	public OSMTile up() {
 		return new OSMTile(zoom, xTile, yTile - 1);
 	}
 
+	/**
+	 * Return the tile directly below this one (higher y-coordinate) at the same zoom level.
+	 *
+	 * @return A new OSMTile with y-coordinate incremented by one
+	 * @throws IllegalArgumentException if the new coordinates would be invalid
+	 */
 	@Override
 	public OSMTile down() {
 		return new OSMTile(zoom, xTile, yTile + 1);
 	}
 
+	/**
+	 * Return the tile directly to the right of this one (higher x-coordinate) at the same zoom level.
+	 *
+	 * @return A new OSMTile with x-coordinate incremented by one
+	 * @throws IllegalArgumentException if the new coordinates would be invalid
+	 */
 	@Override
 	public OSMTile right() {
 		return new OSMTile(zoom, xTile + 1, yTile);
 	}
 
+	/**
+	 * Return the tile directly to the left of this one (lower x-coordinate) at the same zoom level.
+	 *
+	 * @return A new OSMTile with x-coordinate decremented by one
+	 * @throws IllegalArgumentException if the new coordinates would be invalid
+	 */
 	@Override
 	public OSMTile left() {
 		return new OSMTile(zoom, xTile - 1, yTile);
@@ -247,6 +300,12 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return new File(tileDir, toCoords() + ".png");
 	}
 
+	/**
+	 * Checks equality based on zoom, x-tile and y-tile coordinates.
+	 *
+	 * @param o The object to compare with
+	 * @return {@code true} if the given object is an OSMTile with the same zoom, x and y coordinates
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -267,6 +326,11 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return yTile == that.yTile;
 	}
 
+	/**
+	 * Returns a hash code based on zoom, x-tile and y-tile coordinates.
+	 *
+	 * @return A hash code value for this OSMTile
+	 */
 	@Override
 	public int hashCode() {
 		int result = zoom;
@@ -275,6 +339,13 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return result;
 	}
 
+	/**
+	 * Compare this tile to another, ordered by zoom, then x-tile, then y-tile.
+	 *
+	 * @param o The OSMTile to compare to; a {@code null} value is considered greater than any tile
+	 * @return A negative integer, zero, or a positive integer as this tile is less than,
+	 *         equal to, or greater than the specified tile
+	 */
 	@Override
 	public int compareTo(@Nullable OSMTile o) {
 		if (o == null) {
@@ -296,6 +367,11 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return 0;
 	}
 
+	/**
+	 * Return a human-readable string representation of this tile showing zoom, x and y coordinates.
+	 *
+	 * @return A string in the form {@code OSMTile{zoom=z, xTile=x, yTile=y}}
+	 */
 	@Override
 	public String toString() {
 		return "OSMTile{" +
@@ -359,6 +435,11 @@ public class OSMTile implements BaseTile<OSMTile>, Comparable<OSMTile> {
 		return tiles;
 	}
 
+	/**
+	 * Return the string representation of this tile's coordinates, equivalent to {@link #toCoords()}.
+	 *
+	 * @return A string in the form {@code zoom/xTile/yTile}
+	 */
 	@Override
 	public String string() {
 		return toCoords();
