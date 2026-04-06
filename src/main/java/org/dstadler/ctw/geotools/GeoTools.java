@@ -156,26 +156,29 @@ maxy = 48.31913
 					rect.lon1, rect.lon2, rect.lat2, rect.lat1, DefaultGeographicCRS.WGS84);
 			BufferedImage bufferedImage = new BufferedImage(TILE_PIXEL, TILE_PIXEL, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g2d = bufferedImage.createGraphics();
+			try {
+				mapContent.getViewport().setMatchingAspectRatio(true);
 
-			mapContent.getViewport().setMatchingAspectRatio(true);
+				mapContent.getViewport().setScreenArea(new Rectangle(TILE_PIXEL, TILE_PIXEL));
+				mapContent.getViewport().setBounds(bounds);
 
-			mapContent.getViewport().setScreenArea(new Rectangle(TILE_PIXEL, TILE_PIXEL));
-			mapContent.getViewport().setBounds(bounds);
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				Rectangle outputArea = new Rectangle(TILE_PIXEL, TILE_PIXEL);
 
-			Rectangle outputArea = new Rectangle(TILE_PIXEL, TILE_PIXEL);
-
-			GTRenderer renderer = new StreamingRenderer();
-			LabelCache labelCache = new LabelCacheImpl();
-			Map<Object, Object> hints = renderer.getRendererHints();
-			if (hints == null) {
-				hints = new HashMap<>();
+				GTRenderer renderer = new StreamingRenderer();
+				LabelCache labelCache = new LabelCacheImpl();
+				Map<Object, Object> hints = renderer.getRendererHints();
+				if (hints == null) {
+					hints = new HashMap<>();
+				}
+				hints.put(StreamingRenderer.LABEL_CACHE_KEY, labelCache);
+				renderer.setRendererHints(hints);
+				renderer.setMapContent(mapContent);
+				renderer.paint(g2d, outputArea, bounds);
+			} finally {
+				g2d.dispose();
 			}
-			hints.put(StreamingRenderer.LABEL_CACHE_KEY, labelCache);
-			renderer.setRendererHints(hints);
-			renderer.setMapContent(mapContent);
-			renderer.paint(g2d, outputArea, bounds);
 
 			// Finally create an image and render the map:
 			try (OutputStream fileOutputStream = new FileOutputStream(outputFile);

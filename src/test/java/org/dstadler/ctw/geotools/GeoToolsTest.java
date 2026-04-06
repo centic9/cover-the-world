@@ -106,16 +106,26 @@ class GeoToolsTest {
 			log.info("Took " + (System.currentTimeMillis() - start) + "ms");
 		}
 		/*
-		Took 6012ms
-Took 3532ms
-Took 3120ms
-Took 3029ms
-Took 2992ms
-Took 3038ms
-Took 2915ms
-Took 2851ms
-Took 2779ms
-Took 2721ms
-		 */
+		Took 2506ms
+		Took 1617ms
+		Took 1448ms
+		Took 1383ms
+		Took 1349ms
+		Took 1327ms
+		Took 1593ms
+		Took 1652ms
+		Took 1460ms
+		Took 1366ms
+		Took 1258ms
+		Took 1298ms
+		Took 1463ms
+		Took 1830ms
+		Took 1326ms
+		Took 1292ms
+		Took 1228ms
+		Took 1261ms
+		Took 1461ms
+		Took 1253ms
+		*/
 	}
 }
