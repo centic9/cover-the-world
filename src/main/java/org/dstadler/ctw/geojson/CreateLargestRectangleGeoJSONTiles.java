@@ -45,6 +45,13 @@ public class CreateLargestRectangleGeoJSONTiles {
 
 		// produce the GeoJSON for the rectangle
 		Feature rectangle = CreateGeoJSON.getTileRectangle(tiles, LARGEST_RECTANGLE_TILES_TXT, "rectangle");
+
+		if (rectangle == null) {
+			log.info("Could not find a rectangle for tiles");
+			GeoJSON.writeGeoJavaScript(LARGEST_RECTANGLE_TILES_JSON, "tilerectangle", Collections.emptyList());
+			return;
+		}
+
 		log.info("Found largest rectangle for tiles: " +
 				FileUtils.readFileToString(new File(LARGEST_RECTANGLE_TILES_TXT), "UTF-8"));
 

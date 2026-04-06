@@ -45,6 +45,13 @@ public class CreateLargestRectangleGeoJSONSquares {
 
 		// produce the GeoJSON for the rectangle
 		Feature rectangle = CreateGeoJSON.getSquareRectangle(squares, LARGEST_RECTANGLE_SQUARES_TXT, "rectangle");
+
+		if (rectangle == null) {
+			log.info("Could not find a rectangle for squares");
+			GeoJSON.writeGeoJavaScript(LARGEST_RECTANGLE_SQUARES_JSON, "rectangle", Collections.emptyList());
+			return;
+		}
+
 		log.info("Found largest rectangle for squares: " +
 				FileUtils.readFileToString(new File(LARGEST_RECTANGLE_SQUARES_TXT), "UTF-8"));
 
