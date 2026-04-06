@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 	<link rel="stylesheet" href="css/L.Control.ZoomDisplay.css" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@v0.79.0/dist/L.Control.Locate.min.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@v0.89.0/dist/L.Control.Locate.min.css" />
 	<link rel="stylesheet" href="css/L.Control.MousePosition.css" />
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.src.min.css">
@@ -24,7 +24,7 @@
 	<!-- Zoom Plugin from https://github.com/azavea/Leaflet.zoomdisplay/ -->
 	<script type="text/javascript" src="js/L.Control.ZoomDisplay.js"></script>
 	<!-- GPS Plugin from https://github.com/domoritz/leaflet-locatecontrol -->
-	<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@v0.79.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+	<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@v0.89.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
 	<!-- https://github.com/ardhi/Leaflet.MousePosition -->
 	<script type="text/javascript" src="js/L.Control.MousePosition.js"></script>
 	<!-- https://github.com/cliffcloud/Leaflet.EasyButton -->
@@ -32,7 +32,7 @@
 	<!-- https://github.com/stefanocudini/leaflet-search -->
 	<script src="https://cdn.jsdelivr.net/npm/leaflet-search@4.0.0/dist/leaflet-search.src.min.js"></script>
     <!-- https://github.com/TolonUK/Leaflet.EdgeBuffer/ -->
-    <script src="https://cdn.jsdelivr.net/npm/leaflet-edgebuffer@1.0.6/src/leaflet.edgebuffer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-edgebuffer@1.0.7/src/leaflet.edgebuffer.min.js"></script>
 	<!-- https://github.com/ebrelsford/Leaflet.loading -->
 	<script src="https://cdn.jsdelivr.net/npm/leaflet-loading@0.1.24/src/Control.Loading.min.js"></script>
     <!-- Fullscreen option: https://github.com/brunob/leaflet.fullscreen -->
@@ -78,7 +78,7 @@
 const params = new URLSearchParams(window.location.search);
 /* supported query params:
 Base Map: squares, bergfex, cycle, renderedSquares, renderedTiles
-Overlay: tiles, cycling, mtb, skating, gpx, slopes, hiking, hillshading
+Overlay: tiles, cycling, mtb, skating, slopes, hiking, hillshading
 Feature: new, adjacent, squares, tiles, rectangle, cluster
 
 supported anchor:
